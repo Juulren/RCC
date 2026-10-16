@@ -54,7 +54,7 @@ conexión, sustituyendo `YOUR_LOCAL_PASSWORD` por el valor elegido:
 dotnet user-secrets set "ConnectionStrings:Rcc" "Host=127.0.0.1;Port=5432;Database=rcc;Username=rcc;Password=YOUR_LOCAL_PASSWORD" --project src/Rcc.Api
 ```
 
-**PostgreSQL nativo en Windows (configurado en este equipo):**
+**PostgreSQL nativo en Windows (alternativa instalada):**
 
 ```powershell
 ./scripts/dev-postgres.ps1
@@ -139,20 +139,27 @@ La contraseña de CI es pública, ficticia y exclusiva del servicio efímero del
 
 ### Docker Desktop en este equipo
 
-Instalado, pero el motor está pendiente: Windows reporta `VirtualMachinePlatform`
-deshabilitado. DISM devuelve error 740 en la terminal actual (requiere administrador).
-En PowerShell **como administrador**, ejecutar:
+Docker Desktop ya está operativo después de habilitar Virtual Machine Platform,
+reiniciar Windows y actualizar WSL a 2.7.13 con elevación de administrador.
+Se verificó `docker version`, `docker compose up -d --wait postgres` y estado
+`healthy`. La API local usa ahora PostgreSQL del contenedor en 127.0.0.1:5432,
+con conexión guardada en user-secrets y contraseña generada en `.env` (ignorado).
+La instancia nativa conserva sus archivos; no se transfirieron ni borraron datos.
+
+Para pruebas usando la configuración local de Compose, sin imprimir credenciales:
 
 ```powershell
-dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-wsl --install --no-distribution
+$rccEnv = @{}
+Get-Content .env | ForEach-Object {
+  if ($_ -match '^([^#=]+)=(.*)$') { $rccEnv[$Matches[1]] = $Matches[2] }
+}
+$env:RCC_TEST_POSTGRES = "Host=127.0.0.1;Port=5432;Database=postgres;Username=$($rccEnv.POSTGRES_USER);Password=$($rccEnv.POSTGRES_PASSWORD)"
+dotnet test RCC.sln --configuration Release
 ```
 
-Después reiniciar Windows manualmente, actualizar WSL con `wsl --update` si hace
-falta, abrir Docker Desktop y comprobar `docker info`. No se ha reiniciado el equipo.
-Si aún informa falta de virtualización, revisar la configuración de firmware según
-la documentación de Microsoft. Mientras tanto, PostgreSQL nativo permite ejecutar
-toda la base del módulo 1.
+Para otros equipos donde falten requisitos de Windows, instalar WSL y habilitar
+Virtual Machine Platform desde una terminal de administrador, reiniciar cuando
+Windows lo solicite y comprobar `wsl --version` y `docker version` antes de Compose.
 
 Referencias: [Docker en Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
 y [solución de problemas WSL](https://learn.microsoft.com/en-us/windows/wsl/troubleshooting).

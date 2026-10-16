@@ -81,3 +81,12 @@ confiar en IA: por registrar a partir de evidencia.
   dos errores graves detectados por el humano exigidos por la consigna.
 - Evidencia detallada: MODULO-1.md. Revisión y correcciones humanas no registradas
   aún; no se inventan decisiones o aprendizajes del responsable.
+
+### Verificación de Docker después del reinicio: 2026-10-16
+
+- Instrucción literal: «listo, ya se le dio permisos y se reinicio windows».
+- Actualización de WSL a 2.7.13 con autorización de administrador; motor Docker
+  operativo y PostgreSQL 17.6 healthy mediante Compose.
+- Migración aplicada al contenedor; seis pruebas de integración aprobadas de nuevo
+  y API local Healthy. Configuración y contraseña locales excluidas del repositorio.
+- Se actualiza el mismo PR del módulo 1; no se inicia el módulo 2.
