@@ -36,7 +36,7 @@ y pruebas. No delegar a subagentes ni crear chats nuevos sin solicitud explícit
 Al cierre estimar porcentaje por volumen de código aportado y corregido, contrastar
 con historial y declarar método y límites. No usar porcentaje de commits como si
 fuera porcentaje de líneas ni contar documentación inicial como aplicación terminada.
-Los módulos 0 y 1 contienen aportes generados por IA: no se estima aún autoría del código final.
+Los módulos 0 a 2 contienen aportes generados por IA: no se estima aún autoría del código final.
 
 ## Bitácora única (objetivo: dos páginas al entregar)
 
@@ -46,7 +46,7 @@ secretos de salidas. Esta plantilla no acredita requisitos ya completados.
 | Prompt clave (5 al cierre) | Texto literal | Resultado | Corrección humana | Evidencia (commit/PR/prueba) |
 |---|---|---|---|---|
 | 1 | «perfecto, comienza con el modulo 1» | Base C#/React/PostgreSQL, pruebas y CI | No registrada | Rama feat/modulo-1-base |
-| 2 | Por registrar | | | |
+| 2 | «si ya se termino el modulo 1, podemos seguir con el modulo 2» | Sistema visual ES/EN con React Bits y adaptaciones Reacticx | No registrada | Rama feat/modulo-2-diseno |
 | 3 | Por registrar | | | |
 | 4 | Por registrar | | | |
 | 5 | Por registrar | | | |
@@ -90,3 +90,13 @@ confiar en IA: por registrar a partir de evidencia.
 - Migración aplicada al contenedor; seis pruebas de integración aprobadas de nuevo
   y API local Healthy. Configuración y contraseña locales excluidas del repositorio.
 - Se actualiza el mismo PR del módulo 1; no se inicia el módulo 2.
+
+### Módulo 2: 2026-10-16
+
+- Se implementan portada, tarjeta de habitación y secciones de la página con tokens,
+  traducciones y componentes accesibles. Se conservan créditos y licencias.
+- Pruebas: 7 Vitest y 9 Chromium; no equivalen a funcionalidades de reserva real.
+- Correcciones técnicas de IA: limpieza de diálogo compatible con StrictMode y
+  método correcto de prueba de reflujo. No se registran como errores graves
+  detectados por el humano, ni como aprobación visual humana.
+- Evidencias y límites en MODULO-2.md; pendiente revisión del responsable mediante PR.

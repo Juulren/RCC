@@ -1,5 +1,9 @@
 # Diseño: lujo futurista de Chongqing
 
+Implementación del módulo 2 en [MODULO-2.md](MODULO-2.md): la portada y tarjeta
+ya pueden revisarse en la web local. Los bocetos de este documento conservan la
+intención inicial; la interfaz usa cian #80E4DF para un acento más suave.
+
 ## Dirección y componentes
 
 Base #070B14, superficies #111B2B, texto #F2F4F8, texto secundario #B6C2D2,

@@ -42,6 +42,8 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci --prefix frontend
       - run: npm test --prefix frontend
+      - run: npm exec --prefix frontend -- playwright install --with-deps chromium
+      - run: npm run test:browser --prefix frontend
       - run: node scripts/build-web.mjs
       - run: dotnet tool restore
       - run: dotnet restore RCC.sln
@@ -71,3 +73,5 @@ jobs:
           path: |
             artifacts/test-results
             artifacts/smoke.log
+            frontend/playwright-report
+            frontend/test-results
