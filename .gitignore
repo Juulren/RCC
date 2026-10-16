@@ -1,0 +1,22 @@
+# Secretos y configuración local
+.env
+.env.*
+!.env.example
+appsettings.*.local.json
+secrets.json
+*.pfx
+*.key
+
+# Herramientas y resultados
+.vs/
+.idea/
+**/bin/
+**/obj/
+node_modules/
+dist/
+TestResults/
+playwright-report/
+test-results/
+*.log
+.DS_Store
+Thumbs.db
