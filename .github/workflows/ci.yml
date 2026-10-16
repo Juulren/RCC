@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  foundation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17.6
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: rcc_ci
+          POSTGRES_PASSWORD: ci_only_ephemeral_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U rcc_ci -d postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      RCC_TEST_POSTGRES: Host=127.0.0.1;Port=5432;Database=postgres;Username=rcc_ci;Password=ci_only_ephemeral_password
+      ConnectionStrings__Rcc: Host=127.0.0.1;Port=5432;Database=rcc_ci_smoke;Username=rcc_ci;Password=ci_only_ephemeral_password
+      ASPNETCORE_ENVIRONMENT: Development
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --prefix frontend
+      - run: npm test --prefix frontend
+      - run: node scripts/build-web.mjs
+      - run: dotnet tool restore
+      - run: dotnet restore RCC.sln
+      - run: dotnet build RCC.sln --configuration Release --no-restore
+      - run: dotnet test RCC.sln --configuration Release --no-build --logger trx --results-directory artifacts/test-results
+      - run: dotnet ef migrations has-pending-model-changes --project src/Rcc.Api --configuration Release --no-build
+      - run: dotnet ef database update --project src/Rcc.Api --configuration Release --no-build
+      - run: dotnet publish src/Rcc.Api --configuration Release --no-build --output artifacts/publish
+      - name: Smoke test del frontend y API publicados juntos
+        shell: bash
+        run: |
+          dotnet artifacts/publish/Rcc.Api.dll --contentRoot "$PWD/artifacts/publish" --urls http://127.0.0.1:5080 > artifacts/smoke.log 2>&1 &
+          api_pid=$!
+          trap 'kill "$api_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:5080/api/health/ready; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:5080/api/health/ready
+          curl --fail --silent http://127.0.0.1:5080/ | grep 'id="root"'
+          curl --fail --silent http://127.0.0.1:5080/api/status | grep '"application":"RCC"'
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:5080/api/missing)" = 404
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: foundation-results
+          path: |
+            artifacts/test-results
+            artifacts/smoke.log
