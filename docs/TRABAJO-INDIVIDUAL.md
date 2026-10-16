@@ -36,7 +36,7 @@ y pruebas. No delegar a subagentes ni crear chats nuevos sin solicitud explícit
 Al cierre estimar porcentaje por volumen de código aportado y corregido, contrastar
 con historial y declarar método y límites. No usar porcentaje de commits como si
 fuera porcentaje de líneas ni contar documentación inicial como aplicación terminada.
-Hoy solo hay documentación generada por IA: no se estima aún autoría del código final.
+Los módulos 0 y 1 contienen aportes generados por IA: no se estima aún autoría del código final.
 
 ## Bitácora única (objetivo: dos páginas al entregar)
 
@@ -45,7 +45,7 @@ secretos de salidas. Esta plantilla no acredita requisitos ya completados.
 
 | Prompt clave (5 al cierre) | Texto literal | Resultado | Corrección humana | Evidencia (commit/PR/prueba) |
 |---|---|---|---|---|
-| 1 | Por registrar | | | |
+| 1 | «perfecto, comienza con el modulo 1» | Base C#/React/PostgreSQL, pruebas y CI | No registrada | Rama feat/modulo-1-base |
 | 2 | Por registrar | | | |
 | 3 | Por registrar | | | |
 | 4 | Por registrar | | | |
@@ -68,3 +68,16 @@ confiar en IA: por registrar a partir de evidencia.
   individual en todas las áreas, dejando visible la discrepancia con el PDF.
 - Estado: especificación generada por IA, pendiente de revisión humana mediante PR.
 - No hay errores graves de código documentados: todavía no existe código de app.
+
+### Módulo 1: 2026-10-16
+
+- Instrucción adicional literal: «instala el docker si lo necesitas».
+- Instalación: SDK .NET 10 y Docker Desktop. Motor Docker pendiente de habilitar
+  Virtual Machine Platform con permisos de administrador y reiniciar manualmente.
+- Validación con PostgreSQL nativo: seis pruebas de integración y tres de frontend
+  aprobadas, compilación sin advertencias, migración y publicación comprobadas.
+- Corrección técnica de la IA durante la sesión: alinear versiones de EF Core
+  tras CS1705 en pruebas. Esto es un error de compilación resuelto, no uno de los
+  dos errores graves detectados por el humano exigidos por la consigna.
+- Evidencia detallada: MODULO-1.md. Revisión y correcciones humanas no registradas
+  aún; no se inventan decisiones o aprendizajes del responsable.

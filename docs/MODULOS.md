@@ -1,5 +1,9 @@
 # Entregas y verificación
 
+Estado al 2026-10-16: módulo 0 publicado en PR #1; módulo 1 implementado y
+verificado localmente, pendiente de revisión humana. Evidencias en MODULO-1.md.
+Módulos 2 a 9 todavía no implementados.
+
 Una rama y un PR por módulo. Trabajar en tareas pequeñas, revisar diff y ejecutar
 pruebas aplicables antes del commit final. No comenzar el siguiente módulo hasta
 revisar el anterior. Ningún servicio externo se declara integrado por un mock.

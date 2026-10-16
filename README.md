@@ -6,8 +6,10 @@ Repositorio: https://github.com/Juulren/RCC
 
 ## Estado
 
-Módulo 0: especificación. Todavía no hay aplicación ejecutable, migraciones,
-pruebas de aplicación ni despliegue. No se requieren claves para leer esta entrega.
+Módulo 1: base ejecutable con C#, React y PostgreSQL. Incluye migración inicial,
+pruebas y CI. La pantalla inicial comprueba la conexión con la API; el diseño
+completo, autenticación, catálogo y reservas pertenecen a los siguientes módulos.
+Todavía no hay despliegue público ni integraciones externas configuradas.
 
 ## Documentación
 
@@ -15,22 +17,148 @@ pruebas de aplicación ni despliegue. No se requieren claves para leer esta entr
 - [Diseño y bocetos](docs/DISENO.md)
 - [Módulos y aceptación](docs/MODULOS.md)
 - [Trabajo individual y bitácora](docs/TRABAJO-INDIVIDUAL.md)
+- [Evidencias del módulo 1](docs/MODULO-1.md)
 
 ## Arquitectura prevista
 
-React + Vite (JavaScript y CSS) consume una API REST C# con ASP.NET Core 10,
-Identity y Entity Framework Core sobre PostgreSQL. ASP.NET servirá la compilación
-de React bajo el mismo dominio. Integraciones desde C#: Stripe de prueba,
+React + Vite (JavaScript y CSS) consume una API REST C# con ASP.NET Core 10
+y Entity Framework Core sobre PostgreSQL. ASP.NET sirve la compilación de React
+bajo el mismo dominio. Identity se incorporará en el módulo 3. Integraciones previstas desde C#: Stripe de prueba,
 Open-Meteo, Resend y OpenAI; Google Maps se carga en el navegador con clave
 pública restringida por dominio.
 
 ## Instalación y pruebas
 
-Se documentarán comandos ejecutados y verificados al implementar el módulo 1;
-esta entrega no afirma que existan comandos de arranque o pruebas funcionales.
-Requisitos previstos: SDK .NET 10 LTS, Node.js LTS compatible con Vite,
-PostgreSQL y Docker para pruebas de integración. El equipo actual tiene .NET 8;
-la instalación del SDK 10 corresponde al módulo 1.
+Requisitos: SDK .NET 10 LTS, Node.js 24 LTS y PostgreSQL 17. Docker Desktop es
+opcional para ejecutar PostgreSQL con Compose. En Windows, abrir una terminal
+nueva después de instalar herramientas para actualizar PATH.
+
+### 1. Restaurar dependencias (desde la raíz)
+
+```powershell
+dotnet --version
+node --version
+dotnet tool restore
+dotnet restore RCC.sln
+npm ci --prefix frontend
+```
+
+### 2. Configurar PostgreSQL: elegir una alternativa
+
+**Docker Compose:** copiar `.env.example` a `.env`, cambiar la contraseña de
+ejemplo y ejecutar `docker compose up -d postgres`. El puerto es 5432 y el volumen
+conserva datos entre reinicios. ASP.NET no carga `.env`: configurar además la
+conexión, sustituyendo `YOUR_LOCAL_PASSWORD` por el valor elegido:
+
+```powershell
+dotnet user-secrets set "ConnectionStrings:Rcc" "Host=127.0.0.1;Port=5432;Database=rcc;Username=rcc;Password=YOUR_LOCAL_PASSWORD" --project src/Rcc.Api
+```
+
+**PostgreSQL nativo en Windows (configurado en este equipo):**
+
+```powershell
+./scripts/dev-postgres.ps1
+```
+
+El script requiere binarios PostgreSQL instalados. Por defecto busca en
+`$env:LOCALAPPDATA/RCC/tools/postgresql17/pgsql/bin`; admite `-PostgresBin` para
+otra ubicación. Crea una instancia exclusiva del proyecto en `.local/`, en
+127.0.0.1:55432, genera contraseña local y guarda la conexión en user-secrets.
+No instala un servicio global ni descarga binarios. No compartir `.local/`:
+contiene datos y credenciales locales y está excluido de Git.
+
+Para otra instalación PostgreSQL, crear una base `rcc` y guardar su conexión con
+el mismo comando user-secrets. En producción usar `ConnectionStrings__Rcc` como
+variable de entorno, no user-secrets ni credenciales incluidas en archivos.
+
+### 3. Migrar e iniciar
+
+```powershell
+dotnet ef database update --project src/Rcc.Api
+node scripts/build-web.mjs
+dotnet run --project src/Rcc.Api
+```
+
+Abrir http://localhost:5080. El frontend y `/api/status` se sirven juntos.
+La aplicación no migra automáticamente al iniciar: debe aplicarse la migración
+explícitamente. La migración inicial crea `Hotels`; el inventario y las tablas
+de autenticación/reservas se agregarán en sus módulos.
+
+Para desarrollar React con recarga automática, mantener la API ejecutándose y,
+en otra terminal, usar `npm run dev --prefix frontend`. Abrir http://localhost:5173;
+Vite reenvía `/api` a 5080. La compilación y publicación no dependen del servidor Vite.
+
+`dotnet run` usa el perfil Development y permite leer user-secrets. Si se usa
+`--no-launch-profile` o un DLL publicado, establecer `ASPNETCORE_ENVIRONMENT=Development`
+para user-secrets o proporcionar `ConnectionStrings__Rcc` explícitamente.
+
+### 4. Ejecutar pruebas
+
+```powershell
+npm test --prefix frontend
+dotnet build RCC.sln --configuration Release
+```
+
+Las seis pruebas de integración necesitan una instancia **dedicada a pruebas** y
+un usuario con `CREATEDB`. Crean dos bases `rcc_test_<uuid>` y eliminan solo esas
+bases al terminar; nunca se deben apuntar a producción. Para la instancia nativa
+de este proyecto, cargar su configuración sin imprimir la contraseña:
+
+```powershell
+$rccSettings = Get-Content .local/postgres.json -Raw | ConvertFrom-Json
+$env:RCC_TEST_POSTGRES = "Host=127.0.0.1;Port=$($rccSettings.Port);Database=postgres;Username=rcc;Password=$($rccSettings.Password)"
+dotnet test RCC.sln --configuration Release --logger trx --results-directory artifacts/test-results
+```
+
+Con Compose u otro servidor de pruebas, establecer `RCC_TEST_POSTGRES` con su
+conexión antes de `dotnet test`. Si falta, las pruebas fallan con instrucciones;
+no se omiten ni se reemplazan con EF InMemory. CI proporciona PostgreSQL efímero.
+
+### 5. Publicación local y salud
+
+```powershell
+node scripts/build-web.mjs
+dotnet publish src/Rcc.Api --configuration Release --output artifacts/publish
+```
+
+Para ejecutar el resultado, configurar `ConnectionStrings__Rcc` y pasar un
+`--contentRoot` absoluto hacia `artifacts/publish`. En PowerShell:
+
+```powershell
+dotnet artifacts/publish/Rcc.Api.dll --contentRoot "$((Get-Location).Path)/artifacts/publish" --urls http://127.0.0.1:5081
+```
+
+- `/api/status`: contrato de conectividad frontend/API.
+- `/api/health/live`: 200 si el proceso responde, independientemente de PostgreSQL.
+- `/api/health/ready`: 200 con base accesible y migraciones aplicadas; 503 en caso contrario.
+- `/api/*` desconocida: 404 ProblemDetails, nunca HTML de la SPA.
+
+GitHub Actions compila ambos proyectos, ejecuta tres pruebas de frontend y seis
+de integración, verifica migraciones y hace smoke test de la publicación conjunta.
+La contraseña de CI es pública, ficticia y exclusiva del servicio efímero del job.
+
+### Docker Desktop en este equipo
+
+Instalado, pero el motor está pendiente: Windows reporta `VirtualMachinePlatform`
+deshabilitado. DISM devuelve error 740 en la terminal actual (requiere administrador).
+En PowerShell **como administrador**, ejecutar:
+
+```powershell
+dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+wsl --install --no-distribution
+```
+
+Después reiniciar Windows manualmente, actualizar WSL con `wsl --update` si hace
+falta, abrir Docker Desktop y comprobar `docker info`. No se ha reiniciado el equipo.
+Si aún informa falta de virtualización, revisar la configuración de firmware según
+la documentación de Microsoft. Mientras tanto, PostgreSQL nativo permite ejecutar
+toda la base del módulo 1.
+
+Referencias: [Docker en Windows](https://docs.docker.com/desktop/setup/install/windows-install/)
+y [solución de problemas WSL](https://learn.microsoft.com/en-us/windows/wsl/troubleshooting).
+
+Detener PostgreSQL nativo: `./scripts/dev-postgres.ps1 -Stop`.
+Detener Compose conservando datos: `docker compose down`.
 
 ## Flujo de trabajo
 
