@@ -1,0 +1,70 @@
+# Modalidad individual y dirección de IA
+
+## Responsabilidad
+
+Por indicación expresa del usuario, Juulren es la única persona responsable de
+arquitectura, backend, frontend, calidad, seguridad, documentación y despliegue.
+Son áreas de trabajo de una persona, no cuatro integrantes ni agentes separados.
+Codex asiste en generación/revisión técnica; no sustituye una revisión humana.
+
+El PDF pide cuatro integrantes y revisión del trabajo de otro antes de integrar.
+La modalidad individual no cumple literalmente esos puntos. Se registra la
+diferencia para acordar con el docente la adaptación; no se inventan integrantes,
+bitácoras ajenas, aprobaciones ni revisión entre pares. El desarrollo documental
+puede avanzar. Ningún PR se fusiona automáticamente en nombre de un revisor.
+
+## Sesiones por módulo
+
+1. Juulren fija tarea pequeña, entradas, reglas y aceptación.
+2. Codex genera documentación/código y pruebas aplicables dentro del módulo.
+3. Ejecutar verificaciones; registrar comando, resultado y fallos completos saneados.
+4. Juulren revisa diff, ejecuta demostración y registra correcciones/decisiones.
+5. Commit etiquetado, push y PR con evidencia. Registrar revisión propia como
+   auto-revisión, nunca como aprobación independiente. Cerrar módulo tras revisión.
+
+Herramienta de generación: Codex en este proyecto. La función de IA de la app
+usará OpenAI desde C# en módulo 8; es distinta de la herramienta que genera código.
+Sesiones separadas por tarea/área dentro del módulo, con contexto de especificación
+y pruebas. No delegar a subagentes ni crear chats nuevos sin solicitud explícita.
+
+## Convención de autoría
+
+- `[IA]`: contenido generado por IA, aunque una persona lo solicite o revise.
+- `[HUMANO]`: escrito/corregido directamente por Juulren.
+- `[MIXTO]`: combina cambios materiales de ambos; explicar la mezcla en bitácora.
+
+Al cierre estimar porcentaje por volumen de código aportado y corregido, contrastar
+con historial y declarar método y límites. No usar porcentaje de commits como si
+fuera porcentaje de líneas ni contar documentación inicial como aplicación terminada.
+Hoy solo hay documentación generada por IA: no se estima aún autoría del código final.
+
+## Bitácora única (objetivo: dos páginas al entregar)
+
+Completar con hechos conforme ocurran; conservar prompts literalmente y eliminar
+secretos de salidas. Esta plantilla no acredita requisitos ya completados.
+
+| Prompt clave (5 al cierre) | Texto literal | Resultado | Corrección humana | Evidencia (commit/PR/prueba) |
+|---|---|---|---|---|
+| 1 | Por registrar | | | |
+| 2 | Por registrar | | | |
+| 3 | Por registrar | | | |
+| 4 | Por registrar | | | |
+| 5 | Por registrar | | | |
+
+| Error grave observado (2 al cierre) | Qué se esperaba | Cómo se detectó | Solución y verificación |
+|---|---|---|---|
+| Por registrar, sin inventar incidentes | | | |
+| Por registrar, sin inventar incidentes | | | |
+
+Decisión donde el responsable eligió otra opción a la propuesta de IA: por registrar
+con propuesta, elección real, motivo y consecuencia. Aprendizajes sobre cuándo
+confiar en IA: por registrar a partir de evidencia.
+
+### Registro inicial: 2026-10-16
+
+- Instrucción literal del responsable: «en cuanto al reparto del equipo es
+  unicamente una persona encargada de todo, que soy yo».
+- Consecuencia: se reemplaza reparto entre cuatro personas por responsabilidad
+  individual en todas las áreas, dejando visible la discrepancia con el PDF.
+- Estado: especificación generada por IA, pendiente de revisión humana mediante PR.
+- No hay errores graves de código documentados: todavía no existe código de app.
