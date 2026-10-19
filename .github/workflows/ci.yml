@@ -42,6 +42,8 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci --prefix frontend
       - run: npm test --prefix frontend
+      - run: npm exec --prefix frontend -- playwright install --with-deps chromium
+      - run: npm run test:browser --prefix frontend
       - run: node scripts/build-web.mjs
       - run: dotnet tool restore
       - run: dotnet restore RCC.sln
@@ -62,6 +64,9 @@ jobs:
           done
           curl --fail --silent http://127.0.0.1:5080/api/health/ready
           curl --fail --silent http://127.0.0.1:5080/ | grep 'id="root"'
+          for page in habitaciones experiencias destino; do
+            curl --fail --silent "http://127.0.0.1:5080/$page" | grep 'id="root"'
+          done
           curl --fail --silent http://127.0.0.1:5080/api/status | grep '"application":"RCC"'
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:5080/api/missing)" = 404
       - uses: actions/upload-artifact@v4
@@ -71,3 +76,5 @@ jobs:
           path: |
             artifacts/test-results
             artifacts/smoke.log
+            frontend/playwright-report
+            frontend/test-results

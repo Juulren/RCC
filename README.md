@@ -6,9 +6,10 @@ Repositorio: https://github.com/Juulren/RCC
 
 ## Estado
 
-Módulo 1: base ejecutable con C#, React y PostgreSQL. Incluye migración inicial,
-pruebas y CI. La pantalla inicial comprueba la conexión con la API; el diseño
-completo, autenticación, catálogo y reservas pertenecen a los siguientes módulos.
+Módulo 2: sistema visual de lujo futurista, portada de Chongqing y tarjeta de
+habitación, navegación responsiva y español/inglés. La base C#/PostgreSQL del
+módulo 1 permanece conectada. Autenticación, catálogo persistente y reservas
+pertenecen a los siguientes módulos; los controles actuales son vistas previas.
 Todavía no hay despliegue público ni integraciones externas configuradas.
 
 ## Documentación
@@ -18,6 +19,8 @@ Todavía no hay despliegue público ni integraciones externas configuradas.
 - [Módulos y aceptación](docs/MODULOS.md)
 - [Trabajo individual y bitácora](docs/TRABAJO-INDIVIDUAL.md)
 - [Evidencias del módulo 1](docs/MODULO-1.md)
+- [Sistema visual y pruebas del módulo 2](docs/MODULO-2.md)
+- [Fuentes y licencias de imágenes/componentes](THIRD_PARTY.md)
 
 ## Arquitectura prevista
 
@@ -96,6 +99,8 @@ para user-secrets o proporcionar `ConnectionStrings__Rcc` explícitamente.
 
 ```powershell
 npm test --prefix frontend
+npm exec --prefix frontend -- playwright install chromium
+npm run test:browser --prefix frontend
 dotnet build RCC.sln --configuration Release
 ```
 
@@ -133,9 +138,15 @@ dotnet artifacts/publish/Rcc.Api.dll --contentRoot "$((Get-Location).Path)/artif
 - `/api/health/ready`: 200 con base accesible y migraciones aplicadas; 503 en caso contrario.
 - `/api/*` desconocida: 404 ProblemDetails, nunca HTML de la SPA.
 
-GitHub Actions compila ambos proyectos, ejecuta tres pruebas de frontend y seis
-de integración, verifica migraciones y hace smoke test de la publicación conjunta.
+GitHub Actions compila ambos proyectos, ejecuta siete pruebas Vitest, diez de
+navegador y seis de integración, verifica migraciones y hace smoke test de la
+publicación conjunta. Playwright sirve la UI en 4173 con respuesta de estado
+simulada; se guardan capturas y reportes. La web en 5080 consume la API real.
 La contraseña de CI es pública, ficticia y exclusiva del servicio efímero del job.
+
+El módulo visual incluye auroras y trazos de luz animados, entradas al hacer
+scroll, parallax y transiciones entre habitaciones. «Pausar fondo» detiene el
+ambiente; la preferencia del sistema de movimiento reducido desactiva los efectos.
 
 ### Docker Desktop en este equipo
 
@@ -177,7 +188,21 @@ declara generación por IA y no acredita revisión humana.
 ## Contexto académico
 
 Demostración inspirada en Regent Chongqing; no es el sitio oficial ni conecta
-con sus reservas reales. Habitaciones, tarifas e inventario serán ficticios;
+con sus reservas reales. El home conserva habitaciones ilustrativas; la nueva
+colección presenta siete tipos del hotel con fotografías oficiales y atribución.
+Tarifas e inventario de la aplicación serán ficticios;
 pagos exclusivamente de prueba. Fuente de requisitos: `Tarea-1.pdf`, facilitado
 por el usuario. La modalidad individual difiere del equipo de cuatro personas
 pedido por la consigna; véase la documentación de trabajo individual.
+
+## Páginas del módulo visual
+
+El home `/` conserva su contenido. El navbar abre páginas independientes mediante
+React Router: `/habitaciones`, `/experiencias` y `/destino`. Se pueden compartir
+las URLs y recargar directamente; ASP.NET sirve el fallback de la SPA.
+
+Habitaciones incluye siete tipos oficiales, filtros, búsqueda y galerías con
+fotografías de Regent / IHG. No consulta inventario ni ofrece reservas reales.
+Experiencias propone momentos editoriales y Destino presenta Chongqing con un
+esquema conceptual y enlace externo a Maps. El idioma ES/EN se conserva al navegar.
+Fuentes y derechos de las imágenes: [THIRD_PARTY.md](THIRD_PARTY.md).
