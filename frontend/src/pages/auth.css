@@ -1,0 +1,176 @@
+.account-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 90px;
+  align-items: start;
+}
+.account-intro h1 {
+  font-size: clamp(40px, 4.4vw, 65px);
+  max-width: 530px;
+}
+.account-intro > p:not(.eyebrow),
+.account-panel > p,
+.admin-access > p {
+  color: var(--muted);
+  font-size: 14px;
+}
+.account-city {
+  height: 270px;
+  margin-top: 40px;
+  background:
+    linear-gradient(0deg, #070b1440, #070b1410),
+    url('/images/chongqing-night.webp') center / cover;
+}
+.account-caption {
+  display: block;
+  margin-top: 15px;
+  color: var(--cyan);
+  font-size: 9px;
+  letter-spacing: 0.17em;
+}
+.account-panel {
+  background: #101a26;
+  border: 1px solid #30434f;
+  padding: 38px;
+  min-width: 0;
+}
+.account-panel h2 {
+  font-size: 31px;
+  margin-block: 25px;
+}
+.auth-mode {
+  display: flex;
+  gap: 20px;
+  border-bottom: 1px solid var(--line);
+}
+.auth-mode button {
+  min-height: 48px;
+  padding: 10px 0;
+  background: none;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  font-size: 13px;
+}
+.auth-mode button[aria-pressed='true'] {
+  color: var(--cyan);
+  border-color: var(--cyan);
+}
+.account-panel form > label {
+  display: block;
+  margin: 20px 0 8px;
+  font-size: 12px;
+  color: #c4d3dc;
+}
+.account-panel input {
+  background: #070e18;
+  color: #fff;
+  border: 1px solid #526874;
+  min-height: 50px;
+  padding: 12px;
+  width: 100%;
+  font-size: 16px;
+}
+.auth-password {
+  position: relative;
+}
+.auth-password input {
+  padding-right: 14px;
+}
+.auth-password button {
+  display: block;
+  margin-left: auto;
+  min-height: 44px;
+  padding: 8px 0;
+  background: none;
+  color: var(--cyan);
+  font-size: 11px;
+}
+.account-panel form > .button {
+  width: 100%;
+  margin-top: 20px;
+}
+/* Form controls keep a stable hit target while errors and focus change. */
+.account-panel .button,
+.account-panel .button:hover {
+  transform: none;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+html:has(.account-layout) {
+  scroll-behavior: auto;
+}
+.password-hint,
+.account-panel .account-privacy {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.account-panel .auth-error {
+  color: #ffb7ba;
+  background: #4f172735;
+  border-left: 2px solid #e6858c;
+  padding: 14px;
+  font-size: 13px;
+}
+.account-panel .auth-success {
+  color: #b3f2d7;
+  border-left: 2px solid var(--cyan);
+  padding: 12px;
+  font-size: 13px;
+}
+.account-panel .button:disabled,
+.auth-mode button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+.account-email {
+  overflow-wrap: anywhere;
+}
+.account-roles {
+  display: flex;
+  gap: 8px;
+  margin-block: 24px;
+}
+.account-roles span {
+  border: 1px solid #6bacae;
+  color: var(--cyan);
+  padding: 6px 12px;
+  font-size: 11px;
+}
+.account-panel > .button,
+.account-panel > .text-link {
+  display: flex;
+  margin-block: 20px;
+}
+.admin-access {
+  min-height: 65svh;
+}
+.admin-access .button {
+  margin: 20px 20px 0 0;
+}
+@media (max-width: 900px) {
+  .account-layout {
+    gap: 35px;
+  }
+  .account-panel {
+    padding: 28px;
+  }
+}
+@media (max-width: 600px) {
+  .account-layout {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  .account-city {
+    height: 180px;
+    margin-top: 25px;
+  }
+  .account-panel {
+    padding: 24px;
+  }
+  .account-intro h1 {
+    font-size: 40px;
+  }
+}

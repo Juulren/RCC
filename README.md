@@ -6,10 +6,12 @@ Repositorio: https://github.com/Juulren/RCC
 
 ## Estado
 
-Módulo 2: sistema visual de lujo futurista, portada de Chongqing y tarjeta de
-habitación, navegación responsiva y español/inglés. La base C#/PostgreSQL del
-módulo 1 permanece conectada. Autenticación, catálogo persistente y reservas
-pertenecen a los siguientes módulos; los controles actuales son vistas previas.
+Módulo 3: registro, login y logout con ASP.NET Core Identity; usuarios y roles
+persistidos en PostgreSQL, sesión mediante cookies HttpOnly y protección CSRF.
+Roles Customer/Admin. «Mi estancia»
+abre `/cuenta`; `/admin` comprueba permisos reales. La colección, el diseño
+responsivo y ES/EN del módulo 2 se conservan. Catálogo persistente, reservas y
+pagos pertenecen a los siguientes módulos.
 Todavía no hay despliegue público ni integraciones externas configuradas.
 
 ## Documentación
@@ -20,13 +22,14 @@ Todavía no hay despliegue público ni integraciones externas configuradas.
 - [Trabajo individual y bitácora](docs/TRABAJO-INDIVIDUAL.md)
 - [Evidencias del módulo 1](docs/MODULO-1.md)
 - [Sistema visual y pruebas del módulo 2](docs/MODULO-2.md)
+- [Identidad, administrador y pruebas del módulo 3](docs/MODULO-3.md)
 - [Fuentes y licencias de imágenes/componentes](THIRD_PARTY.md)
 
 ## Arquitectura prevista
 
 React + Vite (JavaScript y CSS) consume una API REST C# con ASP.NET Core 10
 y Entity Framework Core sobre PostgreSQL. ASP.NET sirve la compilación de React
-bajo el mismo dominio. Identity se incorporará en el módulo 3. Integraciones previstas desde C#: Stripe de prueba,
+bajo el mismo dominio. Identity almacena usuarios y roles y emite cookies de sesión. Integraciones previstas desde C#: Stripe de prueba,
 Open-Meteo, Resend y OpenAI; Google Maps se carga en el navegador con clave
 pública restringida por dominio.
 
@@ -104,8 +107,8 @@ npm run test:browser --prefix frontend
 dotnet build RCC.sln --configuration Release
 ```
 
-Las seis pruebas de integración necesitan una instancia **dedicada a pruebas** y
-un usuario con `CREATEDB`. Crean dos bases `rcc_test_<uuid>` y eliminan solo esas
+Las 18 pruebas de integración necesitan una instancia **dedicada a pruebas** y
+un usuario con `CREATEDB`. Cada fixture crea dos bases `rcc_test_<uuid>` y elimina solo esas
 bases al terminar; nunca se deben apuntar a producción. Para la instancia nativa
 de este proyecto, cargar su configuración sin imprimir la contraseña:
 
@@ -138,14 +141,21 @@ dotnet artifacts/publish/Rcc.Api.dll --contentRoot "$((Get-Location).Path)/artif
 - `/api/health/ready`: 200 con base accesible y migraciones aplicadas; 503 en caso contrario.
 - `/api/*` desconocida: 404 ProblemDetails, nunca HTML de la SPA.
 
-GitHub Actions compila ambos proyectos, ejecuta siete pruebas Vitest, diez de
-navegador y seis de integración, verifica migraciones y hace smoke test de la
-publicación conjunta. Playwright sirve la UI en 4173 con respuesta de estado
-simulada; se guardan capturas y reportes. La web en 5080 consume la API real.
+GitHub Actions compila ambos proyectos, ejecuta 7 pruebas Vitest, 19 de diseño,
+18 de integración PostgreSQL y 3 recorridos de autenticación contra la API real.
+Verifica migraciones y la publicación conjunta. Las pruebas de diseño sirven UI
+en 4173 con estado/ausencia de sesión simulados; las de identidad usan el servidor
+C# publicado en 5080, sin simular registro/login/logout. Se guardan reportes y
+capturas. Para repetir estas últimas, con API y migraciones listas:
+
+```powershell
+npm run test:auth --prefix frontend
+```
+
 La contraseña de CI es pública, ficticia y exclusiva del servicio efímero del job.
 
 El módulo visual incluye auroras y trazos de luz animados, entradas al hacer
-scroll, parallax y transiciones entre habitaciones. «Pausar fondo» detiene el
+scroll y transiciones entre habitaciones y páginas. «Pausar fondo» detiene el
 ambiente; la preferencia del sistema de movimiento reducido desactiva los efectos.
 
 ### Docker Desktop en este equipo

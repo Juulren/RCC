@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Rcc.Api.Data;
 using Rcc.Api.Health;
+using Rcc.Api.Auth;
 
-var builder = WebApplication.CreateBuilder(args);
+var initializeIdentity = args.Contains("--initialize-identity");
+var builder = WebApplication.CreateBuilder(args.Where(arg => arg != "--initialize-identity").ToArray());
 var connectionString = builder.Configuration.GetConnectionString("Rcc");
 if (string.IsNullOrWhiteSpace(connectionString))
 {
@@ -15,8 +17,14 @@ if (string.IsNullOrWhiteSpace(connectionString))
 builder.Services.AddProblemDetails();
 builder.Services.AddDbContext<RccDbContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddHealthChecks().AddCheck<DatabaseReadinessCheck>("postgresql", tags: ["ready"]);
+builder.Services.AddRccIdentity(builder.Environment);
 
 var app = builder.Build();
+if (initializeIdentity)
+{
+    await IdentityBootstrap.InitializeAsync(app.Services, app.Configuration);
+    return;
+}
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 if (!app.Environment.IsDevelopment() && !app.Environment.IsEnvironment("Testing"))
@@ -26,11 +34,15 @@ if (!app.Environment.IsDevelopment() && !app.Environment.IsEnvironment("Testing"
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseRateLimiter();
+app.MapRccAuth();
 app.MapGet("/api/status", () => Results.Ok(new
 {
     application = "RCC",
-    module = 1,
-    stage = "foundation"
+    module = 3,
+    stage = "identity"
 }));
 app.MapHealthChecks("/api/health/live", HealthOptions(ready: false));
 app.MapHealthChecks("/api/health/ready", HealthOptions(ready: true));

@@ -10,13 +10,13 @@ namespace Rcc.Api.IntegrationTests;
 public sealed class FoundationTests(PostgresFixture postgres) : IClassFixture<PostgresFixture>
 {
     [Fact]
-    public async Task Status_returns_foundation_contract()
+    public async Task Status_returns_current_module_contract()
     {
         await using var factory = postgres.CreateFactory();
         using var client = factory.CreateClient();
         var status = await client.GetFromJsonAsync<JsonElement>("/api/status");
         Assert.Equal("RCC", status.GetProperty("application").GetString());
-        Assert.Equal(1, status.GetProperty("module").GetInt32());
+        Assert.Equal(3, status.GetProperty("module").GetInt32());
     }
 
     [Fact]

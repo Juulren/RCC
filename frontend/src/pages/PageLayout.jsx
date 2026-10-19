@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { copy } from '../content.js'
 import Icon from '../components/Icon.jsx'
-import PreviewDialog from '../components/PreviewDialog.jsx'
 import ConnectionStatus from '../components/ConnectionStatus.jsx'
 import NavigationLinks from '../components/NavigationLinks.jsx'
 import './pages.css'
@@ -11,7 +10,6 @@ export default function PageLayout({ language, setLanguage, title, children }) {
   const t = copy[language]
   const es = language === 'es'
   const [menuOpen, setMenuOpen] = useState(false)
-  const [account, setAccount] = useState(false)
   useEffect(() => {
     document.title = `${title} · RCC Chongqing`
   }, [title])
@@ -42,15 +40,9 @@ export default function PageLayout({ language, setLanguage, title, children }) {
             }}
           >
             <NavigationLinks language={language} onNavigate={() => setMenuOpen(false)} />
-            <button
-              className="mobile-account"
-              onClick={() => {
-                setMenuOpen(false)
-                setAccount(true)
-              }}
-            >
+            <Link to="/cuenta" className="mobile-account" onClick={() => setMenuOpen(false)}>
               {t.account}
-            </button>
+            </Link>
           </nav>
           <div className="header-actions">
             <button
@@ -62,10 +54,10 @@ export default function PageLayout({ language, setLanguage, title, children }) {
               <span aria-hidden="true">/</span>
               <span className={!es ? 'active' : ''}>EN</span>
             </button>
-            <button className="account-button" onClick={() => setAccount(true)}>
+            <Link to="/cuenta" className="account-button">
               {t.account}
               <Icon name="diagonal" size={15} />
-            </button>
+            </Link>
             <button
               id="page-menu-toggle"
               className="menu-toggle icon-button"
@@ -117,15 +109,6 @@ export default function PageLayout({ language, setLanguage, title, children }) {
             : ' · Adapted to WebP and cropped with CSS.'}
         </p>
       </footer>
-      {account && (
-        <PreviewDialog
-          title={t.accountTitle}
-          closeLabel={t.close}
-          onClose={() => setAccount(false)}
-        >
-          <p>{t.accountText}</p>
-        </PreviewDialog>
-      )}
     </div>
   )
 }

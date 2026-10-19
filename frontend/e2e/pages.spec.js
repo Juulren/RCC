@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.beforeEach(async ({ page }) => {
   await page.route('**/api/status', (route) => route.fulfill({ json: { application: 'RCC' } }))
+  await page.route('**/api/auth/me', (route) => route.fulfill({ status: 401 }))
 })
 
 async function backdropGeometry(page) {

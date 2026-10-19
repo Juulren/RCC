@@ -11,7 +11,8 @@
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test": "vitest run",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "test:auth": "playwright test --config playwright.auth.config.js"
   },
   "dependencies": {
     "motion": "14.3.1",
