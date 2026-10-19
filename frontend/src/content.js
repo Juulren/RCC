@@ -110,9 +110,6 @@ export const copy = {
     credits: 'Créditos visuales',
     api: ['Comprobando conexión…', 'Conexión verificada', 'Conexión no disponible'],
     retry: 'Reintentar',
-    accountTitle: 'Tu estancia, en un solo lugar',
-    accountText:
-      'El acceso a tu cuenta y la gestión de reservas estarán disponibles cuando se incorpore la autenticación. Por ahora puedes explorar el diseño.',
     creditTitle: 'Imágenes y componentes',
     creditText:
       'Skyline: Maple Doctor · CC BY-SA 4.0. Interior ilustrativo: Markus Spiske · CC0. Imágenes optimizadas a WebP y recortadas mediante CSS.',
@@ -231,9 +228,6 @@ export const copy = {
     credits: 'Visual credits',
     api: ['Checking connection…', 'Connection verified', 'Connection unavailable'],
     retry: 'Retry',
-    accountTitle: 'Your stay, all in one place',
-    accountText:
-      'Account access and reservation management will be available when authentication is added. For now, explore the design.',
     creditTitle: 'Images and components',
     creditText:
       'Skyline: Maple Doctor · CC BY-SA 4.0. Illustrative interior: Markus Spiske · CC0. Images optimized to WebP and cropped using CSS.',

@@ -111,15 +111,9 @@ export default function App() {
             }}
           >
             <NavigationLinks language={language} onNavigate={() => setMenuOpen(false)} />
-            <button
-              className="mobile-account"
-              onClick={() => {
-                setMenuOpen(false)
-                setDialog('account')
-              }}
-            >
+            <Link to="/cuenta" className="mobile-account" onClick={() => setMenuOpen(false)}>
               {t.account}
-            </button>
+            </Link>
           </nav>
           <div className="header-actions">
             <button
@@ -131,10 +125,10 @@ export default function App() {
               <span aria-hidden="true">/</span>
               <span className={language === 'en' ? 'active' : ''}>EN</span>
             </button>
-            <button className="account-button" onClick={() => setDialog('account')}>
+            <Link to="/cuenta" className="account-button">
               {t.account}
               <Icon name="diagonal" size={15} />
-            </button>
+            </Link>
             <button
               id="menu-toggle"
               className="menu-toggle icon-button"
@@ -514,13 +508,7 @@ export default function App() {
       {dialog && (
         <PreviewDialog
           title={
-            dialog === 'account'
-              ? t.accountTitle
-              : dialog === 'room'
-                ? t.roomNames[room]
-                : dialog === 'credits'
-                  ? t.creditTitle
-                  : t.summary
+            dialog === 'room' ? t.roomNames[room] : dialog === 'credits' ? t.creditTitle : t.summary
           }
           closeLabel={t.close}
           onClose={() => setDialog(null)}
@@ -567,13 +555,11 @@ export default function App() {
           ) : (
             <>
               <p>
-                {dialog === 'account'
-                  ? t.accountText
-                  : dialog === 'room'
-                    ? t.roomDescriptions[room]
-                    : `${formatDate(arrival)} → ${formatDate(departure)} · ${roomSummary}`}
+                {dialog === 'room'
+                  ? t.roomDescriptions[room]
+                  : `${formatDate(arrival)} → ${formatDate(departure)} · ${roomSummary}`}
               </p>
-              {dialog !== 'account' && <p className="dialog-note">{t.previewInfo}</p>}
+              <p className="dialog-note">{t.previewInfo}</p>
             </>
           )}
         </PreviewDialog>

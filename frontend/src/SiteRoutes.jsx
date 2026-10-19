@@ -5,6 +5,8 @@ import App from './App.jsx'
 import RoomsPage from './pages/RoomsPage.jsx'
 import ExperiencesPage from './pages/ExperiencesPage.jsx'
 import DestinationPage from './pages/DestinationPage.jsx'
+import AccountPage from './pages/AccountPage.jsx'
+import AdminPage from './pages/AdminPage.jsx'
 
 export default function SiteRoutes() {
   const { pathname } = useLocation()
@@ -18,6 +20,8 @@ export default function SiteRoutes() {
         <Route path="/habitaciones" element={<RoomsPage />} />
         <Route path="/experiencias" element={<ExperiencesPage />} />
         <Route path="/destino" element={<DestinationPage />} />
+        <Route path="/cuenta" element={<AccountPage />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route
           path="*"
           element={

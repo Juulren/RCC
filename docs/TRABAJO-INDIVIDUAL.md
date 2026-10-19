@@ -131,3 +131,16 @@ El responsable precisó que Inicio tampoco coincidía con las dos páginas de
 ciudad. Se comparte CityBackdrop entre las tres, se unifican recorte, alto,
 degradado y ambiente animado y se elimina el parallax de la foto de Inicio.
 La matriz visual usa ahora el fondo de Inicio como referencia de comparación.
+
+### Módulo 3: 2026-10-19
+
+- Instrucción literal: «ok, empezemos con el modulo 3».
+- Se implementan Identity/PostgreSQL, registro, login/logout/me, CSRF y roles.
+  Cuenta bilingüe y comprobación de permisos de administración en C#.
+- Migración sin usuarios predefinidos. Alta de administrador por configuración
+  local y comando explícito; no se inventa revisión o contraseña del responsable.
+- Validación: 18 pruebas PostgreSQL, 7 Vitest, 19 Playwright de diseño y 3 recorridos
+  de autenticación real. No se consideran autenticación probada los mocks visuales.
+- Se corrigió el acceso de cuenta en tablet y se probaron cookies de producción,
+  concurrencia de emails, invalidación tras logout y CSRF por identidad.
+- Evidencias y limitaciones en MODULO-3.md. Módulo 4 pendiente.

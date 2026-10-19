@@ -1,13 +1,20 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Rcc.Api.Data;
 
-public sealed class RccDbContext(DbContextOptions<RccDbContext> options) : DbContext(options)
+public sealed class RccDbContext(DbContextOptions<RccDbContext> options) : IdentityDbContext<IdentityUser>(options)
 {
     public DbSet<Hotel> Hotels => Set<Hotel>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<IdentityUser>().HasIndex(x => x.NormalizedEmail).IsUnique();
+        modelBuilder.Entity<IdentityRole>().HasData(
+            new IdentityRole { Id = "rcc-customer", Name = "Customer", NormalizedName = "CUSTOMER", ConcurrencyStamp = "rcc-customer-v1" },
+            new IdentityRole { Id = "rcc-admin", Name = "Admin", NormalizedName = "ADMIN", ConcurrencyStamp = "rcc-admin-v1" });
         var hotel = modelBuilder.Entity<Hotel>();
         hotel.ToTable("Hotels", table =>
         {

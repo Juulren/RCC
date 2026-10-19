@@ -25,3 +25,5 @@ Thumbs.db
 .local/
 artifacts/
 src/Rcc.Api/wwwroot/
+frontend/playwright-report-auth/
+frontend/test-results-auth/
