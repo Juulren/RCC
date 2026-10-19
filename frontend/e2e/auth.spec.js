@@ -46,6 +46,12 @@ for (const [width, language] of [
     await expect(page.getByRole('alert')).toContainText(
       es ? 'No se pudo iniciar sesión' : 'Could not sign in',
     )
+    const submitButton = page.getByRole('button', {
+      name: es ? 'Entrar a mi estancia' : 'Sign in to my stay',
+      exact: true,
+    })
+    await submitButton.hover()
+    await expect(submitButton).toHaveCSS('transform', 'none')
     await page.getByLabel(es ? 'Contraseña' : 'Password', { exact: true }).fill(password)
     await page
       .getByRole('button', {
@@ -64,13 +70,9 @@ for (const [width, language] of [
     await page.screenshot({ path: testInfo.outputPath(`session-${width}-${language}.png`) })
     await page.goto('/admin')
     await expect(
-      page
-        .getByRole('status')
-        .filter({
-          hasText: es
-            ? 'requiere una cuenta de administrador'
-            : 'requires an administrator account',
-        }),
+      page.getByRole('status').filter({
+        hasText: es ? 'requiere una cuenta de administrador' : 'requires an administrator account',
+      }),
     ).toBeVisible()
     await page.goto('/cuenta')
     await page.getByRole('button', { name: es ? 'Cerrar sesión' : 'Sign out', exact: true }).click()

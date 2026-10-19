@@ -122,3 +122,12 @@ publicada, PostgreSQL y migraciones reales. No se declara integración de provee
 
 - [Configuración de Identity](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity-configuration?view=aspnetcore-10.0).
 - [Antiforgery](https://learn.microsoft.com/en-us/aspnet/core/security/anti-request-forgery?view=aspnetcore-10.0).
+
+## Corrección detectada por CI
+
+El primer run aprobó backend, migraciones y diseño, pero detectó un botón de login
+inestable en el recorrido móvil al reintentar después de una contraseña inválida.
+Se retira la traslación hover de botones del panel de cuenta y se evita scroll
+suave en formularios de cuenta. Se conserva la respuesta visual mediante color,
+borde y sombra. El recorrido real comprueba ahora que el botón no se traslada
+al pasar el puntero. No se forzó el clic ni se omitió la prueba fallida.
