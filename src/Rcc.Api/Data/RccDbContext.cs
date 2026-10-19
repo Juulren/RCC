@@ -7,6 +7,9 @@ namespace Rcc.Api.Data;
 public sealed class RccDbContext(DbContextOptions<RccDbContext> options) : IdentityDbContext<IdentityUser>(options)
 {
     public DbSet<Hotel> Hotels => Set<Hotel>();
+    public DbSet<RoomType> RoomTypes => Set<RoomType>();
+    public DbSet<PhysicalRoom> Rooms => Set<PhysicalRoom>();
+    public DbSet<RoomImage> RoomImages => Set<RoomImage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,5 +34,6 @@ public sealed class RccDbContext(DbContextOptions<RccDbContext> options) : Ident
         hotel.Property(x => x.Latitude).HasPrecision(9, 6);
         hotel.Property(x => x.Longitude).HasPrecision(9, 6);
         hotel.Property(x => x.TimeZone).HasMaxLength(80).IsRequired();
+        modelBuilder.ConfigureCatalog();
     }
 }

@@ -144,3 +144,18 @@ La matriz visual usa ahora el fondo de Inicio como referencia de comparación.
 - Se corrigió el acceso de cuenta en tablet y se probaron cookies de producción,
   concurrencia de emails, invalidación tras logout y CSRF por identidad.
 - Evidencias y limitaciones en MODULO-3.md. Módulo 4 pendiente.
+
+### Módulo 4: 2026-10-19
+
+- Solicitud literal: «empieza con la implementacion del modulo 4» tras revisar
+  catálogo, datos, panel y pruebas pendientes.
+- Se implementan hotel/servicios, tipos, galerías y habitaciones físicas con EF,
+  PostgreSQL, API pública y administración con rol/CSRF y revisiones.
+- Se mantienen las siete categorías/fotos; tarifas, capacidades e inventario
+  explícitamente ficticios. No se afirma disponibilidad por fechas.
+- Validación: 34 PostgreSQL, 7 Vitest, 21 recorridos visuales, 3 auth reales y
+  2 de catálogo reales. El panel se prueba con base/admin efímeros; no se inventa
+  cuenta ni revisión del responsable.
+- Correcciones técnicas: alta explícita de hijos EF en reemplazos, etiquetas
+  accesibles de select y contentRoot absoluto para el servidor de pruebas.
+- Evidencia, reglas y límites en MODULO-4.md. Módulo 5 pendiente.

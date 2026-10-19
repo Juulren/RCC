@@ -1,6 +1,5 @@
 namespace Rcc.Api.Data;
 
-// Foundation entity only. Catalog, inventory and Identity belong to later modules.
 public sealed class Hotel
 {
     public Guid Id { get; set; }
@@ -12,4 +11,6 @@ public sealed class Hotel
     public decimal Latitude { get; set; }
     public decimal Longitude { get; set; }
     public string TimeZone { get; set; } = "Asia/Shanghai";
+    public long Revision { get; set; } = 1;
+    public List<HotelService> Services { get; set; } = [];
 }

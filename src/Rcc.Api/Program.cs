@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Rcc.Api.Data;
 using Rcc.Api.Health;
 using Rcc.Api.Auth;
+using Rcc.Api.Catalog;
 
 var initializeIdentity = args.Contains("--initialize-identity");
 var builder = WebApplication.CreateBuilder(args.Where(arg => arg != "--initialize-identity").ToArray());
@@ -38,11 +39,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();
 app.MapRccAuth();
+app.MapRccCatalog();
 app.MapGet("/api/status", () => Results.Ok(new
 {
     application = "RCC",
-    module = 3,
-    stage = "identity"
+    module = 4,
+    stage = "catalog"
 }));
 app.MapHealthChecks("/api/health/live", HealthOptions(ready: false));
 app.MapHealthChecks("/api/health/ready", HealthOptions(ready: true));

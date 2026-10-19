@@ -1,6 +1,8 @@
+import { mockCatalogue } from './fixtures/catalog.js'
 import { test, expect } from '@playwright/test'
 
 test.beforeEach(async ({ page }) => {
+  await mockCatalogue(page)
   // UI tests isolate the health call; C#/PostgreSQL have their own integration suite.
   await page.route('**/api/status', (route) => route.fulfill({ json: { application: 'RCC' } }))
   await page.route('**/api/auth/me', (route) => route.fulfill({ status: 401 }))

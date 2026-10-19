@@ -1,8 +1,12 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import PageLayout from './PageLayout.jsx'
 import usePageLanguage from './usePageLanguage.js'
-import { officialRooms, officialSource } from './rooms.js'
+import { officialSource } from './rooms.js'
+import useCollection from '../catalog/useCollection.js'
+import HotelSummary from '../catalog/HotelSummary.jsx'
+import { money } from '../catalog/api.js'
+import './catalog.css'
 import Reveal from '../components/Reveal.jsx'
 import SpotlightCard from '../components/SpotlightCard.jsx'
 import PreviewDialog from '../components/PreviewDialog.jsx'
@@ -16,18 +20,30 @@ export default function RoomsPage() {
   const [photo, setPhoto] = useState(0)
   const reduced = useReducedMotion()
   const es = language === 'es'
-  const visibleRooms = useMemo(
-    () =>
-      officialRooms.filter(
-        (room) =>
-          (filter === 'all' || room.category === filter || (filter === 'river' && room.river)) &&
-          room.name.toLowerCase().includes(search.trim().toLowerCase()),
-      ),
-    [filter, search],
-  )
+  const [page, setPage] = useState(1)
+  const [attempt, setAttempt] = useState(0)
+  const [featured, setFeatured] = useState(null)
+  const collection = useCollection({ filter, search, page, attempt })
+  const visibleRooms =
+    collection.status === 'ready'
+      ? collection.items.map((room) => ({
+          ...room,
+          name: es ? room.nameEs : room.nameEn,
+          es: room.descriptionEs,
+          en: room.descriptionEn,
+          size: room.area,
+          river: room.riverView,
+        }))
+      : []
+  useEffect(() => {
+    if (collection.status === 'ready' && filter === 'all' && !search.trim() && page === 1)
+      setFeatured(
+        collection.items.find((room) => room.slug === 'club-river') ?? collection.items[0] ?? null,
+      )
+  }, [collection, filter, search, page])
   const beds = (room) =>
     room.beds === 'king' ? '1 King' : es ? '1 King o 2 Twin' : '1 King or 2 Twins'
-  const image = (id) => `/images/regent/${id}.webp`
+  const image = (photo) => photo.url
   return (
     <PageLayout
       language={language}
@@ -58,12 +74,15 @@ export default function RoomsPage() {
               initial={reduced ? false : { scale: 1.08 }}
               animate={{ scale: 1 }}
               transition={{ duration: 1.4 }}
-              src={image('club-river')}
-              alt="Regent Club Room River View · Regent Chongqing"
+              src={featured?.images[0]?.url ?? '/images/chongqing-night.webp'}
+              alt={
+                featured ? (es ? featured.images[0].altEs : featured.images[0].altEn) : 'Chongqing'
+              }
               fetchPriority="high"
             />
             <span className="editorial-caption">
-              REGENT CLUB ROOM RIVER VIEW <span>60 m²</span>
+              {featured ? (es ? featured.nameEs : featured.nameEn) : 'RCC COLLECTION'}{' '}
+              <span>{featured ? `${featured.area} m²` : ''}</span>
             </span>
           </div>
         </div>
@@ -75,6 +94,7 @@ export default function RoomsPage() {
           </span>
         </div>
       </section>
+      <HotelSummary language={language} />
       <section
         id="collection"
         className="shell section collection-section"
@@ -91,8 +111,8 @@ export default function RoomsPage() {
           </div>
           <p className="section-intro">
             {es
-              ? 'Desde los 57 m² de una Classic Room hasta los 215 m² de la Regent Suite.'
-              : 'From a 57 m² Classic Room to the 215 m² Regent Suite.'}
+              ? 'Colección administrada por RCC. Tarifas en CNY por habitación y noche, de demostración.'
+              : 'A collection managed by RCC. Demonstration rates in CNY per room per night.'}
           </p>
         </Reveal>
         <div className="collection-tools">
@@ -106,7 +126,14 @@ export default function RoomsPage() {
               ['suite', 'Suites'],
               ['river', es ? 'Vista al río' : 'River view'],
             ].map(([value, label]) => (
-              <button key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>
+              <button
+                key={value}
+                aria-pressed={filter === value}
+                onClick={() => {
+                  setFilter(value)
+                  setPage(1)
+                }}
+              >
                 {label}
               </button>
             ))}
@@ -116,15 +143,33 @@ export default function RoomsPage() {
             <input
               type="search"
               value={search}
-              onChange={(event) => setSearch(event.target.value)}
+              onChange={(event) => {
+                setSearch(event.target.value)
+                setPage(1)
+              }}
+              maxLength={100}
               placeholder={es ? 'Buscar un espacio…' : 'Find your space…'}
             />
             <Icon name="arrow" size={16} />
           </label>
         </div>
         <p className="collection-count" role="status">
-          {visibleRooms.length} {es ? 'espacios en esta selección' : 'spaces in this selection'}
+          {collection.status === 'loading'
+            ? es
+              ? 'Cargando colección…'
+              : 'Loading collection…'
+            : `${collection.total} ${es ? 'espacios en esta selección' : 'spaces in this selection'}`}
         </p>
+        {collection.status === 'error' && (
+          <div className="collection-empty">
+            <p role="alert">
+              {es ? 'No pudimos cargar el catálogo.' : 'Could not load the catalogue.'}
+            </p>
+            <button className="button button-outline" onClick={() => setAttempt(attempt + 1)}>
+              {es ? 'Reintentar catálogo' : 'Retry catalogue'}
+            </button>
+          </div>
+        )}
         <motion.div layout={!reduced} className="room-collection-grid">
           <AnimatePresence mode="popLayout" initial={false}>
             {visibleRooms.map((room, index) => (
@@ -144,7 +189,7 @@ export default function RoomsPage() {
                   <div className="collection-photo">
                     <img
                       src={image(room.images[0])}
-                      alt={`${room.name} · Regent Chongqing`}
+                      alt={es ? room.images[0].altEs : room.images[0].altEn}
                       loading="lazy"
                     />
                     <span className="collection-badge">
@@ -180,6 +225,15 @@ export default function RoomsPage() {
                         </li>
                       )}
                     </ul>
+                    <div className="catalog-price">
+                      <strong>{money(room.nightlyRate, language)}</strong>
+                      <span>{es ? '/ noche · demostración' : '/ night · demonstration'}</span>
+                      <small>
+                        {es ? 'Capacidad de demostración' : 'Demonstration capacity'}:{' '}
+                        {room.capacity} · {es ? 'máx. adultos' : 'max adults'} {room.maxAdults} ·{' '}
+                        {es ? 'máx. niños' : 'max children'} {room.maxChildren}
+                      </small>
+                    </div>
                     <button
                       className="text-link"
                       onClick={() => {
@@ -196,7 +250,7 @@ export default function RoomsPage() {
             ))}
           </AnimatePresence>
         </motion.div>
-        {visibleRooms.length === 0 && (
+        {collection.status === 'ready' && collection.total === 0 && (
           <div className="collection-empty">
             <h3>{es ? 'Todavía hay más por descubrir.' : 'There is more to discover.'}</h3>
             <p>
@@ -209,18 +263,43 @@ export default function RoomsPage() {
               onClick={() => {
                 setSearch('')
                 setFilter('all')
+                setPage(1)
               }}
             >
               {es ? 'Ver todos los espacios' : 'View all spaces'}
             </button>
           </div>
         )}
+        {collection.totalPages > 1 && (
+          <nav
+            className="catalog-pagination"
+            aria-label={es ? 'Páginas del catálogo' : 'Catalogue pages'}
+          >
+            <button
+              className="button button-outline"
+              disabled={page <= 1 || collection.status !== 'ready'}
+              onClick={() => setPage(page - 1)}
+            >
+              {es ? 'Anterior' : 'Previous'}
+            </button>
+            <span>
+              {page} / {collection.totalPages}
+            </span>
+            <button
+              className="button button-outline"
+              disabled={page >= collection.totalPages || collection.status !== 'ready'}
+              onClick={() => setPage(page + 1)}
+            >
+              {es ? 'Siguiente' : 'Next'}
+            </button>
+          </nav>
+        )}
         <aside className="official-source-note">
           <Icon name="sparkle" />
           <p>
             {es
-              ? 'Fotografías, nombres, camas y superficies tomados de la página oficial. Esta selección es informativa: no muestra precios ni disponibilidad en tiempo real.'
-              : 'Photography, names, beds and floor areas are sourced from the official page. This is an informational collection, without live rates or availability.'}
+              ? 'Fotografías de Regent / IHG con atribución. Tarifas, capacidades e inventario de RCC son de demostración y pueden ser editados. No se muestra disponibilidad por fechas ni una oferta real del hotel.'
+              : 'Attributed Regent / IHG photography. RCC rates, capacities and inventory are demonstrations and may be edited. This is not date-based availability or a real hotel offer.'}
             <a href={officialSource} target="_blank" rel="noreferrer">
               {es ? 'Fuente: Regent Chongqing / IHG' : 'Source: Regent Chongqing / IHG'} ↗
             </a>
@@ -242,7 +321,7 @@ export default function RoomsPage() {
                 exit={{ opacity: reduced ? 1 : 0 }}
                 transition={{ duration: reduced ? 0 : 0.2 }}
                 src={image(selected.images[photo])}
-                alt={`${selected.name} · ${photo + 1}/${selected.images.length} · IHG / Regent`}
+                alt={es ? selected.images[photo].altEs : selected.images[photo].altEn}
               />
             </AnimatePresence>
           </div>
@@ -272,6 +351,16 @@ export default function RoomsPage() {
           <p>{selected[language]}</p>
           <p>
             {selected.size} m² · {beds(selected)}
+          </p>
+          <p>
+            {money(selected.nightlyRate, language)}{' '}
+            {es ? '/ noche · tarifa de demostración' : '/ night · demonstration rate'}
+          </p>
+          <p>
+            {es ? 'Capacidad de demostración' : 'Demonstration capacity'}: {selected.capacity} ·{' '}
+            {es
+              ? 'Cada habitación requiere al menos un adulto.'
+              : 'Each room requires at least one adult.'}
           </p>
           <p className="dialog-note">
             {es

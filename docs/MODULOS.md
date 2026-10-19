@@ -1,10 +1,10 @@
 # Entregas y verificación
 
-Estado al 2026-10-19: módulos 0, 1 y 2 publicados en PR #1, #2 y #3.
-Módulo 3 implementado en `codex/modulo-3-identidad`, con autenticación real y
-pruebas PostgreSQL/Chromium; evidencia en MODULO-3.md. Revisión humana e integración
-pendientes. Módulos 4 a 9 no implementados. El responsable autorizó continuar
-tras revisar visualmente el módulo 2; no se fusionan PR automáticamente.
+Estado al 2026-10-19: módulos 0 a 3 publicados en PR #1 a #4. Módulo 4
+implementado en `codex/modulo-4-catalogo`, con catálogo PostgreSQL y panel
+administrativo; evidencia en MODULO-4.md. Revisión humana e integración pendientes.
+Módulos 5 a 9 no implementados. El responsable autorizó continuar con el módulo 4
+tras revisar sus pendientes. No se fusionan PR automáticamente.
 
 Una rama y un PR por módulo. Trabajar en tareas pequeñas, revisar diff y ejecutar
 pruebas aplicables antes del commit final. No comenzar el siguiente módulo hasta
@@ -16,7 +16,7 @@ revisar el anterior. Ningún servicio externo se declara integrado por un mock.
 | 1 | feat/modulo-1-base | SDK 10, solución API, React/Vite, PostgreSQL, migración inicial, instrucciones reales, configuración sin secretos, CI de compilación y pruebas mínimas de integración. |
 | 2 | feat/modulo-2-diseno | Tokens y componentes, portada y tarjeta revisadas primero, luego navegación bilingüe y estados; capturas y accesibilidad básica. |
 | 3 | codex/modulo-3-identidad | Registro/login/logout/me, CSRF y roles; pruebas de credenciales, email duplicado, permisos y cierre de sesión. |
-| 4 | feat/modulo-4-catalogo | Catálogo bilingüe y administración; persistencia, validación y restricciones de cambios a inventario comprometido. |
+| 4 | codex/modulo-4-catalogo | Catálogo bilingüe y administración persistentes; validación, versiones, tipos físicos inmutables y ausencia de borrado. Bloqueo por reservas se verifica con módulo 5. |
 | 5 | feat/modulo-5-reservas | Disponibilidad/cotización/reserva/cancelación; pruebas con PostgreSQL de fechas, capacidad, precios, idempotencia y concurrencia real. |
 | 6 | feat/modulo-6-pagos | Checkout sandbox/webhook/reconciliación/reembolso; firma inválida, aprobado, rechazado, duplicado, pago tardío, vencimiento y cancelación. |
 | 7 | feat/modulo-7-servicios | Clima/mapa/correo reales configurados; caché, fallback, colas, reintentos y prueba controlada de correo recibido. |

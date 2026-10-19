@@ -1,7 +1,13 @@
 import { useEffect, useRef } from 'react'
 import Icon from './Icon.jsx'
 
-export default function PreviewDialog({ title, closeLabel, onClose, children }) {
+export default function PreviewDialog({
+  title,
+  closeLabel,
+  onClose,
+  children,
+  closeDisabled = false,
+}) {
   const ref = useRef(null)
   const returnFocus = useRef(null)
   useEffect(() => {
@@ -16,10 +22,19 @@ export default function PreviewDialog({ title, closeLabel, onClose, children }) 
     }
   }, [])
   return (
-    <dialog ref={ref} onClose={onClose} aria-labelledby="dialog-title" className="preview-dialog">
+    <dialog
+      ref={ref}
+      onClose={onClose}
+      onCancel={(event) => {
+        if (closeDisabled) event.preventDefault()
+      }}
+      aria-labelledby="dialog-title"
+      className="preview-dialog"
+    >
       <button
         className="dialog-close icon-button"
         aria-label={closeLabel}
+        disabled={closeDisabled}
         onClick={() => ref.current.close()}
       >
         <Icon name="close" />

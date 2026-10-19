@@ -1,6 +1,8 @@
+import { mockCatalogue } from './fixtures/catalog.js'
 import { test, expect } from '@playwright/test'
 
 test.beforeEach(async ({ page }) => {
+  await mockCatalogue(page)
   await page.route('**/api/status', (route) => route.fulfill({ json: { application: 'RCC' } }))
   await page.route('**/api/auth/me', (route) => route.fulfill({ status: 401 }))
 })
@@ -142,4 +144,28 @@ test('experiencias: abrir detalle y cerrar con teclado', async ({ page }) => {
   await expect(page.getByRole('dialog')).toContainText('Inspiración editorial')
   await page.keyboard.press('Escape')
   await expect(trigger).toBeFocused()
+})
+
+test('catálogo vacío no inventa habitaciones ni precios', async ({ page }) => {
+  await page.route(/\/api\/room-types(?:\?.*)?$/, (route) =>
+    route.fulfill({ json: { items: [], total: 0, totalPages: 0 } }),
+  )
+  await page.goto('/habitaciones')
+  await expect(page.locator('.collection-empty')).toContainText('Todavía hay más por descubrir')
+  await expect(page.locator('.official-room-card')).toHaveCount(0)
+  await expect(page.locator('.catalog-price')).toHaveCount(0)
+})
+
+test('fallo de catálogo y reintento recuperan datos del servidor', async ({ page }) => {
+  let failed = true
+  await page.route(/\/api\/room-types(?:\?.*)?$/, async (route) => {
+    if (failed) return route.fulfill({ status: 503, json: { code: 'UNAVAILABLE' } })
+    return route.fallback()
+  })
+  await page.goto('/habitaciones')
+  await expect(page.getByRole('alert')).toContainText('No pudimos cargar el catálogo')
+  await expect(page.locator('.official-room-card')).toHaveCount(0)
+  failed = false
+  await page.getByRole('button', { name: 'Reintentar catálogo', exact: true }).click()
+  await expect(page.locator('.official-room-card')).toHaveCount(7)
 })

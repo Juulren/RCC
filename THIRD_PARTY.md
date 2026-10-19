@@ -86,3 +86,13 @@ no etiquetas de la escena fotografiada. La galería identifica habitación y nú
 Las imágenes se sirven localmente para evitar dependencia de servidores de fotos
 durante la navegación. El home conserva su interior ilustrativo. El nombre RCC
 y la marca tipográfica son propios del proyecto académico; no se copian logotipos.
+
+## Metadatos iniciales del hotel
+
+- Dirección y referencias de gastronomía/bienestar contrastadas el 2026-10-19 con
+  https://www.ihg.com/regent/hotels/us/en/chongqing/ckgrh/hoteldetail.
+- Descripciones del proyecto redactadas para RCC. Coordenadas iniciales 29.57,
+  106.57 aproximadas y así identificadas; no sustituyen una ubicación verificada.
+- Tarifas, capacidades y catorce unidades `DEMO-*` son datos ficticios del proyecto.
+- El administrador puede modificar los datos del catálogo. Procedencia y copyright
+  de las imágenes son metadatos controlados por el servidor, no una licencia libre.
