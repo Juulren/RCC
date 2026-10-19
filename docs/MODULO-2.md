@@ -145,3 +145,18 @@ cambio no intercale una pantalla de carga. El bundle de producción pesa unos
 La matriz ES/EN a 360/768/1440 px compara geometría y recorte de ambas portadas,
 además de comprobar Inicio activo en el home. Un recorrido adicional valida el
 fundido y su alternativa con movimiento reducido: 19 pruebas Playwright en total.
+
+## Fondo compartido con Inicio: 2026-10-19
+
+Se extiende la consistencia al home mediante CityBackdrop: una sola definición
+para imagen, degradado, ambiente Canvas/CSS y botón de pausa en Inicio,
+Experiencias y Destino. Las tres portadas comparten altura y encuadre según
+breakpoint (810 px escritorio, 770 px tablet, 780 px móvil, 880 px pantallas grandes).
+El header de las dos páginas de ciudad se superpone al fondo como en Inicio.
+Habitaciones conserva su portada editorial y header sólido.
+
+Se retira el parallax de la fotografía del home, que desplazaba el skyline al
+navegar. Continúan las auroras, trazos, partículas, entradas y fundido de rutas.
+La preferencia de movimiento reducido y el control de pausa siguen disponibles.
+Las pruebas comparan ahora dimensiones, posición, object-fit, object-position y
+degradado contra Inicio, en ES/EN a 360/768/1440 px.

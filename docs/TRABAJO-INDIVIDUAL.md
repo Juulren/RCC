@@ -124,3 +124,10 @@ El responsable señaló la ausencia de Inicio en el home, el salto de la imagen
 entre Destino y Experiencias y la falta de transición de página. Se comparten
 NavigationLinks y CityHero y se aplica un fundido sin movimiento geométrico.
 Se añaden comprobaciones de alineación por tamaño/idioma y movimiento reducido.
+
+### Fondo común con Inicio: 2026-10-19
+
+El responsable precisó que Inicio tampoco coincidía con las dos páginas de
+ciudad. Se comparte CityBackdrop entre las tres, se unifican recorte, alto,
+degradado y ambiente animado y se elimina el parallax de la foto de Inicio.
+La matriz visual usa ahora el fondo de Inicio como referencia de comparación.

@@ -56,6 +56,7 @@ export default function DestinationPage() {
       title={es ? 'Destino Chongqing' : 'Destination Chongqing'}
     >
       <CityHero
+        language={language}
         className="destination-page-hero"
         decoration={
           <span className="destination-coordinate">

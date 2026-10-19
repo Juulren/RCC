@@ -1,16 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  AnimatePresence,
-  motion,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from 'motion/react'
+import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 'motion/react'
 import { copy } from './content.js'
 import Icon from './components/Icon.jsx'
-import AmbientLight from './components/AmbientLight.jsx'
+import CityBackdrop from './components/CityBackdrop.jsx'
 import SpotlightCard from './components/SpotlightCard.jsx'
 import PreviewDialog from './components/PreviewDialog.jsx'
 import ConnectionStatus from './components/ConnectionStatus.jsx'
@@ -34,14 +27,10 @@ export function todayInChongqing() {
 }
 
 export default function App() {
-  const heroRef = useRef(null)
   const reducedMotion = useReducedMotion()
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, reducedMotion ? 0 : 130])
   const pageScroll = useScroll()
   const progress = useSpring(pageScroll.scrollYProgress, { stiffness: 100, damping: 30 })
   const [language, setLanguage] = useState(initialLanguage)
-  const [backgroundPaused, setBackgroundPaused] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [room, setRoom] = useState(0)
   const [dialog, setDialog] = useState(null)
@@ -161,18 +150,8 @@ export default function App() {
       </header>
 
       <main id="main">
-        <section ref={heroRef} id="top" className="hero" aria-labelledby="hero-title">
-          <motion.img
-            className="hero-photo"
-            style={{ y: heroY }}
-            src="/images/chongqing-night.webp"
-            alt=""
-            fetchPriority="high"
-            width="1280"
-            height="853"
-          />
-          <div className="hero-shade" aria-hidden="true" />
-          <AmbientLight paused={backgroundPaused} />
+        <section id="top" className="hero" aria-labelledby="hero-title">
+          <CityBackdrop language={language} />
           <div className="shell hero-layout">
             <div className="hero-content">
               <p className="hero-location">
@@ -212,14 +191,6 @@ export default function App() {
               </a>
               <span>29°33′ N / 106°33′ E</span>
             </div>
-            <button
-              className="motion-toggle"
-              aria-pressed={backgroundPaused}
-              onClick={() => setBackgroundPaused(!backgroundPaused)}
-            >
-              {backgroundPaused ? t.resumeMotion : t.pauseMotion}
-              <span aria-hidden="true">{backgroundPaused ? '▷' : 'Ⅱ'}</span>
-            </button>
           </div>
         </section>
 

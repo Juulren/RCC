@@ -67,7 +67,7 @@ export default function ExperiencesPage() {
       setLanguage={setLanguage}
       title={es ? 'Experiencias' : 'Experiences'}
     >
-      <CityHero className="experience-page-hero">
+      <CityHero language={language} className="experience-page-hero">
         <p className="eyebrow">RCC / THE ART OF BEING HERE</p>
         <h1>
           {es ? 'No solo venir.' : 'Not just visiting.'}

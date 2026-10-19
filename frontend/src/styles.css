@@ -1,4 +1,9 @@
 :root {
+  --skyline-height: 810px;
+  --skyline-top: 160px;
+  --skyline-position: center 58%;
+}
+:root {
   font-family: Inter, 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
   color: #f2f4f8;
   background: #070b14;
@@ -201,7 +206,7 @@ p {
   z-index: -1;
 }
 .hero-photo {
-  object-position: center 58%;
+  object-position: var(--skyline-position);
 }
 .hero-shade {
   background:
@@ -229,8 +234,8 @@ p {
 }
 .hero-layout {
   position: relative;
-  padding-top: 160px;
-  min-height: 810px;
+  padding-top: var(--skyline-top);
+  min-height: var(--skyline-height);
 }
 .hero-content {
   max-width: 650px;
@@ -955,9 +960,9 @@ h3 {
   padding-top: 20px;
 }
 @media (min-width: 1600px) {
-  .hero-layout {
-    min-height: 880px;
-    padding-top: 190px;
+  :root {
+    --skyline-height: 880px;
+    --skyline-top: 190px;
   }
 }
 @media (max-width: 1100px) {
@@ -1020,9 +1025,10 @@ h3 {
   .account-button {
     display: none;
   }
-  .hero-layout {
-    min-height: 770px;
-    padding-top: 145px;
+  :root {
+    --skyline-height: 770px;
+    --skyline-top: 145px;
+    --skyline-position: 58% center;
   }
   .hero-editorial {
     top: 175px;
@@ -1035,9 +1041,6 @@ h3 {
   }
   h1 {
     font-size: 68px;
-  }
-  .hero-photo {
-    object-position: 58% center;
   }
   .hero-bottom {
     bottom: 65px;
@@ -1144,12 +1147,10 @@ h3 {
     padding: 14px 0;
     font-size: 14px;
   }
-  .hero-layout {
-    min-height: 780px;
-    padding-top: 120px;
-  }
-  .hero-photo {
-    object-position: 62% center;
+  :root {
+    --skyline-height: 780px;
+    --skyline-top: 120px;
+    --skyline-position: 62% center;
   }
   .hero-shade {
     background:

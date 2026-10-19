@@ -4,12 +4,29 @@ test.beforeEach(async ({ page }) => {
   await page.route('**/api/status', (route) => route.fulfill({ json: { application: 'RCC' } }))
 })
 
+async function backdropGeometry(page) {
+  return page.locator('.hero-photo').evaluate((image) => {
+    const rect = image.getBoundingClientRect()
+    return {
+      x: rect.x,
+      y: rect.y,
+      width: rect.width,
+      height: rect.height,
+      position: getComputedStyle(image).objectPosition,
+      fit: getComputedStyle(image).objectFit,
+      shade: getComputedStyle(image.parentElement.querySelector('.hero-shade')).backgroundImage,
+    }
+  })
+}
+
 for (const width of [360, 768, 1440]) {
   for (const language of ['es', 'en']) {
     test(`páginas independientes ${width}px / ${language}`, async ({ page }, testInfo) => {
       await page.setViewportSize({ width, height: 1000 })
-      await page.goto('/habitaciones')
+      await page.goto('/')
       if (language === 'en') await page.getByRole('button', { name: 'Switch to English' }).click()
+      const homeGeometry = await backdropGeometry(page)
+      await page.goto('/habitaciones')
       const routes = [
         ['habitaciones', language === 'es' ? 'Habitaciones' : 'Rooms'],
         ['experiencias', language === 'es' ? 'Experiencias' : 'Experiences'],
@@ -42,20 +59,8 @@ for (const width of [360, 768, 1440]) {
             .poll(() => heroPhoto.evaluate((image) => image.complete && image.naturalWidth > 0))
             .toBe(true)
         if (route !== 'habitaciones') {
-          const geometry = await page.locator('.city-page-hero').evaluate((hero) => {
-            const image = hero.querySelector('img')
-            const title = hero.querySelector('h1')
-            const rect = image.getBoundingClientRect()
-            return {
-              x: rect.x,
-              y: rect.y,
-              width: rect.width,
-              height: rect.height,
-              titleY: title.getBoundingClientRect().y,
-              position: getComputedStyle(image).objectPosition,
-              fit: getComputedStyle(image).objectFit,
-            }
-          })
+          const geometry = await backdropGeometry(page)
+          expect(geometry).toEqual(homeGeometry)
           if (cityGeometry) expect(geometry).toEqual(cityGeometry)
           cityGeometry = geometry
         }
