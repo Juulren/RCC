@@ -6,8 +6,9 @@ Repositorio: https://github.com/Juulren/RCC
 
 ## Estado
 
-Módulo 3: registro, login, logout y sesión persistida en PostgreSQL mediante
-ASP.NET Core Identity, cookies HttpOnly, CSRF y roles Customer/Admin. «Mi estancia»
+Módulo 3: registro, login y logout con ASP.NET Core Identity; usuarios y roles
+persistidos en PostgreSQL, sesión mediante cookies HttpOnly y protección CSRF.
+Roles Customer/Admin. «Mi estancia»
 abre `/cuenta`; `/admin` comprueba permisos reales. La colección, el diseño
 responsivo y ES/EN del módulo 2 se conservan. Catálogo persistente, reservas y
 pagos pertenecen a los siguientes módulos.
@@ -107,7 +108,7 @@ dotnet build RCC.sln --configuration Release
 ```
 
 Las 18 pruebas de integración necesitan una instancia **dedicada a pruebas** y
-un usuario con `CREATEDB`. Crean dos bases `rcc_test_<uuid>` y eliminan solo esas
+un usuario con `CREATEDB`. Cada fixture crea dos bases `rcc_test_<uuid>` y elimina solo esas
 bases al terminar; nunca se deben apuntar a producción. Para la instancia nativa
 de este proyecto, cargar su configuración sin imprimir la contraseña:
 
