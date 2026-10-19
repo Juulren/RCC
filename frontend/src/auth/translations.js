@@ -28,8 +28,7 @@ export const authCopy = {
     private:
       'Tu contraseña se protege en el servidor. Al cerrar sesión, se cierran todas tus sesiones de RCC.',
     adminTitle: 'Administración',
-    adminIntro:
-      'Acceso autorizado como administrador. La gestión del catálogo se incorporará en el módulo 4.',
+    adminIntro: 'Administra el hotel, los tipos de habitación y el inventario de demostración.',
     denied: 'Esta sección requiere una cuenta de administrador.',
     signInFirst: 'Inicia sesión para acceder a esta sección.',
     errors: {
@@ -70,7 +69,7 @@ export const authCopy = {
     unavailable: 'We could not check your session. Please try again.',
     private: 'Your password is protected on the server. Signing out ends all your RCC sessions.',
     adminTitle: 'Administration',
-    adminIntro: 'Administrator access confirmed. Catalogue management will be added in module 4.',
+    adminIntro: 'Manage the hotel, room types and demonstration inventory.',
     denied: 'This section requires an administrator account.',
     signInFirst: 'Sign in to access this section.',
     errors: {

@@ -6,12 +6,12 @@ Repositorio: https://github.com/Juulren/RCC
 
 ## Estado
 
-Módulo 3: registro, login y logout con ASP.NET Core Identity; usuarios y roles
-persistidos en PostgreSQL, sesión mediante cookies HttpOnly y protección CSRF.
-Roles Customer/Admin. «Mi estancia»
-abre `/cuenta`; `/admin` comprueba permisos reales. La colección, el diseño
-responsivo y ES/EN del módulo 2 se conservan. Catálogo persistente, reservas y
-pagos pertenecen a los siguientes módulos.
+Módulo 4: catálogo persistente y administración de hotel, servicios, tipos,
+galerías e inventario físico. `/habitaciones` consulta PostgreSQL mediante la API
+C#, con tarifas CNY y capacidades de demostración. `/admin` permite crear, editar
+y desactivar registros con rol Admin, CSRF y control de versiones. Se conserva
+Identity, el diseño responsivo ES/EN y la portada. Reservas y pagos siguen
+pendientes; el catálogo no representa disponibilidad por fechas.
 Todavía no hay despliegue público ni integraciones externas configuradas.
 
 ## Documentación
@@ -23,6 +23,7 @@ Todavía no hay despliegue público ni integraciones externas configuradas.
 - [Evidencias del módulo 1](docs/MODULO-1.md)
 - [Sistema visual y pruebas del módulo 2](docs/MODULO-2.md)
 - [Identidad, administrador y pruebas del módulo 3](docs/MODULO-3.md)
+- [Catálogo, inventario y administración del módulo 4](docs/MODULO-4.md)
 - [Fuentes y licencias de imágenes/componentes](THIRD_PARTY.md)
 
 ## Arquitectura prevista
@@ -107,7 +108,7 @@ npm run test:browser --prefix frontend
 dotnet build RCC.sln --configuration Release
 ```
 
-Las 18 pruebas de integración necesitan una instancia **dedicada a pruebas** y
+Las 34 pruebas de integración necesitan una instancia **dedicada a pruebas** y
 un usuario con `CREATEDB`. Cada fixture crea dos bases `rcc_test_<uuid>` y elimina solo esas
 bases al terminar; nunca se deben apuntar a producción. Para la instancia nativa
 de este proyecto, cargar su configuración sin imprimir la contraseña:
@@ -141,18 +142,19 @@ dotnet artifacts/publish/Rcc.Api.dll --contentRoot "$((Get-Location).Path)/artif
 - `/api/health/ready`: 200 con base accesible y migraciones aplicadas; 503 en caso contrario.
 - `/api/*` desconocida: 404 ProblemDetails, nunca HTML de la SPA.
 
-GitHub Actions compila ambos proyectos, ejecuta 7 pruebas Vitest, 19 de diseño,
-18 de integración PostgreSQL y 3 recorridos de autenticación contra la API real.
+GitHub Actions compila ambos proyectos, ejecuta 7 pruebas Vitest, 21 de diseño,
+34 de integración PostgreSQL, 3 recorridos de autenticación y 2 de catálogo reales.
 Verifica migraciones y la publicación conjunta. Las pruebas de diseño sirven UI
-en 4173 con estado/ausencia de sesión simulados; las de identidad usan el servidor
-C# publicado en 5080, sin simular registro/login/logout. Se guardan reportes y
+en 4173 con respuestas de catálogo/estado/ausencia de sesión simuladas; las de identidad y administración usan el servidor
+C# publicado en 5080, sin simular registro/login/logout ni las modificaciones del catálogo. Se guardan reportes y
 capturas. Para repetir estas últimas, con API y migraciones listas:
 
 ```powershell
 npm run test:auth --prefix frontend
 ```
 
-La contraseña de CI es pública, ficticia y exclusiva del servicio efímero del job.
+La contraseña PostgreSQL de CI es pública, ficticia y exclusiva del servicio efímero
+del job. El administrador de pruebas usa una contraseña aleatoria y enmascarada.
 
 El módulo visual incluye auroras y trazos de luz animados, entradas al hacer
 scroll y transiciones entre habitaciones y páginas. «Pausar fondo» detiene el
@@ -216,3 +218,31 @@ fotografías de Regent / IHG. No consulta inventario ni ofrece reservas reales.
 Experiencias propone momentos editoriales y Destino presenta Chongqing con un
 esquema conceptual y enlace externo a Maps. El idioma ES/EN se conserva al navegar.
 Fuentes y derechos de las imágenes: [THIRD_PARTY.md](THIRD_PARTY.md).
+
+
+## Catálogo y administración
+
+La migración `AddCatalog` carga siete tipos, once referencias fotográficas y
+catorce habitaciones físicas `DEMO-*`. Tarifas, capacidades e inventario son
+ficticios; dirección y referencias del hotel tienen atribución. Las coordenadas
+iniciales son aproximadas. Las siguientes migraciones no reinicializan las
+ediciones del administrador.
+
+Crear el administrador propio con el procedimiento de [MODULO-3.md](docs/MODULO-3.md)
+y entrar a `/cuenta` → «Acceder a administración». No hay credenciales fijas.
+La galería usa una biblioteca local acreditada; no incorpora subida de archivos.
+Los cambios desactualizados se rechazan con 409 y se conserva el borrador.
+
+Para probar el panel completo en una **base aislada**, con PostgreSQL Compose
+activo y `.env` configurado (usuario con CREATEDB), después de compilar Release
+y ejecutar `node scripts/build-web.mjs`:
+
+```powershell
+./scripts/test-catalog.ps1
+```
+
+El script crea una base `rcc_e2e_<uuid>`, un administrador con contraseña aleatoria
+y una API temporal en 5082. Ejecuta los dos recorridos de catálogo y limpia solo
+esa base al finalizar, incluso si falla una prueba. No modifica las cuentas del
+hotel local. La suite de autenticación `test:auth`, en cambio, usa la base de la
+API seleccionada y genera clientes ficticios; no debe apuntarse a producción.

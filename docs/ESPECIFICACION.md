@@ -83,9 +83,10 @@ excepto donde se indique. No se eliminan en cascada reservas o pagos.
 |---|---|
 | Identity users/roles | Tablas estándar; email normalizado único, hash de contraseña, roles Customer/Admin. |
 | Hotels | id, nombre, descripción ES/EN, dirección, latitud, longitud, zona horaria; un hotel inicial. |
-| RoomTypes | id, hotel_id, nombre/descripcion ES/EN, capacidad total, máximo adultos/niños, tarifa CNY, activo. |
+| HotelServices | id, hotel_id, nombre ES/EN, orden (máximo 20 servicios). |
+| RoomTypes | id, hotel_id, slug, nombre/descripcion ES/EN, categoría, camas, superficie, vista al río, capacidad total, máximo adultos/niños, tarifa CNY, activo, orden y revisión. |
 | RoomImages | id, room_type_id, URL, texto alternativo ES/EN, orden, procedencia/licencia. |
-| Rooms | id, room_type_id, número único por hotel, estado operativo Active/Inactive. |
+| Rooms | id, hotel_id, room_type_id, número normalizado único por hotel, estado operativo Active/Inactive y revisión. |
 | Reservations | id, user_id, entrada, salida, estado, expires_at, moneda, total, idioma, created_at. |
 | ReservationItems | id, reservation_id, room_id, nombre/tarifa histórica, adultos, edades de niños, subtotal. |
 | Payments | id, reservation_id, checkout_session_id único opcional, payment_intent_id único opcional, importe, moneda, estado. |
@@ -132,6 +133,9 @@ Listados administrativos paginados (20 por defecto, máximo 100).
 | GET /weather | Público | Pronóstico disponible de Chongqing, instante y atribución. |
 | POST /recommendations | Sesión + CSRF | fechas, distribución, presupuesto opcional, preferencias, locale → combinaciones con explicación. |
 | GET /admin/reservations y /admin/reservations/{id} | Admin | Consultar con filtros por estado/fechas. |
+| GET /admin/hotel | Admin | Consultar información y versión para edición. |
+| GET /admin/room-types | Admin | Listado paginado, incluidos tipos inactivos. |
+| GET /admin/image-assets | Admin | Biblioteca local de fotografías acreditadas. |
 | PUT /admin/hotel | Admin + CSRF | Editar contenido bilingüe y ubicación. |
 | POST /admin/room-types | Admin + CSRF | Crear tipo con capacidades, traducciones, tarifa e imágenes. |
 | PUT /admin/room-types/{id} | Admin + CSRF | Actualizar o desactivar tipo. |
@@ -177,3 +181,20 @@ https://reactbits.dev/, https://www.reacticx.com/,
 https://dotnet.microsoft.com/en-us/platform/support/policy.
 Las cuentas, licencias, cuotas y acceso a proveedores se validarán en su módulo;
 esta especificación no afirma que estén configurados.
+
+
+## Ajustes de implementación del módulo 4
+
+Las escrituras de hotel, tipo y habitación física incluyen `revision`; una versión
+obsoleta recibe 409. La lista pública pagina a 20, máximo 100, con búsqueda
+bilingüe y filtros category/riverView; solo expone tipos activos. Los listados
+administrativos admiten búsqueda, estado y paginación; inventario también tipo.
+La galería conserva URL, alt ES/EN, orden, procedencia y copyright, y admite solo
+los activos locales acreditados. Se editan y reordenan metadatos, sin uploader.
+
+La relación de inventario incluye una FK compuesta que exige mismo hotel que el
+tipo. El tipo de una habitación física es inmutable en esta versión; el número
+se normaliza a mayúsculas. No se ofrecen endpoints de borrado de tipos ni unidades.
+Las ediciones de tarifas no tienen todavía reservas históricas sobre las que
+actuar. El bloqueo de desactivaciones/renumeraciones con reservas futuras vigentes
+se implementará y probará en el módulo 5, como se acordó al revisar el alcance.

@@ -55,6 +55,10 @@ jobs:
       - name: Smoke test del frontend y API publicados juntos
         shell: bash
         run: |
+          export RCC_E2E_ADMIN_EMAIL="catalog-ci@example.test"
+          export RCC_E2E_ADMIN_PASSWORD="$(node -e "process.stdout.write(require('crypto').randomBytes(24).toString('hex')+'Aa1!')")"
+          echo "::add-mask::$RCC_E2E_ADMIN_PASSWORD"
+          Administrator__Email="$RCC_E2E_ADMIN_EMAIL" Administrator__Password="$RCC_E2E_ADMIN_PASSWORD" dotnet artifacts/publish/Rcc.Api.dll --contentRoot "$PWD/artifacts/publish" --initialize-identity
           dotnet artifacts/publish/Rcc.Api.dll --contentRoot "$PWD/artifacts/publish" --urls http://127.0.0.1:5080 > artifacts/smoke.log 2>&1 &
           api_pid=$!
           trap 'kill "$api_pid" 2>/dev/null || true' EXIT
@@ -70,6 +74,7 @@ jobs:
           curl --fail --silent http://127.0.0.1:5080/api/status | grep '"application":"RCC"'
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:5080/api/missing)" = 404
           npm run test:auth --prefix frontend
+          npm run test:catalog --prefix frontend
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -81,3 +86,5 @@ jobs:
             frontend/test-results
             frontend/playwright-report-auth
             frontend/test-results-auth
+            frontend/playwright-report-catalog
+            frontend/test-results-catalog
