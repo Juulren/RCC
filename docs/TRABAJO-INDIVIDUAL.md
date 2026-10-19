@@ -47,7 +47,7 @@ secretos de salidas. Esta plantilla no acredita requisitos ya completados.
 |---|---|---|---|---|
 | 1 | «perfecto, comienza con el modulo 1» | Base C#/React/PostgreSQL, pruebas y CI | No registrada | Rama feat/modulo-1-base |
 | 2 | «si ya se termino el modulo 1, podemos seguir con el modulo 2» | Sistema visual ES/EN con React Bits y adaptaciones Reacticx | No registrada | Rama feat/modulo-2-diseno |
-| 3 | Por registrar | | | |
+| 3 | «la página es bastante estática y sin trancisiones, overall se siente sin vida, necesito componentes más dinámicos, transiciones y fondos animados» | Revisión de movimiento: Motion, auroras/Canvas, parallax y transiciones | El responsable detectó movimiento insuficiente y solicitó reforzarlo | Revisión del módulo 2, 2026-10-19 |
 | 4 | Por registrar | | | |
 | 5 | Por registrar | | | |
 
@@ -100,3 +100,11 @@ confiar en IA: por registrar a partir de evidencia.
   método correcto de prueba de reflujo. No se registran como errores graves
   detectados por el humano, ni como aprobación visual humana.
 - Evidencias y límites en MODULO-2.md; pendiente revisión del responsable mediante PR.
+
+### Revisión visual del responsable: 2026-10-19
+
+El responsable indicó que el diseño se sentía estático. Se añadieron transiciones
+visibles, entradas al desplazarse, ambiente Canvas/CSS, efectos de tarjetas y
+control de pausa. Se agrega prueba de cambio real de fotogramas y pausa fuera de
+vista. Esta corrección visual no se registra como vulnerabilidad ni aprobación
+humana del código. Se actualiza el PR #3; no se inicia otro módulo.

@@ -1,5 +1,14 @@
 # Fuentes y atribuciones
 
+## Motion: transiciones y desplazamiento
+
+- Paquete `motion` 14.3.1, importación `motion/react`, licencia MIT.
+- Documentación: https://motion.dev/docs/react-scroll-animations y
+  https://motion.dev/docs/react-animate-presence.
+- Aviso de licencia distribuido en `frontend/public/licenses/motion.txt`.
+- Se utiliza para entradas al hacer scroll, parallax, progreso de lectura y
+  transiciones entre habitaciones. El ambiente Canvas/CSS es código propio de RCC.
+
 ## React Bits: SpotlightCard
 
 - Autor: David Haz. Componente JavaScript/CSS incorporado y adaptado para RCC.

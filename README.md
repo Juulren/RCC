@@ -138,11 +138,15 @@ dotnet artifacts/publish/Rcc.Api.dll --contentRoot "$((Get-Location).Path)/artif
 - `/api/health/ready`: 200 con base accesible y migraciones aplicadas; 503 en caso contrario.
 - `/api/*` desconocida: 404 ProblemDetails, nunca HTML de la SPA.
 
-GitHub Actions compila ambos proyectos, ejecuta siete pruebas Vitest, nueve de
+GitHub Actions compila ambos proyectos, ejecuta siete pruebas Vitest, diez de
 navegador y seis de integración, verifica migraciones y hace smoke test de la
 publicación conjunta. Playwright sirve la UI en 4173 con respuesta de estado
 simulada; se guardan capturas y reportes. La web en 5080 consume la API real.
 La contraseña de CI es pública, ficticia y exclusiva del servicio efímero del job.
+
+El módulo visual incluye auroras y trazos de luz animados, entradas al hacer
+scroll, parallax y transiciones entre habitaciones. «Pausar fondo» detiene el
+ambiente; la preferencia del sistema de movimiento reducido desactiva los efectos.
 
 ### Docker Desktop en este equipo
 

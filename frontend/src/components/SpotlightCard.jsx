@@ -21,10 +21,20 @@ const SpotlightCard = ({
     divRef.current.style.setProperty('--mouse-x', `${x}px`)
     divRef.current.style.setProperty('--mouse-y', `${y}px`)
     divRef.current.style.setProperty('--spotlight-color', spotlightColor)
+    divRef.current.style.setProperty('--tilt-x', `${-(y / rect.height - 0.5) * 5}deg`)
+    divRef.current.style.setProperty('--tilt-y', `${(x / rect.width - 0.5) * 5}deg`)
   }
 
   return (
-    <div ref={divRef} onMouseMove={handleMouseMove} className={`card-spotlight ${className}`}>
+    <div
+      ref={divRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => {
+        divRef.current.style.setProperty('--tilt-x', '0deg')
+        divRef.current.style.setProperty('--tilt-y', '0deg')
+      }}
+      className={`card-spotlight ${className}`}
+    >
       {children}
     </div>
   )

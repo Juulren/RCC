@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import App from './App.jsx'
 import ConnectionStatus from './components/ConnectionStatus.jsx'
@@ -74,7 +74,9 @@ describe('Diseño bilingüe de RCC', () => {
     const tab = screen.getByRole('tab', { name: /Escapada urbana/ })
     fireEvent.keyDown(tab, { key: 'ArrowRight' })
     expect(screen.getByRole('tab', { name: /Junto al río/ })).toHaveFocus()
-    expect(screen.getByRole('heading', { name: 'River Retreat' })).toBeVisible()
+    await waitFor(() =>
+      expect(screen.getByRole('heading', { name: 'River Retreat' })).toBeVisible(),
+    )
     await screen.findByText('Conexión verificada')
   })
 

@@ -38,7 +38,7 @@ de una reserva confirmada. Sin cookies de proveedores ni claves en el frontend.
 - 7 pruebas Vitest: conectividad, fallo/reintento, respuesta inesperada, traducción
   conservando estado, pestañas por teclado, vista previa sin petición de reserva
   y fechas inválidas.
-- 9 pruebas Chromium con Playwright: matriz de 360/768/1440 px × ES/EN, ausencia
+- 10 pruebas Chromium con Playwright: matriz de 360/768/1440 px × ES/EN, ausencia
   de desbordamiento, imagen cargada, navegación, diálogos/Escape/foco, teclado,
   movimiento reducido, fallo de imágenes y persistencia de idioma.
 - El caso de reflujo equivalente a zoom 200% usa 640 píxeles CSS para una ventana
@@ -78,3 +78,27 @@ no se ocultó desbordamiento con overflow-x hidden para aprobar la comprobación
 
 La aprobación visual humana queda pendiente en el PR. El módulo 3 no se inicia
 automáticamente. El PR parte del módulo 1 mientras su PR siga abierto.
+
+## Revisión de movimiento: 2026-10-19
+
+Tras la observación del responsable de que la página se sentía estática, se
+reforzó el movimiento del módulo 2. Se añade Motion 14.3.1 para entradas de
+secciones al hacer scroll, tarjetas escalonadas, transición de salida/entrada
+entre habitaciones, parallax de la ciudad y barra de progreso.
+
+El fondo pasa de un gradiente casi imperceptible a un ambiente compuesto de
+auroras CSS, tres trazos de luz Canvas, partículas y una órbita. Se limita a
+30 dibujos/segundo y densidad de píxeles máxima 1.5; usa 18 puntos en móvil y
+36 en escritorio. No se mide ni promete una tasa de fotogramas universal.
+Se pausa fuera de vista, con la pestaña oculta y con movimiento reducido.
+El botón «Pausar fondo» permite detenerlo manualmente.
+
+Botones con reflejo y desplazamiento, tarjetas con iluminación e inclinación
+suave al pasar el puntero, zoom de imágenes y apertura animada de FAQ/diálogos.
+Los efectos no se requieren para leer ni operar el sitio. La versión reducida
+omite entradas, parallax y Canvas; el contenido conserva contraste y navegación.
+
+La décima prueba de navegador comprueba que el Canvas cambia realmente entre
+fotogramas, responde al control de pausa y deja de dibujar cuando sale del viewport.
+La prueba de movimiento reducido comprueba que Canvas no es visible ni está activo.
+Se conserva la matriz de tamaños/idiomas y los recorridos de teclado existentes.

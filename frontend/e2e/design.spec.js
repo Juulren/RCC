@@ -75,6 +75,8 @@ test('movimiento reducido y fallback sin imágenes', async ({ page }) => {
       .locator('.ambient-light')
       .evaluate((element) => getComputedStyle(element).animationName),
   ).toBe('none')
+  await expect(page.locator('.ambient-light')).toHaveAttribute('data-visible', 'false')
+  await expect(page.locator('.neon-canvas')).not.toBeVisible()
   await page.getByRole('tab', { name: /En familia/ }).click()
   await expect(page.getByRole('heading', { name: 'Family Residence' })).toBeVisible()
   expect(
@@ -82,6 +84,31 @@ test('movimiento reducido y fallback sin imágenes', async ({ page }) => {
       () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
     ),
   ).toBe(true)
+})
+
+test('fondo realmente animado y pausado al salir de pantalla', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/')
+  const environment = page.locator('.ambient-light')
+  const canvas = page.locator('.neon-canvas')
+  await expect(environment).toHaveAttribute('data-visible', 'true')
+  const first = await canvas.evaluate((element) => element.toDataURL())
+  await expect.poll(() => canvas.evaluate((element) => element.toDataURL())).not.toBe(first)
+  await page.getByRole('button', { name: 'Pausar fondo' }).click()
+  await expect(environment).toHaveAttribute('data-visible', 'false')
+  await expect(page.getByRole('button', { name: 'Reanudar fondo' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+  await page.getByRole('button', { name: 'Reanudar fondo' }).click()
+  await expect(environment).toHaveAttribute('data-visible', 'true')
+  await page.getByRole('heading', { name: /El arte de/ }).scrollIntoViewIfNeeded()
+  await expect(environment).toHaveAttribute('data-visible', 'false')
+  const paused = await canvas.evaluate((element) => element.toDataURL())
+  await page.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))),
+  )
+  expect(await canvas.evaluate((element) => element.toDataURL())).toBe(paused)
 })
 
 test('idioma conservado tras recarga y reflujo equivalente a zoom al 200 por ciento', async ({

@@ -1,10 +1,19 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from 'motion/react'
 import { copy } from './content.js'
 import Icon from './components/Icon.jsx'
 import AmbientLight from './components/AmbientLight.jsx'
 import SpotlightCard from './components/SpotlightCard.jsx'
 import PreviewDialog from './components/PreviewDialog.jsx'
 import ConnectionStatus from './components/ConnectionStatus.jsx'
+import Reveal from './components/Reveal.jsx'
 
 function initialLanguage() {
   try {
@@ -23,7 +32,14 @@ export function todayInChongqing() {
 }
 
 export default function App() {
+  const heroRef = useRef(null)
+  const reducedMotion = useReducedMotion()
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
+  const heroY = useTransform(scrollYProgress, [0, 1], [0, reducedMotion ? 0 : 130])
+  const pageScroll = useScroll()
+  const progress = useSpring(pageScroll.scrollYProgress, { stiffness: 100, damping: 30 })
   const [language, setLanguage] = useState(initialLanguage)
+  const [backgroundPaused, setBackgroundPaused] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [room, setRoom] = useState(0)
   const [dialog, setDialog] = useState(null)
@@ -79,6 +95,9 @@ export default function App() {
       <a href="#main" className="skip-link">
         {t.skip}
       </a>
+      {!reducedMotion && (
+        <motion.div className="scroll-progress" style={{ scaleX: progress }} aria-hidden="true" />
+      )}
       <header className="site-header">
         <div className="shell header-inner">
           <a href="#top" className="brand" aria-label="RCC Chongqing">
@@ -148,9 +167,10 @@ export default function App() {
       </header>
 
       <main id="main">
-        <section id="top" className="hero" aria-labelledby="hero-title">
-          <img
+        <section ref={heroRef} id="top" className="hero" aria-labelledby="hero-title">
+          <motion.img
             className="hero-photo"
+            style={{ y: heroY }}
             src="/images/chongqing-night.webp"
             alt=""
             fetchPriority="high"
@@ -158,7 +178,7 @@ export default function App() {
             height="853"
           />
           <div className="hero-shade" aria-hidden="true" />
-          <AmbientLight />
+          <AmbientLight paused={backgroundPaused} />
           <div className="shell hero-layout">
             <div className="hero-content">
               <p className="hero-location">
@@ -198,6 +218,14 @@ export default function App() {
               </a>
               <span>29°33′ N / 106°33′ E</span>
             </div>
+            <button
+              className="motion-toggle"
+              aria-pressed={backgroundPaused}
+              onClick={() => setBackgroundPaused(!backgroundPaused)}
+            >
+              {backgroundPaused ? t.resumeMotion : t.pauseMotion}
+              <span aria-hidden="true">{backgroundPaused ? '▷' : 'Ⅱ'}</span>
+            </button>
           </div>
         </section>
 
@@ -286,7 +314,12 @@ export default function App() {
           )}
         </section>
 
-        <section id="rooms" className="shell section rooms-section" aria-labelledby="rooms-title">
+        <Reveal
+          as="section"
+          id="rooms"
+          className="shell section rooms-section"
+          aria-labelledby="rooms-title"
+        >
           <div className="section-heading">
             <div>
               <p className="eyebrow">{t.roomEyebrow}</p>
@@ -332,48 +365,59 @@ export default function App() {
             ))}
           </div>
           <div id="room-panel" role="tabpanel" aria-labelledby={`room-tab-${room}`}>
-            <SpotlightCard className="featured-room" spotlightColor="rgba(85, 230, 237, 0.1)">
-              <div className="room-photo-wrap">
-                <img
-                  src="/images/room-preview.webp"
-                  width="1280"
-                  height="853"
-                  loading="lazy"
-                  alt={t.roomAlt}
-                />
-                <span className="image-caption">{t.illustration}</span>
-                <span className="room-number" aria-hidden="true">
-                  0{room + 1}
-                </span>
-              </div>
-              <div className="room-content">
-                <p className="eyebrow">RCC / COLLECTION 0{room + 1}</p>
-                <h3>{t.roomNames[room]}</h3>
-                <p className="room-description">{t.roomDescriptions[room]}</p>
-                <ul className="room-features">
-                  {t.features[room].map((feature, index) => (
-                    <li key={index}>
-                      <Icon name={['people', 'bed', 'area'][index]} size={18} />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <div className="room-price">
-                  <span>{t.from}</span>
-                  <strong>{money}</strong>
-                  <span>{t.perNight}</span>
-                </div>
-                <button className="button button-outline" onClick={() => setDialog('room')}>
-                  {t.details}
-                  <Icon name="diagonal" size={17} />
-                </button>
-                <small className="sample-note">{t.sample}</small>
-              </div>
-            </SpotlightCard>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={room}
+                initial={{ opacity: reducedMotion ? 1 : 0, y: reducedMotion ? 0 : 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: reducedMotion ? 1 : 0, y: reducedMotion ? 0 : -16 }}
+                transition={{ duration: reducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <SpotlightCard className="featured-room" spotlightColor="rgba(85, 230, 237, 0.1)">
+                  <div className="room-photo-wrap">
+                    <img
+                      src="/images/room-preview.webp"
+                      width="1280"
+                      height="853"
+                      loading="lazy"
+                      alt={t.roomAlt}
+                    />
+                    <span className="image-caption">{t.illustration}</span>
+                    <span className="room-number" aria-hidden="true">
+                      0{room + 1}
+                    </span>
+                  </div>
+                  <div className="room-content">
+                    <p className="eyebrow">RCC / COLLECTION 0{room + 1}</p>
+                    <h3>{t.roomNames[room]}</h3>
+                    <p className="room-description">{t.roomDescriptions[room]}</p>
+                    <ul className="room-features">
+                      {t.features[room].map((feature, index) => (
+                        <li key={index}>
+                          <Icon name={['people', 'bed', 'area'][index]} size={18} />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="room-price">
+                      <span>{t.from}</span>
+                      <strong>{money}</strong>
+                      <span>{t.perNight}</span>
+                    </div>
+                    <button className="button button-outline" onClick={() => setDialog('room')}>
+                      {t.details}
+                      <Icon name="diagonal" size={17} />
+                    </button>
+                    <small className="sample-note">{t.sample}</small>
+                  </div>
+                </SpotlightCard>
+              </motion.div>
+            </AnimatePresence>
           </div>
-        </section>
+        </Reveal>
 
-        <section
+        <Reveal
+          as="section"
           id="experiences"
           className="experience-section section"
           aria-labelledby="experience-title"
@@ -392,25 +436,27 @@ export default function App() {
             </div>
             <div className="experience-grid">
               {t.experiences.map((item, index) => (
-                <SpotlightCard
-                  key={item.number}
-                  className={`experience-card experience-card-${index}`}
-                  spotlightColor="rgba(85,230,237,.12)"
-                >
-                  <div className="experience-card-top">
-                    <Icon name={['pin', 'sparkle', 'cup'][index]} size={30} />
-                    <span>{item.number}</span>
-                  </div>
-                  <p className="eyebrow">{item.label}</p>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </SpotlightCard>
+                <Reveal key={item.number} delay={index * 0.12} className="experience-reveal">
+                  <SpotlightCard
+                    className={`experience-card experience-card-${index}`}
+                    spotlightColor="rgba(85,230,237,.12)"
+                  >
+                    <div className="experience-card-top">
+                      <Icon name={['pin', 'sparkle', 'cup'][index]} size={30} />
+                      <span>{item.number}</span>
+                    </div>
+                    <p className="eyebrow">{item.label}</p>
+                    <h3>{item.title}</h3>
+                    <p>{item.text}</p>
+                  </SpotlightCard>
+                </Reveal>
               ))}
             </div>
           </div>
-        </section>
+        </Reveal>
 
-        <section
+        <Reveal
+          as="section"
           id="destination"
           className="shell section destination-section"
           aria-labelledby="destination-title"
@@ -448,9 +494,9 @@ export default function App() {
               <Icon name="arrow" />
             </a>
           </div>
-        </section>
+        </Reveal>
 
-        <section className="shell section faq-section" aria-labelledby="faq-title">
+        <Reveal as="section" className="shell section faq-section" aria-labelledby="faq-title">
           <div>
             <p className="eyebrow">{t.faqEyebrow}</p>
             <h2 id="faq-title">{t.faqTitle}</h2>
@@ -466,9 +512,9 @@ export default function App() {
               </details>
             ))}
           </div>
-        </section>
+        </Reveal>
 
-        <section className="closing-section">
+        <Reveal as="section" className="closing-section">
           <div className="shell">
             <span className="eyebrow">RCC · CHONGQING</span>
             <h2>
@@ -481,7 +527,7 @@ export default function App() {
               <Icon name="diagonal" />
             </a>
           </div>
-        </section>
+        </Reveal>
       </main>
       <footer className="shell site-footer">
         <div className="footer-main">

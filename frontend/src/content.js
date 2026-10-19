@@ -1,5 +1,7 @@
 export const copy = {
   es: {
+    pauseMotion: 'Pausar fondo',
+    resumeMotion: 'Reanudar fondo',
     skip: 'Saltar al contenido',
     nav: ['Habitaciones', 'Experiencias', 'Destino'],
     menu: 'Menú',
@@ -117,9 +119,11 @@ export const copy = {
     creditsSky: 'Ver fotografía de Chongqing',
     creditsRoom: 'Ver fotografía del interior',
     creditsComponents:
-      'SpotlightCard de React Bits; pestañas, borde luminoso y acordeón inspirados en Reacticx, adaptados a la web.',
+      'SpotlightCard de React Bits, transiciones con Motion; pestañas, borde luminoso y acordeón inspirados en Reacticx, adaptados a la web.',
   },
   en: {
+    pauseMotion: 'Pause background',
+    resumeMotion: 'Resume background',
     skip: 'Skip to content',
     nav: ['Rooms', 'Experiences', 'Destination'],
     menu: 'Menu',
@@ -236,6 +240,6 @@ export const copy = {
     creditsSky: 'View the Chongqing photograph',
     creditsRoom: 'View the interior photograph',
     creditsComponents:
-      'SpotlightCard by React Bits; tabs, light border and accordion inspired by Reacticx, adapted for the web.',
+      'SpotlightCard by React Bits, transitions with Motion; tabs, light border and accordion inspired by Reacticx, adapted for the web.',
   },
 }
