@@ -15,6 +15,7 @@ import SpotlightCard from './components/SpotlightCard.jsx'
 import PreviewDialog from './components/PreviewDialog.jsx'
 import ConnectionStatus from './components/ConnectionStatus.jsx'
 import Reveal from './components/Reveal.jsx'
+import NavigationLinks from './components/NavigationLinks.jsx'
 
 function initialLanguage() {
   try {
@@ -120,15 +121,7 @@ export default function App() {
               }
             }}
           >
-            {t.nav.map((label, index) => (
-              <Link
-                key={index}
-                to={['/habitaciones', '/experiencias', '/destino'][index]}
-                onClick={() => setMenuOpen(false)}
-              >
-                {label}
-              </Link>
-            ))}
+            <NavigationLinks language={language} onNavigate={() => setMenuOpen(false)} />
             <button
               className="mobile-account"
               onClick={() => {

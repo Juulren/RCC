@@ -117,3 +117,10 @@ humana del código. Se actualiza el PR #3; no se inicia otro módulo.
 - Experiencias y Destino mantienen el alcance de propuesta visual del módulo 2.
 - Se amplía Playwright de 10 a 18 pruebas; no se acredita revisión humana ni
   funcionamiento de reservas por estos recorridos del diseño.
+
+### Consistencia visual y transición: 2026-10-19
+
+El responsable señaló la ausencia de Inicio en el home, el salto de la imagen
+entre Destino y Experiencias y la falta de transición de página. Se comparten
+NavigationLinks y CityHero y se aplica un fundido sin movimiento geométrico.
+Se añaden comprobaciones de alineación por tamaño/idioma y movimiento reducido.

@@ -15,6 +15,7 @@ for (const width of [360, 768, 1440]) {
         ['experiencias', language === 'es' ? 'Experiencias' : 'Experiences'],
         ['destino', language === 'es' ? 'Destino' : 'Destination'],
       ]
+      let cityGeometry
       for (const [route, label] of routes) {
         if (width === 360)
           await page
@@ -35,11 +36,29 @@ for (const width of [360, 768, 1440]) {
             () => document.documentElement.scrollWidth <= document.documentElement.clientWidth,
           ),
         ).toBe(true)
-        const heroPhoto = page.locator('.rooms-hero-photo img, .destination-page-hero > img')
+        const heroPhoto = page.locator('.rooms-hero-photo img, .city-hero-photo')
         if (await heroPhoto.count())
           await expect
             .poll(() => heroPhoto.evaluate((image) => image.complete && image.naturalWidth > 0))
             .toBe(true)
+        if (route !== 'habitaciones') {
+          const geometry = await page.locator('.city-page-hero').evaluate((hero) => {
+            const image = hero.querySelector('img')
+            const title = hero.querySelector('h1')
+            const rect = image.getBoundingClientRect()
+            return {
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height,
+              titleY: title.getBoundingClientRect().y,
+              position: getComputedStyle(image).objectPosition,
+              fit: getComputedStyle(image).objectFit,
+            }
+          })
+          if (cityGeometry) expect(geometry).toEqual(cityGeometry)
+          cityGeometry = geometry
+        }
         await page.screenshot({ path: testInfo.outputPath(`${route}-${width}-${language}.png`) })
       }
       await page.goBack()
@@ -49,9 +68,28 @@ for (const width of [360, 768, 1440]) {
       await page.getByRole('banner').getByRole('link', { name: 'RCC Chongqing' }).click()
       await expect(page.getByRole('tab', { selected: true })).toBeVisible()
       await expect(page).toHaveURL('/')
+      await expect(
+        page.getByRole('navigation', { includeHidden: true }).getByRole('link', {
+          name: language === 'es' ? 'Inicio' : 'Home',
+          exact: true,
+          includeHidden: true,
+        }),
+      ).toHaveAttribute('aria-current', 'page')
     })
   }
 }
+
+test('fundido al cambiar de página y alternativa con movimiento reducido', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await page.goto('/experiencias')
+  await page.getByRole('navigation').getByRole('link', { name: 'Destino', exact: true }).click()
+  await expect(page).toHaveURL('/destino')
+  await expect(page.locator('.route-view')).toHaveCSS('animation-name', 'route-enter')
+  await expect(page.locator('.route-view')).toHaveCSS('transform', 'none')
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.getByRole('navigation').getByRole('link', { name: 'Inicio', exact: true }).click()
+  await expect(page.locator('.route-view')).toHaveCSS('animation-name', 'none')
+})
 
 test('colección oficial: filtros, búsqueda, galería e idioma', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' })

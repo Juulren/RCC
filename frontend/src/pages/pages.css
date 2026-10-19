@@ -13,18 +13,6 @@
   position: relative;
   background: #0a111d;
 }
-.subpage-shell .navigation a[aria-current='page'] {
-  color: var(--cyan);
-}
-.subpage-shell .navigation a[aria-current='page']::after {
-  transform: scaleX(1);
-}
-.subpage-shell .header-inner {
-  gap: 20px;
-}
-.subpage-shell .navigation {
-  gap: 26px;
-}
 .route-loading {
   min-height: 100svh;
   display: grid;
@@ -56,7 +44,7 @@
   color: var(--cyan);
 }
 .subpage-title > p:not(.eyebrow),
-.experience-hero-content > p:not(.eyebrow) {
+.city-hero-content > p:not(.eyebrow) {
   color: var(--muted);
   max-width: 420px;
   font-size: 13px;
@@ -292,19 +280,25 @@
   opacity: 0.3;
   cursor: default;
 }
-.experience-page-hero {
-  min-height: 580px;
+.city-page-hero {
+  height: 590px;
   isolation: isolate;
 }
-.experience-city {
+.city-hero-photo,
+.city-hero-shade {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
   z-index: -1;
-  background:
-    linear-gradient(90deg, #070b14ee, #070b1470),
-    url('/images/chongqing-night.webp') 50% 62% / cover;
+  object-fit: cover;
+  object-position: 50% 62%;
 }
-.experience-hero-content {
+.city-hero-shade {
+  background:
+    linear-gradient(90deg, #070b14eb, #070b1470), linear-gradient(0deg, #070b14, transparent 60%);
+}
+.city-hero-content {
   position: relative;
   padding-block: 85px;
 }
@@ -393,32 +387,6 @@
 }
 .inner-page-cta h2 {
   margin-bottom: 28px;
-}
-.destination-page-hero {
-  min-height: 590px;
-  isolation: isolate;
-}
-.destination-page-hero > img,
-.destination-hero-shade {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  object-fit: cover;
-}
-.destination-hero-shade {
-  background:
-    linear-gradient(90deg, #070b14eb, #070b1470), linear-gradient(0deg, #070b14, transparent 60%);
-}
-.destination-page-hero > .shell {
-  padding-block: 100px;
-}
-.destination-page-hero p:not(.eyebrow) {
-  color: #cad4dc;
-  max-width: 450px;
-  font-size: 13px;
-  margin-block: 24px;
 }
 .destination-coordinate {
   position: absolute;
@@ -544,9 +512,6 @@
   .rooms-hero-photo img {
     height: 370px;
   }
-  .subpage-shell .navigation {
-    gap: 18px;
-  }
 }
 @media (max-width: 800px) {
   .rooms-hero-layout {
@@ -597,9 +562,6 @@
   }
 }
 @media (max-width: 600px) {
-  .subpage-shell .navigation {
-    gap: 0;
-  }
   .rooms-hero-layout {
     grid-template-columns: 1fr;
     gap: 32px;
@@ -649,11 +611,8 @@
   .official-source-note {
     padding: 22px;
   }
-  .experience-page-hero {
-    min-height: 560px;
-  }
-  .experience-hero-content {
-    padding-block: 65px;
+  .city-hero-content {
+    padding-block: 65px 125px;
   }
   .experience-large-type {
     display: none;
@@ -680,9 +639,6 @@
   }
   .inner-page-cta {
     padding-block: 60px;
-  }
-  .destination-page-hero > .shell {
-    padding-block: 65px 125px;
   }
   .destination-coordinate {
     font-size: 18px;

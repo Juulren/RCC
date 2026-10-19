@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { copy } from '../content.js'
 import Icon from '../components/Icon.jsx'
 import PreviewDialog from '../components/PreviewDialog.jsx'
 import ConnectionStatus from '../components/ConnectionStatus.jsx'
+import NavigationLinks from '../components/NavigationLinks.jsx'
 import './pages.css'
 
 export default function PageLayout({ language, setLanguage, title, children }) {
@@ -40,16 +41,7 @@ export default function PageLayout({ language, setLanguage, title, children }) {
               }
             }}
           >
-            {[
-              ['/', es ? 'Inicio' : 'Home'],
-              ['/habitaciones', t.nav[0]],
-              ['/experiencias', t.nav[1]],
-              ['/destino', t.nav[2]],
-            ].map(([path, label]) => (
-              <NavLink key={path} to={path} end onClick={() => setMenuOpen(false)}>
-                {label}
-              </NavLink>
-            ))}
+            <NavigationLinks language={language} onNavigate={() => setMenuOpen(false)} />
             <button
               className="mobile-account"
               onClick={() => {

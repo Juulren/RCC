@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import PageLayout from './PageLayout.jsx'
+import CityHero from '../components/CityHero.jsx'
 import usePageLanguage from './usePageLanguage.js'
 import Reveal from '../components/Reveal.jsx'
 import Icon from '../components/Icon.jsx'
@@ -54,31 +55,31 @@ export default function DestinationPage() {
       setLanguage={setLanguage}
       title={es ? 'Destino Chongqing' : 'Destination Chongqing'}
     >
-      <section className="destination-page-hero subpage-hero">
-        <img src="/images/chongqing-night.webp" alt="" fetchPriority="high" />
-        <div className="destination-hero-shade" />
-        <div className="shell">
-          <p className="eyebrow">CHONGQING / CHINA / UTC+8</p>
-          <h1>
-            {es ? 'Una ciudad.' : 'One city.'}
-            <br />
-            <em>{es ? 'Mil perspectivas.' : 'A thousand perspectives.'}</em>
-          </h1>
-          <p>
-            {es
-              ? 'Entre el agua, la montaña y la luz. Descubre la ciudad que inspira nuestra forma de entender la estancia.'
-              : 'Between water, mountain and light. Discover the city that inspires our perspective on a stay.'}
-          </p>
-          <a className="text-link" href="#city-perspectives">
-            {es ? 'Conocer el destino' : 'Discover the destination'}
-            <Icon name="arrow" />
-          </a>
-        </div>
-        <span className="destination-coordinate">
-          29°33′ N<br />
-          106°33′ E
-        </span>
-      </section>
+      <CityHero
+        className="destination-page-hero"
+        decoration={
+          <span className="destination-coordinate">
+            29°33′ N<br />
+            106°33′ E
+          </span>
+        }
+      >
+        <p className="eyebrow">CHONGQING / CHINA / UTC+8</p>
+        <h1>
+          {es ? 'Una ciudad.' : 'One city.'}
+          <br />
+          <em>{es ? 'Mil perspectivas.' : 'A thousand perspectives.'}</em>
+        </h1>
+        <p>
+          {es
+            ? 'Entre el agua, la montaña y la luz. Descubre la ciudad que inspira nuestra forma de entender la estancia.'
+            : 'Between water, mountain and light. Discover the city that inspires our perspective on a stay.'}
+        </p>
+        <a className="text-link" href="#city-perspectives">
+          {es ? 'Conocer el destino' : 'Discover the destination'}
+          <Icon name="arrow" />
+        </a>
+      </CityHero>
       <section id="city-perspectives" className="shell section" aria-labelledby="city-title">
         <Reveal className="section-heading">
           <div>

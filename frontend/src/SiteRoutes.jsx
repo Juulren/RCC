@@ -1,10 +1,10 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Link, Route, Routes, useLocation } from 'react-router-dom'
 import App from './App.jsx'
 
-const RoomsPage = lazy(() => import('./pages/RoomsPage.jsx'))
-const ExperiencesPage = lazy(() => import('./pages/ExperiencesPage.jsx'))
-const DestinationPage = lazy(() => import('./pages/DestinationPage.jsx'))
+import RoomsPage from './pages/RoomsPage.jsx'
+import ExperiencesPage from './pages/ExperiencesPage.jsx'
+import DestinationPage from './pages/DestinationPage.jsx'
 
 export default function SiteRoutes() {
   const { pathname } = useLocation()
@@ -12,13 +12,7 @@ export default function SiteRoutes() {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
   }, [pathname])
   return (
-    <Suspense
-      fallback={
-        <div className="route-loading" role="status">
-          RCC · Chongqing…
-        </div>
-      }
-    >
+    <div key={pathname} className="route-view">
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/habitaciones" element={<RoomsPage />} />
@@ -36,6 +30,6 @@ export default function SiteRoutes() {
           }
         />
       </Routes>
-    </Suspense>
+    </div>
   )
 }

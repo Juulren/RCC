@@ -39,7 +39,7 @@ de una reserva confirmada. Sin cookies de proveedores ni claves en el frontend.
 - 7 pruebas Vitest: conectividad, fallo/reintento, respuesta inesperada, traducción
   conservando estado, pestañas por teclado, vista previa sin petición de reserva
   y fechas inválidas.
-- 18 pruebas Chromium con Playwright: matriz de 360/768/1440 px × ES/EN, ausencia
+- 19 pruebas Chromium con Playwright: matriz de 360/768/1440 px × ES/EN, ausencia
   de desbordamiento, imagen cargada, navegación, diálogos/Escape/foco, teclado,
   movimiento reducido, fallo de imágenes y persistencia de idioma.
 - El caso de reflujo equivalente a zoom 200% usa 640 píxeles CSS para una ventana
@@ -109,7 +109,7 @@ Se conserva la matriz de tamaños/idiomas y los recorridos de teclado existentes
 Por solicitud del responsable, el navbar deja de saltar a secciones y abre
 `/habitaciones`, `/experiencias` y `/destino`. La portada `/` conserva las secciones,
 animaciones, fotografías ilustrativas y tarifas de demostración. React Router
-carga cada página bajo demanda, marca el enlace activo y permite historial,
+marca el enlace activo y permite historial,
 recarga directa y retorno al inicio. ES/EN persiste entre páginas.
 
 Habitaciones presenta siete tipos oficiales (cuatro habitaciones, tres suites),
@@ -129,3 +129,19 @@ páginas en 360/768/1440 px y ES/EN), build de producción y acceso directo a ru
 servidas por C#. Las pruebas cubren búsqueda, filtros, cambio de foto, foco,
 recarga, historial, regreso al home y persistencia de idioma. Las fotos oficiales
 se sirven desde el proyecto, sin llamadas externas durante las pruebas.
+
+## Consistencia de navegación y transición: 2026-10-19
+
+Se comparte NavigationLinks entre home y páginas interiores, con Inicio/Home
+siempre presente, enlace activo y el mismo espaciado. CityHero unifica fotografía,
+altura (590 px), recorte (50% 62%), degradado y posición de títulos de Experiencias
+y Destino. Se elimina la discrepancia entre fondo CSS e imagen HTML.
+
+Cada cambio de ruta aplica un fundido de 360 ms sin traslación ni escalado;
+movimiento reducido lo desactiva. Las páginas se importan juntas para que el
+cambio no intercale una pantalla de carga. El bundle de producción pesa unos
+148 kB gzip de JavaScript, frente a unos 142 kB iniciales con carga diferida.
+
+La matriz ES/EN a 360/768/1440 px compara geometría y recorte de ambas portadas,
+además de comprobar Inicio activo en el home. Un recorrido adicional valida el
+fundido y su alternativa con movimiento reducido: 19 pruebas Playwright en total.

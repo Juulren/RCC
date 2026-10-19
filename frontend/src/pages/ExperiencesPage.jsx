@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import PageLayout from './PageLayout.jsx'
+import CityHero from '../components/CityHero.jsx'
 import usePageLanguage from './usePageLanguage.js'
 import Reveal from '../components/Reveal.jsx'
 import SpotlightCard from '../components/SpotlightCard.jsx'
@@ -66,29 +67,26 @@ export default function ExperiencesPage() {
       setLanguage={setLanguage}
       title={es ? 'Experiencias' : 'Experiences'}
     >
-      <section className="experience-page-hero subpage-hero">
-        <div className="experience-city" aria-hidden="true" />
-        <div className="shell experience-hero-content">
-          <p className="eyebrow">RCC / THE ART OF BEING HERE</p>
-          <h1>
-            {es ? 'No solo venir.' : 'Not just visiting.'}
-            <br />
-            <em>{es ? 'Sentir el lugar.' : 'Feeling the place.'}</em>
-          </h1>
-          <p>
-            {es
-              ? 'Una ciudad para explorar. Un refugio al que volver. Entre ambos, momentos que hacen tuyo el viaje.'
-              : 'A city to explore. A retreat to return to. Between them, moments that make the journey yours.'}
-          </p>
-          <a className="button button-light" href="#moments">
-            {es ? 'Descubrir momentos' : 'Discover moments'}
-            <Icon name="diagonal" />
-          </a>
-          <span className="experience-large-type" aria-hidden="true">
-            感受
-          </span>
-        </div>
-      </section>
+      <CityHero className="experience-page-hero">
+        <p className="eyebrow">RCC / THE ART OF BEING HERE</p>
+        <h1>
+          {es ? 'No solo venir.' : 'Not just visiting.'}
+          <br />
+          <em>{es ? 'Sentir el lugar.' : 'Feeling the place.'}</em>
+        </h1>
+        <p>
+          {es
+            ? 'Una ciudad para explorar. Un refugio al que volver. Entre ambos, momentos que hacen tuyo el viaje.'
+            : 'A city to explore. A retreat to return to. Between them, moments that make the journey yours.'}
+        </p>
+        <a className="button button-light" href="#moments">
+          {es ? 'Descubrir momentos' : 'Discover moments'}
+          <Icon name="diagonal" />
+        </a>
+        <span className="experience-large-type" aria-hidden="true">
+          感受
+        </span>
+      </CityHero>
       <section
         id="moments"
         className="shell section moments-section"

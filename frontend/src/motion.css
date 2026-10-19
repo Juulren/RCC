@@ -203,6 +203,23 @@
 .button-cyan:hover {
   box-shadow: 0 8px 35px #80e4df30;
 }
+.route-view {
+  animation: route-enter 360ms ease-out both;
+}
+@keyframes route-enter {
+  from {
+    opacity: 0.25;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.navigation a[aria-current='page'] {
+  color: var(--cyan);
+}
+.navigation a[aria-current='page']::after {
+  transform: scaleX(1);
+}
 .navigation a {
   position: relative;
 }
