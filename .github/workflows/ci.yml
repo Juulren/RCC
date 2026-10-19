@@ -64,6 +64,9 @@ jobs:
           done
           curl --fail --silent http://127.0.0.1:5080/api/health/ready
           curl --fail --silent http://127.0.0.1:5080/ | grep 'id="root"'
+          for page in habitaciones experiencias destino; do
+            curl --fail --silent "http://127.0.0.1:5080/$page" | grep 'id="root"'
+          done
           curl --fail --silent http://127.0.0.1:5080/api/status | grep '"application":"RCC"'
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:5080/api/missing)" = 404
       - uses: actions/upload-artifact@v4

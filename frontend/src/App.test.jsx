@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import App from './App.jsx'
+import { MemoryRouter } from 'react-router-dom'
 import ConnectionStatus from './components/ConnectionStatus.jsx'
 import { copy } from './content.js'
 
@@ -47,7 +48,11 @@ describe('Diseño bilingüe de RCC', () => {
       'fetch',
       vi.fn().mockResolvedValue({ ok: true, json: async () => ({ application: 'RCC' }) }),
     )
-    return render(<App />)
+    return render(
+      <MemoryRouter>
+        <App />
+      </MemoryRouter>,
+    )
   }
 
   it('conserva fechas, huéspedes y habitación al cambiar idioma', async () => {

@@ -188,7 +188,21 @@ declara generación por IA y no acredita revisión humana.
 ## Contexto académico
 
 Demostración inspirada en Regent Chongqing; no es el sitio oficial ni conecta
-con sus reservas reales. Habitaciones, tarifas e inventario serán ficticios;
+con sus reservas reales. El home conserva habitaciones ilustrativas; la nueva
+colección presenta siete tipos del hotel con fotografías oficiales y atribución.
+Tarifas e inventario de la aplicación serán ficticios;
 pagos exclusivamente de prueba. Fuente de requisitos: `Tarea-1.pdf`, facilitado
 por el usuario. La modalidad individual difiere del equipo de cuatro personas
 pedido por la consigna; véase la documentación de trabajo individual.
+
+## Páginas del módulo visual
+
+El home `/` conserva su contenido. El navbar abre páginas independientes mediante
+React Router: `/habitaciones`, `/experiencias` y `/destino`. Se pueden compartir
+las URLs y recargar directamente; ASP.NET sirve el fallback de la SPA.
+
+Habitaciones incluye siete tipos oficiales, filtros, búsqueda y galerías con
+fotografías de Regent / IHG. No consulta inventario ni ofrece reservas reales.
+Experiencias propone momentos editoriales y Destino presenta Chongqing con un
+esquema conceptual y enlace externo a Maps. El idioma ES/EN se conserva al navegar.
+Fuentes y derechos de las imágenes: [THIRD_PARTY.md](THIRD_PARTY.md).

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
   AnimatePresence,
   motion,
@@ -100,14 +101,14 @@ export default function App() {
       )}
       <header className="site-header">
         <div className="shell header-inner">
-          <a href="#top" className="brand" aria-label="RCC Chongqing">
+          <Link to="/" className="brand" aria-label="RCC Chongqing">
             <span className="brand-symbol" aria-hidden="true">
               R
             </span>
             <span>
               RCC<small>CHONGQING</small>
             </span>
-          </a>
+          </Link>
           <nav
             className={`navigation ${menuOpen ? 'is-open' : ''}`}
             id="main-navigation"
@@ -120,13 +121,13 @@ export default function App() {
             }}
           >
             {t.nav.map((label, index) => (
-              <a
+              <Link
                 key={index}
-                href={['#rooms', '#experiences', '#destination'][index]}
+                to={['/habitaciones', '/experiencias', '/destino'][index]}
                 onClick={() => setMenuOpen(false)}
               >
                 {label}
-              </a>
+              </Link>
             ))}
             <button
               className="mobile-account"

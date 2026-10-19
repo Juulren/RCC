@@ -18,9 +18,10 @@ huéspedes, pestañas con flechas/Home/End y diálogos HTML nativos con Escape y
 restitución de foco. Enlaces de salto y foco visible. No se añade autenticación,
 catálogo persistente, disponibilidad ni reservas antes de sus módulos.
 
-Precios, capacidades y superficies de las tarjetas son ejemplos ficticios.
-La misma imagen ilustrativa acompaña los conceptos, no un catálogo de fotografías
-verificadas del hotel. Cuenta y exploración abren explicaciones, no simulaciones
+Precios, capacidades y superficies de las tarjetas del home son ejemplos ficticios.
+La misma imagen ilustrativa acompaña sus conceptos. La página independiente de
+Habitaciones utiliza los siete tipos oficiales y sus fotografías, como se documenta
+en la revisión del 19 de octubre. Cuenta y exploración abren explicaciones, no simulaciones
 de una reserva confirmada. Sin cookies de proveedores ni claves en el frontend.
 
 ## Componentes y movimiento
@@ -38,7 +39,7 @@ de una reserva confirmada. Sin cookies de proveedores ni claves en el frontend.
 - 7 pruebas Vitest: conectividad, fallo/reintento, respuesta inesperada, traducción
   conservando estado, pestañas por teclado, vista previa sin petición de reserva
   y fechas inválidas.
-- 10 pruebas Chromium con Playwright: matriz de 360/768/1440 px × ES/EN, ausencia
+- 18 pruebas Chromium con Playwright: matriz de 360/768/1440 px × ES/EN, ausencia
   de desbordamiento, imagen cargada, navegación, diálogos/Escape/foco, teclado,
   movimiento reducido, fallo de imágenes y persistencia de idioma.
 - El caso de reflujo equivalente a zoom 200% usa 640 píxeles CSS para una ventana
@@ -102,3 +103,29 @@ La décima prueba de navegador comprueba que el Canvas cambia realmente entre
 fotogramas, responde al control de pausa y deja de dibujar cuando sale del viewport.
 La prueba de movimiento reducido comprueba que Canvas no es visible ni está activo.
 Se conserva la matriz de tamaños/idiomas y los recorridos de teclado existentes.
+
+## Páginas independientes: 2026-10-19
+
+Por solicitud del responsable, el navbar deja de saltar a secciones y abre
+`/habitaciones`, `/experiencias` y `/destino`. La portada `/` conserva las secciones,
+animaciones, fotografías ilustrativas y tarifas de demostración. React Router
+carga cada página bajo demanda, marca el enlace activo y permite historial,
+recarga directa y retorno al inicio. ES/EN persiste entre páginas.
+
+Habitaciones presenta siete tipos oficiales (cuatro habitaciones, tres suites),
+con nombres, camas y superficies de la página de Regent Chongqing facilitada.
+Incluye filtros por categoría/vista al río, búsqueda, estado vacío y galería modal
+con navegación y restitución de foco. Se incorporan once fotos WebP del CDN
+oficial; trazabilidad y derechos en THIRD_PARTY.md. No se inventan tarifas,
+capacidades ni disponibilidad para esta colección informativa.
+
+Experiencias tiene una composición editorial con tres momentos y sus detalles;
+los horarios se identifican como sugerencias. Destino presenta Hongyadong,
+Qiansimen y Jialing, referencia Jiangbeizui y un esquema expresamente conceptual
+con enlace a Google Maps. El mapa integrado corresponde al módulo 7.
+
+Validación: 7 pruebas Vitest, 18 recorridos Playwright (incluida matriz de las tres
+páginas en 360/768/1440 px y ES/EN), build de producción y acceso directo a rutas
+servidas por C#. Las pruebas cubren búsqueda, filtros, cambio de foto, foco,
+recarga, historial, regreso al home y persistencia de idioma. Las fotos oficiales
+se sirven desde el proyecto, sin llamadas externas durante las pruebas.

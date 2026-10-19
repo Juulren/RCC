@@ -36,18 +36,22 @@ for (const width of [360, 768, 1440]) {
         .getByRole('navigation')
         .getByRole('link', { name: language === 'es' ? 'Habitaciones' : 'Rooms', exact: true })
         .click()
-      await expect(page.getByRole('heading', { name: 'Skyline Studio', exact: true })).toBeVisible()
-      await page
+      await expect(page).toHaveURL(/\/habitaciones$/)
+      const room = page
+        .locator('article')
+        .filter({ has: page.getByRole('heading', { name: 'Classic Room', exact: true }) })
+      await expect(room).toBeVisible()
+      await room
         .getByRole('button', {
-          name: language === 'es' ? 'Descubrir el espacio' : 'Discover the space',
+          name: language === 'es' ? 'Conocer el espacio' : 'Explore this space',
         })
         .click()
       await expect(page.getByRole('dialog')).toBeVisible()
       await page.keyboard.press('Escape')
       await expect(page.getByRole('dialog')).not.toBeVisible()
       await expect(
-        page.getByRole('button', {
-          name: language === 'es' ? 'Descubrir el espacio' : 'Discover the space',
+        room.getByRole('button', {
+          name: language === 'es' ? 'Conocer el espacio' : 'Explore this space',
         }),
       ).toBeFocused()
     })

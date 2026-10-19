@@ -108,3 +108,12 @@ visibles, entradas al desplazarse, ambiente Canvas/CSS, efectos de tarjetas y
 control de pausa. Se agrega prueba de cambio real de fotogramas y pausa fuera de
 vista. Esta corrección visual no se registra como vulnerabilidad ni aprobación
 humana del código. Se actualiza el PR #3; no se inicia otro módulo.
+
+### Navegación por páginas: 2026-10-19
+
+- Solicitud: conservar el home y diseñar páginas propias para el navbar, usando
+  imágenes de la página oficial IHG indicada para Habitaciones.
+- Se añaden tres rutas, siete tipos oficiales y once fotografías con atribución.
+- Experiencias y Destino mantienen el alcance de propuesta visual del módulo 2.
+- Se amplía Playwright de 10 a 18 pruebas; no se acredita revisión humana ni
+  funcionamiento de reservas por estos recorridos del diseño.

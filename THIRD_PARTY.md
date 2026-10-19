@@ -50,6 +50,39 @@ compatibilidad directa de sus componentes nativos con Vite.
 - Cambios: resolución reducida y conversión a WebP; recorte mediante CSS.
 - No es una fotografía del Regent Chongqing. Se identifica como ilustrativa.
 
+### Habitaciones oficiales Regent / IHG
+
+- Página solicitada por el responsable: https://www.ihg.com/regent/hotels/us/en/chongqing/ckgrh/hoteldetail/rooms-and-suites
+- Consulta: 2026-10-19. Nombres, superficies y camas contrastados con esa página.
+- Once fotografías alojadas localmente en `frontend/public/images/regent/`.
+  Se solicitó al CDN oficial una versión WebP de 1400 px; recorte visual con CSS.
+- Copyright de sus respectivos titulares Regent / IHG. Estas imágenes no están
+  cubiertas por las licencias CC de las otras fotografías ni por la del código.
+  Se incorporan al prototipo académico por solicitud del responsable, con enlace
+  visible a la fuente; no se afirma licencia libre ni afiliación con el hotel.
+- Descripciones redactadas para RCC; no se reproducen los textos promocionales.
+
+Correspondencia de archivos y recursos originales (prefijos debajo de la tabla):
+
+| Archivo `.webp` | CDN | Recurso |
+|---|---|---|
+| classic | scene7 | roomssuites-chongqing-deluxeroom |
+| classic-bathroom | scene7 | roomssuites-chongqing-deluxeroom-2 |
+| classic-river | scene7 | roomssuites-chongqing-deluxeriverview |
+| club | scene7 | roomssuites-chongqing-clubroom |
+| club-river | digital | chongqing-regent-club-river-view |
+| junior | scene7 | roomssuites-chongqing-juniorsuite-2 |
+| junior-living | digital | Junior_Suite |
+| executive | digital | Executive-Suite-bedroom |
+| executive-living | digital | Chongqing_AccomondationRegent-Executive-Suite-Living-Room-1920x942 |
+| regent | scene7 | roomssuites-chongqing-presidentialsuite |
+| regent-living | scene7 | roomssuites-chongqing-presidentialsuite-2 |
+
+Prefijos: `https://ihg.scene7.com/is/image/ihg/` y
+`https://digital.ihg.com/is/image/ihg/`; parámetros de descarga:
+`?wid=1400&fmt=webp&qlt=85`. Los nombres locales son identificadores técnicos,
+no etiquetas de la escena fotografiada. La galería identifica habitación y número.
+
 Las imágenes se sirven localmente para evitar dependencia de servidores de fotos
-durante la navegación. No se copiaron fotografías ni logotipos de Regent/IHG.
-El nombre RCC y la marca tipográfica son propios del proyecto académico.
+durante la navegación. El home conserva su interior ilustrativo. El nombre RCC
+y la marca tipográfica son propios del proyecto académico; no se copian logotipos.
