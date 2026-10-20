@@ -55,3 +55,6 @@ Fuentes oficiales consultadas: [Structured Outputs](https://developers.openai.co
 
 
 Matriz: 119 pruebas .NET/PostgreSQL/transporte, 11 Vitest, 29 Playwright de diseño/servicios, 3 autenticación, 2 catálogo, 6 reservas/recomendaciones y 3 pagos aislados: **173 comprobaciones**. Se revisan capturas 1440 ES y 360 EN y se aplica migración sin cambios pendientes. Las nuevas pruebas de recomendaciones reutilizan la API y PostgreSQL reales; el proveedor OpenAI se simula únicamente en pruebas de transporte/ranking. No se ha realizado una inferencia externa real.
+
+
+La primera CI detectó acumulación de logins entre suites independientes contra el mismo proceso: el último escenario alcanzó la protección por IP. La CI reinicia la API entre autenticación, catálogo y reservas, conservando la base de datos y sin cambiar los límites de producción. Las pruebas específicas de rate limit permanecen activas en .NET. No se aumenta la cuota para ocultar el fallo.

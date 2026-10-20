@@ -220,3 +220,5 @@ La matriz visual usa ahora el fondo de Inicio como referencia de comparación.
 - Guía conjunta CONFIGURACION-SERVICIOS.md para la configuración posterior que solicita el responsable. No hay llamadas reales a OpenAI ni se inventa revisión humana independiente. Módulo 9 fuera de alcance.
 
 - Matriz del módulo 8: 119 .NET, 11 Vitest, 29 visuales/servicios, 3 autenticación, 2 catálogo, 6 reservas/recomendaciones y 3 pagos: 173 comprobaciones. Se adaptan selectores antiguos a la casilla exacta de aceptación; las preferencias nuevas no sustituyen esa aceptación.
+
+- La CI inicial encontró acumulación del cupo de login entre suites rápidas en un solo proceso. Se aíslan procesos entre suites, conservando base y límites de seguridad; los escenarios específicos de rate limit siguen verificándolos.
