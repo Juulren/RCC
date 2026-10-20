@@ -68,13 +68,14 @@ jobs:
           done
           curl --fail --silent http://127.0.0.1:5080/api/health/ready
           curl --fail --silent http://127.0.0.1:5080/ | grep 'id="root"'
-          for page in habitaciones experiencias destino cuenta admin; do
+          for page in habitaciones experiencias destino cuenta admin reservar mis-reservas; do
             curl --fail --silent "http://127.0.0.1:5080/$page" | grep 'id="root"'
           done
           curl --fail --silent http://127.0.0.1:5080/api/status | grep '"application":"RCC"'
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:5080/api/missing)" = 404
           npm run test:auth --prefix frontend
           npm run test:catalog --prefix frontend
+          npm run test:reservations --prefix frontend
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -88,3 +89,5 @@ jobs:
             frontend/test-results-auth
             frontend/playwright-report-catalog
             frontend/test-results-catalog
+            frontend/playwright-report-reservations
+            frontend/test-results-reservations

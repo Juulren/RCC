@@ -560,6 +560,19 @@ export default function App() {
                   : `${formatDate(arrival)} → ${formatDate(departure)} · ${roomSummary}`}
               </p>
               <p className="dialog-note">{t.previewInfo}</p>
+              <Link
+                className="button button-cyan"
+                to={
+                  dialog === 'stay'
+                    ? `/reservar?${new URLSearchParams({ arrival, departure, adults, children, rooms })}`
+                    : '/reservar'
+                }
+              >
+                {language === 'es'
+                  ? 'Consultar disponibilidad real del demo'
+                  : 'Check live demo availability'}{' '}
+                →
+              </Link>
             </>
           )}
         </PreviewDialog>

@@ -7,12 +7,15 @@ export class CatalogError extends Error {
   }
 }
 
-export async function catalogApi(path, { method = 'GET', body, signal } = {}) {
+export async function catalogApi(
+  path,
+  { method = 'GET', body, signal, headers: extraHeaders = {} } = {},
+) {
   try {
     const requestSignal = signal
       ? AbortSignal.any([signal, AbortSignal.timeout(15000)])
       : AbortSignal.timeout(15000)
-    const headers = {}
+    const headers = { ...extraHeaders }
     if (method !== 'GET') {
       const tokenResponse = await fetch('/api/auth/csrf', {
         credentials: 'same-origin',
@@ -35,7 +38,13 @@ export async function catalogApi(path, { method = 'GET', body, signal } = {}) {
     })
     if (!response.ok) {
       const problem = await response.json().catch(() => ({}))
-      throw new CatalogError(response.status, problem.code ?? 'NETWORK', problem.errors ?? {})
+      const error = new CatalogError(
+        response.status,
+        problem.code ?? 'NETWORK',
+        problem.errors ?? {},
+      )
+      error.quote = problem.quote
+      throw error
     }
     return response.status === 204 ? null : await response.json()
   } catch (error) {

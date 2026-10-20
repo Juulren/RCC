@@ -6,6 +6,7 @@ import { authCopy } from '../auth/translations.js'
 import './auth.css'
 import AdminCatalog from '../catalog/AdminCatalog.jsx'
 import { useAuth } from '../auth/AuthContext.jsx'
+import ReservationList from '../reservations/ReservationList.jsx'
 
 export default function AdminPage() {
   const [language, setLanguage] = usePageLanguage()
@@ -63,6 +64,12 @@ export default function AdminPage() {
                   : t.unavailable}
         </p>
         {status === 'allowed' && <AdminCatalog language={language} onAccessLost={onAccessLost} />}
+        {status === 'allowed' && (
+          <section>
+            <h2>{language === 'es' ? 'Reservas del hotel' : 'Hotel reservations'}</h2>
+            <ReservationList language={language} admin />
+          </section>
+        )}
         {status === 'error' && (
           <button className="button button-outline" onClick={() => setAttempt(attempt + 1)}>
             {t.retry}

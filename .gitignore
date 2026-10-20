@@ -29,3 +29,5 @@ frontend/playwright-report-auth/
 frontend/test-results-auth/
 frontend/playwright-report-catalog/
 frontend/test-results-catalog/
+frontend/playwright-report-reservations/
+frontend/test-results-reservations/

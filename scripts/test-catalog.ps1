@@ -1,4 +1,4 @@
-param([int]$Port = 5082)
+param([int]$Port = 5082, [ValidateSet('catalog', 'reservations')][string]$Suite = 'catalog')
 $ErrorActionPreference = 'Stop'
 $rccRoot = Split-Path $PSScriptRoot -Parent
 Set-Location -LiteralPath $rccRoot
@@ -34,7 +34,7 @@ try {
         Start-Sleep -Milliseconds 500
     }
     if (-not $rccReady) { throw 'La API de pruebas no inició; revisar .local/catalog-e2e-server-error.log.' }
-    & npm run test:catalog --prefix frontend
+    & npm run "test:$Suite" --prefix frontend
     $rccResult = $LASTEXITCODE
 } finally {
     if ($rccServer -and -not $rccServer.HasExited) { Stop-Process -Id $rccServer.Id }

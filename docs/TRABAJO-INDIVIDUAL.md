@@ -159,3 +159,19 @@ La matriz visual usa ahora el fondo de Inicio como referencia de comparación.
 - Correcciones técnicas: alta explícita de hijos EF en reemplazos, etiquetas
   accesibles de select y contentRoot absoluto para el servidor de pruebas.
 - Evidencia, reglas y límites en MODULO-4.md. Módulo 5 pendiente.
+
+### Módulo 5: 2026-10-19
+
+- Solicitud literal: «empieza con la implementacion del modulo 5».
+- Implementación asistida de disponibilidad, cotización decimal en C#, asignación
+  atómica de varias habitaciones, idempotencia y reservas propias con cancelación.
+- Reglas de Chongqing, edades y capacidades; bloqueo de 30 minutos y vencimiento
+  periódico. Protección administrativa de inventario comprometido y precios históricos.
+- Interfaz ES/EN con distribución por habitación, tarjetas, aceptación de tarifa,
+  continuidad del borrador, lista propia y consulta administrativa.
+- Pruebas con PostgreSQL real y navegador; casos de último cupo simultáneo,
+  respuesta perdida y nueva aceptación de precio. Evidencia en MODULO-5.md.
+- Resultado local: 53 PostgreSQL, 7 Vitest, 21 visuales, 3 autenticación,
+  2 catálogo y 4 reservas (90 comprobaciones); pruebas reales con bases aisladas.
+- Pagos/confirmaciones/reembolsos quedan en módulo 6; no se simulan como completados.
+  El responsable sigue siendo único; no se inventa revisión humana.

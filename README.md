@@ -6,12 +6,13 @@ Repositorio: https://github.com/Juulren/RCC
 
 ## Estado
 
-Módulo 4: catálogo persistente y administración de hotel, servicios, tipos,
-galerías e inventario físico. `/habitaciones` consulta PostgreSQL mediante la API
-C#, con tarifas CNY y capacidades de demostración. `/admin` permite crear, editar
-y desactivar registros con rol Admin, CSRF y control de versiones. Se conserva
-Identity, el diseño responsivo ES/EN y la portada. Reservas y pagos siguen
-pendientes; el catálogo no representa disponibilidad por fechas.
+Módulo 5: disponibilidad por fechas, cotización C# y reservas de varias habitaciones
+con inventario PostgreSQL. `/reservar` distribuye adultos y edades de niños,
+revalida precios y crea un bloqueo de 30 minutos; `/mis-reservas` permite consultar
+y cancelar pendientes propias. `/admin` mantiene catálogo e inventario y consulta
+reservas. Roles, CSRF, idempotencia y transacciones protegen las escrituras.
+Se conserva el diseño responsivo ES/EN y la portada. Tarifas y stock son ficticios.
+Pagos y confirmación verificada corresponden al módulo 6.
 Todavía no hay despliegue público ni integraciones externas configuradas.
 
 ## Documentación
@@ -24,6 +25,7 @@ Todavía no hay despliegue público ni integraciones externas configuradas.
 - [Sistema visual y pruebas del módulo 2](docs/MODULO-2.md)
 - [Identidad, administrador y pruebas del módulo 3](docs/MODULO-3.md)
 - [Catálogo, inventario y administración del módulo 4](docs/MODULO-4.md)
+- [Disponibilidad, cotización y reservas del módulo 5](docs/MODULO-5.md)
 - [Fuentes y licencias de imágenes/componentes](THIRD_PARTY.md)
 
 ## Arquitectura prevista
@@ -108,7 +110,7 @@ npm run test:browser --prefix frontend
 dotnet build RCC.sln --configuration Release
 ```
 
-Las 34 pruebas de integración necesitan una instancia **dedicada a pruebas** y
+Las 53 pruebas de integración necesitan una instancia **dedicada a pruebas** y
 un usuario con `CREATEDB`. Cada fixture crea dos bases `rcc_test_<uuid>` y elimina solo esas
 bases al terminar; nunca se deben apuntar a producción. Para la instancia nativa
 de este proyecto, cargar su configuración sin imprimir la contraseña:
@@ -143,7 +145,7 @@ dotnet artifacts/publish/Rcc.Api.dll --contentRoot "$((Get-Location).Path)/artif
 - `/api/*` desconocida: 404 ProblemDetails, nunca HTML de la SPA.
 
 GitHub Actions compila ambos proyectos, ejecuta 7 pruebas Vitest, 21 de diseño,
-34 de integración PostgreSQL, 3 recorridos de autenticación y 2 de catálogo reales.
+53 de integración PostgreSQL, 3 recorridos de autenticación, 2 de catálogo y 4 de reservas reales.
 Verifica migraciones y la publicación conjunta. Las pruebas de diseño sirven UI
 en 4173 con respuestas de catálogo/estado/ausencia de sesión simuladas; las de identidad y administración usan el servidor
 C# publicado en 5080, sin simular registro/login/logout ni las modificaciones del catálogo. Se guardan reportes y
@@ -246,3 +248,27 @@ y una API temporal en 5082. Ejecuta los dos recorridos de catálogo y limpia sol
 esa base al finalizar, incluso si falla una prueba. No modifica las cuentas del
 hotel local. La suite de autenticación `test:auth`, en cambio, usa la base de la
 API seleccionada y genera clientes ficticios; no debe apuntarse a producción.
+
+## Reservas de demostración (módulo 5)
+
+Abrir `/reservar`, elegir fechas/distribución, consultar opciones, cotizar y
+aceptar el importe. Tras iniciar sesión, continuar el borrador desde `/cuenta`;
+volver a buscar/cotizar para comprobar datos actuales. La reserva pendiente se
+consulta en `/mis-reservas` y bloquea inventario 30 minutos. Cancelar antes del
+día local de entrada libera todas las unidades. No hay cobro ni confirmación de
+pago en este módulo. El límite es 8 habitaciones, 30 noches y llegada dentro de
+365 días, con al menos un adulto por habitación.
+
+Para ejecutar el recorrido real sin tocar reservas del usuario:
+
+```powershell
+node scripts/build-web.mjs
+dotnet build RCC.sln --configuration Release
+./scripts/test-reservations.ps1
+```
+
+El script crea una base y administrador temporales a partir de la configuración
+local de Compose, inicia una API en 5083 y limpia solo esa base al terminar.
+Prueba las reservas a 360/768/1440 px, ES/EN, cancelación, respuesta perdida,
+reintento idempotente, precio actualizado y sesión cerrada. Ver MODULO-5.md para
+contratos, transacciones y límites antes de incorporar pagos.

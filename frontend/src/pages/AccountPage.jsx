@@ -95,7 +95,12 @@ export default function AccountPage() {
                   <span key={role}>{role === 'Admin' ? t.admin : t.customer}</span>
                 ))}
               </div>
-              <p>{t.future}</p>
+              <Link className="text-link" to="/mis-reservas">
+                {language === 'es' ? 'Mis reservas' : 'My reservations'} →
+              </Link>
+              <Link className="button button-outline" to="/reservar">
+                {language === 'es' ? 'Continuar reserva' : 'Continue booking'} →
+              </Link>
               <Link className="button button-cyan" to="/habitaciones">
                 {t.explore}
                 <Icon name="arrow" />

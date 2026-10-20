@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Rcc.Api.Data;
+using Rcc.Api.Reservations;
 
 namespace Rcc.Api.Catalog;
 
@@ -35,9 +36,19 @@ public static class CatalogEndpoints
     {
         var hotel = await db.Hotels.AsNoTracking().Where(x => x.Id == CatalogSeed.HotelId).Select(x => new
         {
-            x.Id, x.Name, x.DescriptionEs, x.DescriptionEn, x.Address, x.Latitude, x.Longitude, x.TimeZone, x.Revision,
+            x.Id,
+            x.Name,
+            x.DescriptionEs,
+            x.DescriptionEn,
+            x.Address,
+            x.Latitude,
+            x.Longitude,
+            x.TimeZone,
+            x.Revision,
             services = x.Services.OrderBy(service => service.SortOrder).Select(service => new { service.NameEs, service.NameEn }).ToList(),
-            currency = "CNY", isDemo = true, coordinatesApproximate = true
+            currency = "CNY",
+            isDemo = true,
+            coordinatesApproximate = true
         }).SingleOrDefaultAsync();
         return hotel is null ? Results.NotFound() : Results.Ok(hotel);
     }
@@ -90,14 +101,16 @@ public static class CatalogEndpoints
         await db.SaveChangesAsync();
         return Results.Created($"/api/room-types/{type.Id}", await db.RoomTypes.Where(x => x.Id == type.Id).Select(CatalogProjection.Type).SingleAsync());
     }
-    private static async Task<IResult> UpdateType(Guid id, RoomTypeInput input, RccDbContext db)
+    private static async Task<IResult> UpdateType(Guid id, RoomTypeInput input, RccDbContext db, TimeProvider clock)
     {
         var errors = CatalogValidation.Type(input);
         if (errors.Count > 0) return Invalid(errors);
+        await using var transaction = await db.Database.BeginTransactionAsync();
+        await Inventory.LockAsync(db);
         var type = await db.RoomTypes.Include(x => x.Images).SingleOrDefaultAsync(x => x.Id == id && x.HotelId == CatalogSeed.HotelId);
         if (type is null) return Results.NotFound();
         if (type.Revision != input.Revision) return Error(409, "CATALOG_CHANGED");
-        await using var transaction = await db.Database.BeginTransactionAsync();
+        if (!input.Active && await Inventory.HasFutureAsync(db, null, id, clock)) return Error(409, "INVENTORY_COMMITTED");
         Apply(type, input); type.Revision++;
         db.RoomImages.RemoveRange(type.Images);
         await db.SaveChangesAsync();
@@ -117,8 +130,14 @@ public static class CatalogEndpoints
     }
     private static List<RoomImage> Images(Guid typeId, ImageInput?[] images) => images.Select((image, index) => new RoomImage
     {
-        Id = Guid.NewGuid(), RoomTypeId = typeId, Url = image!.Url!, AltEs = CatalogValidation.Clean(image.AltEs), AltEn = CatalogValidation.Clean(image.AltEn), SortOrder = index,
-        SourceUrl = CatalogAssets.Source, Credit = CatalogAssets.Credit
+        Id = Guid.NewGuid(),
+        RoomTypeId = typeId,
+        Url = image!.Url!,
+        AltEs = CatalogValidation.Clean(image.AltEs),
+        AltEn = CatalogValidation.Clean(image.AltEn),
+        SortOrder = index,
+        SourceUrl = CatalogAssets.Source,
+        Credit = CatalogAssets.Credit
     }).ToList();
     private static async Task<IResult> ListRooms(RccDbContext db, int page = 1, int pageSize = 20, string? search = null, Guid? roomTypeId = null, bool? active = null)
     {
@@ -140,16 +159,20 @@ public static class CatalogEndpoints
         db.Rooms.Add(room); await db.SaveChangesAsync();
         return Results.Created($"/api/admin/rooms/{room.Id}", await db.Rooms.Where(x => x.Id == room.Id).Select(CatalogProjection.Room).SingleAsync());
     }
-    private static async Task<IResult> UpdateRoom(Guid id, RoomInput input, RccDbContext db)
+    private static async Task<IResult> UpdateRoom(Guid id, RoomInput input, RccDbContext db, TimeProvider clock)
     {
         var errors = CatalogValidation.Room(input);
         if (errors.Count > 0) return Invalid(errors);
+        await using var transaction = await db.Database.BeginTransactionAsync();
+        await Inventory.LockAsync(db);
         var room = await db.Rooms.SingleOrDefaultAsync(x => x.Id == id && x.HotelId == CatalogSeed.HotelId);
         if (room is null) return Results.NotFound();
         if (room.Revision != input.Revision) return Error(409, "CATALOG_CHANGED");
         if (room.RoomTypeId != input.RoomTypeId) return Error(409, "ROOM_TYPE_IMMUTABLE");
+        if ((!input.Active || room.Number != CatalogValidation.Clean(input.Number).ToUpperInvariant()) && await Inventory.HasFutureAsync(db, id, null, clock)) return Error(409, "INVENTORY_COMMITTED");
         room.Number = CatalogValidation.Clean(input.Number).ToUpperInvariant(); room.Active = input.Active; room.Revision++;
         await db.SaveChangesAsync();
+        await transaction.CommitAsync();
         return Results.Ok(await db.Rooms.AsNoTracking().Where(x => x.Id == id).Select(CatalogProjection.Room).SingleAsync());
     }
     private static bool ValidPage(int page, int pageSize, string? search) => page is >= 1 and <= 1000000 && pageSize is >= 1 and <= 100 && (search?.Length ?? 0) <= 100;

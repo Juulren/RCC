@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import PageLayout from './PageLayout.jsx'
 import usePageLanguage from './usePageLanguage.js'
@@ -234,6 +235,9 @@ export default function RoomsPage() {
                         {es ? 'máx. niños' : 'max children'} {room.maxChildren}
                       </small>
                     </div>
+                    <Link className="button button-outline" to={`/reservar?type=${room.id}`}>
+                      {es ? 'Buscar fechas' : 'Find dates'} →
+                    </Link>
                     <button
                       className="text-link"
                       onClick={() => {
@@ -298,8 +302,8 @@ export default function RoomsPage() {
           <Icon name="sparkle" />
           <p>
             {es
-              ? 'Fotografías de Regent / IHG con atribución. Tarifas, capacidades e inventario de RCC son de demostración y pueden ser editados. No se muestra disponibilidad por fechas ni una oferta real del hotel.'
-              : 'Attributed Regent / IHG photography. RCC rates, capacities and inventory are demonstrations and may be edited. This is not date-based availability or a real hotel offer.'}
+              ? 'Fotografías de Regent / IHG con atribución. Tarifas, capacidades e inventario de RCC son de demostración y pueden ser editados. Consulta el buscador para ver disponibilidad por fechas; no es una oferta real del hotel.'
+              : 'Attributed Regent / IHG photography. RCC rates, capacities and inventory are demonstrations and may be edited. Use the booking search for date-based availability; this is not a real hotel offer.'}
             <a href={officialSource} target="_blank" rel="noreferrer">
               {es ? 'Fuente: Regent Chongqing / IHG' : 'Source: Regent Chongqing / IHG'} ↗
             </a>
