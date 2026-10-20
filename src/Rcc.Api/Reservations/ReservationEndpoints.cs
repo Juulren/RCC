@@ -31,7 +31,7 @@ public static class ReservationEndpoints
         admin.MapGet("/{id:guid}", (Guid id, RccDbContext db, TimeProvider clock) => Detail(id, null, db, clock));
     }
 
-    private static Dictionary<string, string[]> Validate(StayInput input, TimeProvider clock, bool selected)
+    internal static Dictionary<string, string[]> Validate(StayInput input, TimeProvider clock, bool selected)
     {
         var errors = new Dictionary<string, string[]>();
         var today = Inventory.Today(clock);
@@ -65,7 +65,7 @@ public static class ReservationEndpoints
             selections = input.Rooms!.Select((guest, index) => new { index, options = types.Where(x => x.availableCount > 0 && guest!.Adults <= x.roomType.MaxAdults && guest.ChildAges!.Length <= x.roomType.MaxChildren && guest.Adults + guest.ChildAges.Length <= x.roomType.Capacity) }) });
     }
 
-    private static async Task<(QuoteView? Quote, string? Error, List<PhysicalRoom> Rooms)> Calculate(StayInput input, RccDbContext db, TimeProvider clock)
+    internal static async Task<(QuoteView? Quote, string? Error, List<PhysicalRoom> Rooms)> Calculate(StayInput input, RccDbContext db, TimeProvider clock)
     {
         var ids = input.Rooms!.Select(x => x!.RoomTypeId!.Value).Distinct().ToArray();
         var types = await db.RoomTypes.AsNoTracking().Where(x => ids.Contains(x.Id) && x.HotelId == CatalogSeed.HotelId && x.Active).ToDictionaryAsync(x => x.Id);

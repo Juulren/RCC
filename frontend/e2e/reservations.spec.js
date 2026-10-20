@@ -170,9 +170,19 @@ test('tarifa cambiada exige nueva aceptación y sesión vencida no crea reservas
     saved = await response.json()
     await page.getByRole('button', { name: 'Reservar por 30 minutos' }).click()
     await expect(page.getByRole('alert')).toContainText('La tarifa cambió')
-    await expect(page.getByRole('checkbox')).not.toBeChecked()
+    await expect(
+      page.getByRole('checkbox', {
+        name: 'Acepto esta cotización y las fechas seleccionadas.',
+        exact: true,
+      }),
+    ).not.toBeChecked()
     await expect(page.getByRole('button', { name: 'Reservar por 30 minutos' })).toBeDisabled()
-    await page.getByRole('checkbox').check()
+    await page
+      .getByRole('checkbox', {
+        name: 'Acepto esta cotización y las fechas seleccionadas.',
+        exact: true,
+      })
+      .check()
     expect((await write(page.request, '/auth/logout', {})).status()).toBe(204)
     await page.getByRole('button', { name: 'Reservar por 30 minutos' }).click()
     await expect(page.getByRole('alert')).toContainText('Inicia sesión de nuevo')
@@ -191,3 +201,68 @@ test('tarifa cambiada exige nueva aceptación y sesión vencida no crea reservas
     await admin.close()
   }
 })
+
+for (const [width, es] of [
+  [1440, true],
+  [360, false],
+]) {
+  test(`recomendación local real, presupuesto y elección sin reserva ${width}px`, async ({
+    page,
+  }, info) => {
+    await page.setViewportSize({ width, height: 1000 })
+    await account(page, es)
+    await search(page, es, 2)
+    const panel = page.locator('.recommendation-panel')
+    await expect(panel).toBeVisible()
+    await panel
+      .getByLabel(
+        es
+          ? 'Presupuesto total de la estancia (CNY, opcional)'
+          : 'Total stay budget (CNY, optional)',
+      )
+      .fill('1')
+    await panel
+      .getByRole('button', { name: es ? 'Pedir recomendaciones' : 'Get recommendations' })
+      .click()
+    await expect(panel).toContainText(
+      es ? 'No encontramos una combinación' : 'No combination found',
+    )
+    await panel
+      .getByLabel(
+        es
+          ? 'Presupuesto total de la estancia (CNY, opcional)'
+          : 'Total stay budget (CNY, optional)',
+      )
+      .fill('3600')
+    await panel.getByRole('checkbox', { name: es ? 'Vista al río' : 'River view' }).check()
+    await panel
+      .getByRole('button', { name: es ? 'Pedir recomendaciones' : 'Get recommendations' })
+      .click()
+    await expect(panel).toContainText(
+      es ? 'Cálculo local · No intervino IA' : 'Local calculation · No AI was used',
+    )
+    await expect(panel.locator('.recommendation-card')).toHaveCount(1)
+    expect((await (await page.request.get('/api/reservations')).json()).total).toBe(0)
+    await panel.scrollIntoViewIfNeeded()
+    await panel.screenshot({ path: info.outputPath(`recommendation-${width}.png`) })
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    ).toBe(true)
+    await panel
+      .getByRole('button', { name: es ? 'Usar esta combinación' : 'Use this combination' })
+      .click()
+    await expect(
+      panel.getByRole('button', { name: es ? 'Seleccionada' : 'Selected' }),
+    ).toBeVisible()
+    for (const selection of await page.locator('.space-selection').all())
+      await expect(
+        selection.getByRole('radio', { name: 'Classic Room', exact: true }),
+      ).toBeChecked()
+    await page.getByRole('button', { name: es ? 'Cotizar selección' : 'Get quote' }).click()
+    await expect(page.locator('.quote-total')).toContainText('3,520')
+    expect((await (await page.request.get('/api/reservations')).json()).total).toBe(0)
+    await page.getByLabel(es ? 'Adultos habitación 1' : 'Adults room 1', { exact: true }).fill('1')
+    await expect(page.locator('.recommendation-results')).toHaveCount(0)
+    await expect(page.locator('.quote-total')).toHaveCount(0)
+  })
+}

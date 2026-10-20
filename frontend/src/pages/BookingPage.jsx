@@ -8,6 +8,7 @@ import { catalogApi, money } from '../catalog/api.js'
 import { bookingError } from '../reservations/translations.js'
 import '../reservations/reservations.css'
 import { officialSource } from './rooms.js'
+import RecommendationPanel from '../recommendations/RecommendationPanel.jsx'
 
 export function chongqingToday() {
   return new Intl.DateTimeFormat('en-CA', {
@@ -347,6 +348,23 @@ export default function BookingPage() {
                   ? 'El inventario se comparte entre selecciones. La cotización comprueba la combinación completa; buscar no bloquea habitaciones.'
                   : 'Selections share inventory. The quote checks the complete combination; searching does not hold rooms.'}
               </p>
+              <RecommendationPanel
+                draft={draft}
+                language={language}
+                disabled={busy}
+                onChoose={(ids) =>
+                  change(
+                    {
+                      ...draft,
+                      rooms: draft.rooms.map((room, index) => ({
+                        ...room,
+                        roomTypeId: ids[index],
+                      })),
+                    },
+                    true,
+                  )
+                }
+              />
               {availability.selections.map(({ index, options }) => (
                 <fieldset className="space-selection" disabled={busy} key={index}>
                   <legend>

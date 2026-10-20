@@ -46,6 +46,9 @@ public static class IdentityConfiguration
         services.AddRateLimiter(options =>
         {
             options.RejectionStatusCode = 429;
+            options.AddPolicy("recommendations", context => RateLimitPartition.GetFixedWindowLimiter(
+                context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? context.Connection.RemoteIpAddress?.ToString() ?? "anonymous", _ => new FixedWindowRateLimiterOptions
+                { PermitLimit = 3, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
             options.AddPolicy("auth", context => RateLimitPartition.GetFixedWindowLimiter(
                 $"{context.Connection.RemoteIpAddress}:{context.Request.Path}", _ => new FixedWindowRateLimiterOptions
                 { PermitLimit = 12, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));

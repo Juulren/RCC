@@ -8,6 +8,7 @@ using Rcc.Api.Catalog;
 using Rcc.Api.Reservations;
 using Rcc.Api.Payments;
 using Rcc.Api.Services;
+using Rcc.Api.Recommendations;
 
 var initializeIdentity = args.Contains("--initialize-identity");
 var builder = WebApplication.CreateBuilder(args.Where(arg => arg != "--initialize-identity").ToArray());
@@ -37,6 +38,10 @@ builder.Services.AddSingleton<WeatherService>();
 builder.Services.AddScoped<IEmailGateway, ResendGateway>();
 builder.Services.AddScoped<NotificationProcessor>();
 builder.Services.AddHostedService<NotificationWorker>();
+builder.Services.Configure<AiSettings>(builder.Configuration.GetSection("OpenAI"));
+builder.Services.AddHttpClient("openai", client => { client.Timeout = TimeSpan.FromSeconds(10); client.MaxResponseContentBufferSize = 65536; });
+builder.Services.AddScoped<IRecommendationGateway, OpenAiGateway>();
+builder.Services.AddScoped<RecommendationService>();
 var app = builder.Build();
 if (initializeIdentity)
 {
@@ -60,11 +65,12 @@ app.MapRccCatalog();
 app.MapRccReservations();
 app.MapRccPayments();
 app.MapRccServices();
+app.MapRccRecommendations();
 app.MapGet("/api/status", () => Results.Ok(new
 {
     application = "RCC",
-    module = 7,
-    stage = "external-services"
+    module = 8,
+    stage = "room-recommendations"
 }));
 app.MapHealthChecks("/api/health/live", HealthOptions(ready: false));
 app.MapHealthChecks("/api/health/ready", HealthOptions(ready: true));

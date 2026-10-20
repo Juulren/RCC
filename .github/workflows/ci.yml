@@ -30,6 +30,8 @@ jobs:
       RCC_TEST_POSTGRES: Host=127.0.0.1;Port=5432;Database=postgres;Username=rcc_ci;Password=ci_only_ephemeral_password
       ConnectionStrings__Rcc: Host=127.0.0.1;Port=5432;Database=rcc_ci_smoke;Username=rcc_ci;Password=ci_only_ephemeral_password
       ASPNETCORE_ENVIRONMENT: Development
+      OpenAI__Enabled: "false"
+      Resend__Enabled: "false"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4

@@ -6,14 +6,14 @@ Repositorio: https://github.com/Juulren/RCC
 
 ## Estado
 
-Módulo 7 implementado: clima Open-Meteo con caché y alternativas ante fallos,
-ubicación Google Maps con enlace alternativo y cola durable de correos Resend
-para confirmación/cancelación. Paneles ES/EN responsivos y consulta administrativa.
-Se conservan catálogo, reservas de varias habitaciones y pagos de prueba.
-**Pendientes de validación externa:** Google Maps y Resend aún sin cuentas/claves;
-Stripe sigue sin sandbox real. Sin configuración no se envían correos ni se
-habilitan pagos. Las pruebas automáticas usan proveedores aislados. Tarifas y
-stock ficticios; sin despliegue público ni IA del módulo 8.
+Módulo 8 implementado: recomendaciones de combinaciones de habitaciones con
+validación C# de capacidad, inventario y presupuesto total. OpenAI puede ordenar
+opciones y explicarlas; sin configuración/fallo se usa cálculo local marcado.
+Panel ES/EN en Reservar, selección explícita y cotización antes de reservar.
+Se conservan clima, mapa, correos durables y pagos de prueba.
+**Pendiente:** configurar y comprobar OpenAI, Maps, Resend y Stripe sandbox con
+las cuentas del responsable. No se acreditan llamadas IA, correos ni pagos reales
+por pruebas simuladas. Tarifas/stock ficticios; módulo 9 y despliegue pendientes.
 
 ## Documentación
 
@@ -29,6 +29,8 @@ stock ficticios; sin despliegue público ni IA del módulo 8.
 - [Pagos, conciliación y reembolsos del módulo 6](docs/MODULO-6.md)
 - [Servicios externos y pruebas del módulo 7](docs/MODULO-7.md)
 - [Crear y configurar Google Maps / Resend](docs/SERVICIOS-EXTERNOS.md)
+- [Recomendaciones y pruebas del módulo 8](docs/MODULO-8.md)
+- [Activar todos los servicios pendientes](docs/CONFIGURACION-SERVICIOS.md)
 - [Configurar y validar Stripe sandbox](docs/STRIPE-SANDBOX.md)
 - [Fuentes y licencias de imágenes/componentes](THIRD_PARTY.md)
 
@@ -304,3 +306,10 @@ en [MODULO-6.md](docs/MODULO-6.md). Clima, correos e IA siguen pendientes.
 En `/destino` se muestran condiciones actuales de Chongqing y ubicación del hotel. No hay pronóstico asociado a fechas de reserva. Sin clave Maps se conserva enlace externo. Sin habilitar Resend, las confirmaciones/cancelaciones quedan pendientes en la cola SQL, consultable por el administrador.
 
 Configuración y alta de cuentas: [SERVICIOS-EXTERNOS.md](docs/SERVICIOS-EXTERNOS.md). Detalles, límites y matriz de 151 comprobaciones: [MODULO-7.md](docs/MODULO-7.md). La CI usa HTTP simulado para servicios externos; la prueba local de Open-Meteo sí consultó el proveedor. Validaciones reales de Maps/Resend pendientes de configuración.
+
+
+## Recomendaciones (módulo 8)
+
+En `/reservar`, busca disponibilidad e inicia sesión para pedir recomendaciones. Presupuesto opcional total en CNY, preferencias de vista/espacio/precio y hasta tres combinaciones. Elegir no reserva: revisa y acepta una cotización. Sin OpenAI se muestra cálculo local explícito. La integración usa Responses API desde C#, esquema estricto, cuota diaria durable y límites por usuario/tokens; no transmite datos personales.
+
+Configuración posterior de Stripe, Maps, Resend y OpenAI: [CONFIGURACION-SERVICIOS.md](docs/CONFIGURACION-SERVICIOS.md). Alcance, contratos y límites: [MODULO-8.md](docs/MODULO-8.md).
