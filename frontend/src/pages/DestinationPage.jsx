@@ -4,6 +4,7 @@ import CityHero from '../components/CityHero.jsx'
 import usePageLanguage from './usePageLanguage.js'
 import Reveal from '../components/Reveal.jsx'
 import Icon from '../components/Icon.jsx'
+import DestinationServices from '../services/DestinationServices.jsx'
 
 export default function DestinationPage() {
   const [language, setLanguage] = usePageLanguage()
@@ -113,57 +114,7 @@ export default function DestinationPage() {
           ))}
         </div>
       </section>
-      <Reveal as="section" className="location-section">
-        <div className="shell location-layout">
-          <div>
-            <p className="eyebrow">REGENT CHONGQING / JIANGBEIZUI</p>
-            <h2>
-              {es ? 'Un punto de partida.' : 'A starting point.'}
-              <br />
-              <span>{es ? 'Tu propia ruta.' : 'Your own route.'}</span>
-            </h2>
-            <p>
-              {es
-                ? 'La ubicación del Regent Chongqing en Jiangbeizui sirve de referencia para este proyecto. Consulta la ubicación en un mapa antes de planear tu visita.'
-                : 'Regent Chongqing’s Jiangbeizui location is the reference for this project. Check its location on a map before planning a visit.'}
-            </p>
-            <a
-              href="https://www.google.com/maps/search/?api=1&query=Regent+Chongqing+China"
-              target="_blank"
-              rel="noreferrer"
-              className="button button-outline"
-            >
-              {es ? 'Abrir ubicación en Google Maps' : 'Open location in Google Maps'}
-              <Icon name="diagonal" />
-            </a>
-            <small>
-              {es
-                ? 'Enlace externo · El mapa integrado llegará en un módulo posterior.'
-                : 'External link · An integrated map will be added in a future module.'}
-            </small>
-          </div>
-          <div
-            className="city-diagram"
-            role="img"
-            aria-label={
-              es
-                ? 'Esquema conceptual del río y la ciudad, sin escala geográfica'
-                : 'Conceptual river and city diagram, not a geographic map'
-            }
-          >
-            <span className="diagram-grid" />
-            <span className="diagram-river" />
-            <span className="diagram-pin">
-              <Icon name="pin" size={28} />
-              REGENT CHONGQING
-            </span>
-            <span className="diagram-label">JIANGBEIZUI</span>
-            <span className="diagram-caption">
-              {es ? 'ESQUEMA CONCEPTUAL · NO A ESCALA' : 'CONCEPTUAL DIAGRAM · NOT TO SCALE'}
-            </span>
-          </div>
-        </div>
-      </Reveal>
+      <DestinationServices language={language} />
       <section className="inner-page-cta">
         <div className="shell">
           <p className="eyebrow">{es ? 'LA CIUDAD TE ESPERA' : 'THE CITY AWAITS'}</p>

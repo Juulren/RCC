@@ -124,6 +124,17 @@ export const hotelFixture = {
   isDemo: true,
 }
 export async function mockCatalogue(page) {
+  await page.route('**/api/weather', (route) =>
+    route.fulfill({ json: { available: false, stale: false, current: null } }),
+  )
+  await page.route('**/api/location', (route) =>
+    route.fulfill({
+      json: {
+        searchUrl: 'https://www.google.com/maps/search/?api=1&query=Regent+Chongqing+China',
+        embedUrl: null,
+      },
+    }),
+  )
   await page.route('**/api/hotel', (route) => route.fulfill({ json: hotelFixture }))
   await page.route(/\/api\/room-types(?:\?.*)?$/, (route) => {
     const params = new URL(route.request().url()).searchParams

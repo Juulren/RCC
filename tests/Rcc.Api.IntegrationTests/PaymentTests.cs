@@ -25,7 +25,7 @@ public sealed class PaymentTests(PostgresFixture postgres) : IClassFixture<Postg
         if (!System.Text.RegularExpressions.Regex.IsMatch(db.Database.GetDbConnection().Database, "^rcc_test_[0-9a-f]{32}$")) throw new InvalidOperationException("Not a fixture-owned test database.");
         // Each scenario has its own provider account in memory. Its database must
         // contain only that scenario's monetary work when the global worker runs.
-        await db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"PaymentEvents\", \"RefundJobs\", \"Payments\", \"IdempotencyRequests\", \"ReservationItems\", \"Reservations\"");
+        await db.Database.ExecuteSqlRawAsync("TRUNCATE TABLE \"Notifications\", \"PaymentEvents\", \"RefundJobs\", \"Payments\", \"IdempotencyRequests\", \"ReservationItems\", \"Reservations\"");
     }
     public Task DisposeAsync() => Task.CompletedTask;
     private const string Secret = "whsec_test_fixture_only_not_a_provider_secret";
@@ -144,6 +144,7 @@ public sealed class PaymentTests(PostgresFixture postgres) : IClassFixture<Postg
         Assert.Equal(1, await db.PaymentEvents.CountAsync(x => x.Id == eventId));
         Assert.Equal("Confirmed", await db.Reservations.Where(x => x.Id == id).Select(x => x.Status).SingleAsync());
         Assert.Equal("Paid", (await Payment(id)).State);
+        Assert.Equal(1, await db.Notifications.CountAsync(x => x.ReservationId == id && x.Kind == "Confirmed"));
     }
 
     [Theory]
@@ -209,6 +210,7 @@ public sealed class PaymentTests(PostgresFixture postgres) : IClassFixture<Postg
         await Event(client, fake.Paid((await Payment(id)).SessionId!), clock);
         Assert.Equal(HttpStatusCode.OK, (await Write(client, $"/reservations/{id}/cancel", new { })).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await Write(client, $"/reservations/{id}/cancel", new { })).StatusCode);
+        await using (var notifications = postgres.OpenDbContext()) Assert.Equal(2, await notifications.Notifications.CountAsync(x => x.ReservationId == id));
         await Drain(factory, clock); Assert.Single(fake.Refunds);
         clock.Now = clock.Now.AddMinutes(2); await Drain(factory, clock);
         await using var db = postgres.OpenDbContext(); var refunds = await db.RefundJobs.Where(x => x.Payment.ReservationId == id).ToListAsync();
