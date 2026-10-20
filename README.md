@@ -6,14 +6,14 @@ Repositorio: https://github.com/Juulren/RCC
 
 ## Estado
 
-Módulo 5: disponibilidad por fechas, cotización C# y reservas de varias habitaciones
-con inventario PostgreSQL. `/reservar` distribuye adultos y edades de niños,
-revalida precios y crea un bloqueo de 30 minutos; `/mis-reservas` permite consultar
-y cancelar pendientes propias. `/admin` mantiene catálogo e inventario y consulta
-reservas. Roles, CSRF, idempotencia y transacciones protegen las escrituras.
-Se conserva el diseño responsivo ES/EN y la portada. Tarifas y stock son ficticios.
-Pagos y confirmación verificada corresponden al módulo 6.
-Todavía no hay despliegue público ni integraciones externas configuradas.
+Módulo 6 implementado: Stripe Checkout de prueba desde C#, webhook firmado,
+confirmación verificada, conciliación, cancelación de confirmadas y reembolsos
+durables. Se conservan catálogo, reservas de varias habitaciones, bloqueo local
+de 30 minutos, ES/EN y administración. Tarifas y stock son ficticios.
+**Pendiente de validación con Stripe sandbox real:** el responsable aún no tiene
+cuenta. Sin claves, los pagos están desactivados. Las pruebas automáticas usan
+proveedor aislado y no acreditan cobros externos reales. No hay despliegue público
+ni integraciones de clima/correo/IA configuradas.
 
 ## Documentación
 
@@ -26,6 +26,8 @@ Todavía no hay despliegue público ni integraciones externas configuradas.
 - [Identidad, administrador y pruebas del módulo 3](docs/MODULO-3.md)
 - [Catálogo, inventario y administración del módulo 4](docs/MODULO-4.md)
 - [Disponibilidad, cotización y reservas del módulo 5](docs/MODULO-5.md)
+- [Pagos, conciliación y reembolsos del módulo 6](docs/MODULO-6.md)
+- [Configurar y validar Stripe sandbox](docs/STRIPE-SANDBOX.md)
 - [Fuentes y licencias de imágenes/componentes](THIRD_PARTY.md)
 
 ## Arquitectura prevista
@@ -110,7 +112,7 @@ npm run test:browser --prefix frontend
 dotnet build RCC.sln --configuration Release
 ```
 
-Las 53 pruebas de integración necesitan una instancia **dedicada a pruebas** y
+Las pruebas de integración necesitan una instancia **dedicada a pruebas** y
 un usuario con `CREATEDB`. Cada fixture crea dos bases `rcc_test_<uuid>` y elimina solo esas
 bases al terminar; nunca se deben apuntar a producción. Para la instancia nativa
 de este proyecto, cargar su configuración sin imprimir la contraseña:
@@ -144,8 +146,9 @@ dotnet artifacts/publish/Rcc.Api.dll --contentRoot "$((Get-Location).Path)/artif
 - `/api/health/ready`: 200 con base accesible y migraciones aplicadas; 503 en caso contrario.
 - `/api/*` desconocida: 404 ProblemDetails, nunca HTML de la SPA.
 
-GitHub Actions compila ambos proyectos, ejecuta 7 pruebas Vitest, 21 de diseño,
-53 de integración PostgreSQL, 3 recorridos de autenticación, 2 de catálogo y 4 de reservas reales.
+GitHub Actions compila API, pruebas y harness, ejecuta 7 pruebas Vitest, 21 de diseño,
+84 de backend/PostgreSQL/transporte SDK, 3 recorridos de autenticación, 2 de catálogo,
+4 de reservas y 3 de pagos con Stripe simulado (124 comprobaciones).
 Verifica migraciones y la publicación conjunta. Las pruebas de diseño sirven UI
 en 4173 con respuestas de catálogo/estado/ausencia de sesión simuladas; las de identidad y administración usan el servidor
 C# publicado en 5080, sin simular registro/login/logout ni las modificaciones del catálogo. Se guardan reportes y
@@ -255,8 +258,8 @@ Abrir `/reservar`, elegir fechas/distribución, consultar opciones, cotizar y
 aceptar el importe. Tras iniciar sesión, continuar el borrador desde `/cuenta`;
 volver a buscar/cotizar para comprobar datos actuales. La reserva pendiente se
 consulta en `/mis-reservas` y bloquea inventario 30 minutos. Cancelar antes del
-día local de entrada libera todas las unidades. No hay cobro ni confirmación de
-pago en este módulo. El límite es 8 habitaciones, 30 noches y llegada dentro de
+día local de entrada libera todas las unidades. El pago de prueba del módulo 6
+requiere configurar y validar Stripe sandbox. El límite es 8 habitaciones, 30 noches y llegada dentro de
 365 días, con al menos un adulto por habitación.
 
 Para ejecutar el recorrido real sin tocar reservas del usuario:
@@ -271,4 +274,24 @@ El script crea una base y administrador temporales a partir de la configuración
 local de Compose, inicia una API en 5083 y limpia solo esa base al terminar.
 Prueba las reservas a 360/768/1440 px, ES/EN, cancelación, respuesta perdida,
 reintento idempotente, precio actualizado y sesión cerrada. Ver MODULO-5.md para
-contratos, transacciones y límites antes de incorporar pagos.
+contratos, transacciones y límites; el módulo 6 amplía el flujo de pagos.
+
+## Pagos de prueba (módulo 6)
+
+Configurar claves sandbox localmente siguiendo
+[STRIPE-SANDBOX.md](docs/STRIPE-SANDBOX.md). No compartirlas en GitHub ni chat.
+Mientras falten, `/api/payments/status` devuelve available=false y no permite
+abrir Checkout. Solo C# verifica el pago; volver desde Stripe no lo acredita.
+El bloqueo local sigue siendo 30 minutos, con expiración remota y reembolso de
+pagos tardíos. Cancelar una confirmada solicita un reembolso total durable.
+
+```powershell
+dotnet build RCC.sln --configuration Release
+node scripts/build-web.mjs
+./scripts/test-payments.ps1
+```
+
+Este script usa un proveedor **simulado** en un harness separado, PostgreSQL
+real y callbacks firmados al webhook de RCC. No pide tarjetas ni usa una cuenta
+Stripe. La prueba real pendiente y la limitación de expires_at están documentadas
+en [MODULO-6.md](docs/MODULO-6.md). Clima, correos e IA siguen pendientes.

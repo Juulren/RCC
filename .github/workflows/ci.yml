@@ -76,6 +76,21 @@ jobs:
           npm run test:auth --prefix frontend
           npm run test:catalog --prefix frontend
           npm run test:reservations --prefix frontend
+      - name: Pagos con proveedor aislado (sin claves Stripe reales)
+        shell: bash
+        run: |
+          export RCC_PAYMENT_BASE_URL="http://127.0.0.1:5084"
+          export RCC_PAYMENT_TEST_TOKEN="$(node -e "process.stdout.write(require('crypto').randomBytes(32).toString('hex'))")"
+          echo "::add-mask::$RCC_PAYMENT_TEST_TOKEN"
+          dotnet tests/Rcc.PaymentHarness/bin/Release/net10.0/Rcc.PaymentHarness.dll 5084 > artifacts/payments-harness.log 2>&1 &
+          harness_pid=$!
+          trap 'kill "$harness_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent "$RCC_PAYMENT_BASE_URL/api/health/ready"; then break; fi
+            sleep 1
+          done
+          curl --fail --silent "$RCC_PAYMENT_BASE_URL/api/health/ready"
+          npm run test:payments --prefix frontend
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -83,6 +98,7 @@ jobs:
           path: |
             artifacts/test-results
             artifacts/smoke.log
+            artifacts/payments-harness.log
             frontend/playwright-report
             frontend/test-results
             frontend/playwright-report-auth
@@ -91,3 +107,5 @@ jobs:
             frontend/test-results-catalog
             frontend/playwright-report-reservations
             frontend/test-results-reservations
+            frontend/playwright-report-payments
+            frontend/test-results-payments

@@ -13,6 +13,7 @@ public sealed class Reservation
     public decimal Total { get; set; }
     public string Locale { get; set; } = "es";
     public List<ReservationItem> Items { get; set; } = [];
+    public List<Payment> Payments { get; set; } = [];
 }
 
 public sealed class ReservationItem

@@ -1,10 +1,11 @@
 # Entregas y verificación
 
-Estado al 2026-10-19: módulos 0 a 4 publicados en PR #1 a #5. Módulo 5
-implementado en `codex/modulo-5-reservas`, con disponibilidad, cotización,
-reservas atómicas y cancelación; evidencia en MODULO-5.md. Revisión humana e
-integración pendientes. Módulos 6 a 9 no implementados. El responsable autorizó
-continuar con el módulo 5. No se fusionan PR automáticamente.
+Estado al 2026-10-20: módulos 0 a 5 publicados en PR #1 a #6. Módulo 6
+implementado en `codex/modulo-6-pagos`, con SDK Stripe, webhook, conciliación y
+reembolsos. Validación automática con proveedor aislado; falta la prueba real en
+Stripe sandbox porque el responsable aún no tiene cuenta. Evidencia y límites
+en MODULO-6.md y guía STRIPE-SANDBOX.md. Revisión humana e integración pendientes.
+Módulos 7 a 9 no implementados. No se fusionan PR automáticamente.
 
 Una rama y un PR por módulo. Trabajar en tareas pequeñas, revisar diff y ejecutar
 pruebas aplicables antes del commit final. No comenzar el siguiente módulo hasta
@@ -18,7 +19,7 @@ revisar el anterior. Ningún servicio externo se declara integrado por un mock.
 | 3 | codex/modulo-3-identidad | Registro/login/logout/me, CSRF y roles; pruebas de credenciales, email duplicado, permisos y cierre de sesión. |
 | 4 | codex/modulo-4-catalogo | Catálogo bilingüe y administración persistentes; validación, versiones, tipos físicos inmutables y ausencia de borrado. Bloqueo por reservas se verifica con módulo 5. |
 | 5 | codex/modulo-5-reservas | Disponibilidad/cotización/reserva/cancelación; pruebas con PostgreSQL de fechas, capacidad, precios, idempotencia y concurrencia real. |
-| 6 | feat/modulo-6-pagos | Checkout sandbox/webhook/reconciliación/reembolso; firma inválida, aprobado, rechazado, duplicado, pago tardío, vencimiento y cancelación. |
+| 6 | codex/modulo-6-pagos | Implementación y pruebas aisladas de Checkout/webhook/reconciliación/reembolso; validación real sandbox pendiente antes de dar por operativa la integración externa. |
 | 7 | feat/modulo-7-servicios | Clima/mapa/correo reales configurados; caché, fallback, colas, reintentos y prueba controlada de correo recibido. |
 | 8 | feat/modulo-8-ia | Recomendaciones con LLM real y salida validada; pruebas de capacidad, presupuesto, IDs inventados, timeout y fallback marcado. |
 | 9 | chore/modulo-9-entrega | Render/Neon, HTTPS, migración controlada, enlace público, prueba end-to-end, README completo, autoría, bitácora y demo. |

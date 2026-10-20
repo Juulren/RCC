@@ -13,6 +13,9 @@ public sealed class RccDbContext(DbContextOptions<RccDbContext> options) : Ident
     public DbSet<Reservation> Reservations => Set<Reservation>();
     public DbSet<ReservationItem> ReservationItems => Set<ReservationItem>();
     public DbSet<IdempotencyRequest> IdempotencyRequests => Set<IdempotencyRequest>();
+    public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<PaymentEvent> PaymentEvents => Set<PaymentEvent>();
+    public DbSet<RefundJob> RefundJobs => Set<RefundJob>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -39,5 +42,6 @@ public sealed class RccDbContext(DbContextOptions<RccDbContext> options) : Ident
         hotel.Property(x => x.TimeZone).HasMaxLength(80).IsRequired();
         modelBuilder.ConfigureCatalog();
         modelBuilder.ConfigureReservations();
+        modelBuilder.ConfigurePayments();
     }
 }

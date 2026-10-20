@@ -1,4 +1,4 @@
-param([int]$Port = 5082, [ValidateSet('catalog', 'reservations')][string]$Suite = 'catalog')
+param([int]$Port = 5082, [ValidateSet('catalog', 'reservations', 'payments')][string]$Suite = 'catalog')
 $ErrorActionPreference = 'Stop'
 $rccRoot = Split-Path $PSScriptRoot -Parent
 Set-Location -LiteralPath $rccRoot
@@ -16,6 +16,10 @@ $env:RCC_E2E_ADMIN_PASSWORD = [Convert]::ToHexString([Security.Cryptography.Rand
 $env:Administrator__Email = $env:RCC_E2E_ADMIN_EMAIL
 $env:Administrator__Password = $env:RCC_E2E_ADMIN_PASSWORD
 $env:RCC_CATALOG_BASE_URL = "http://127.0.0.1:$Port"
+if ($Suite -eq 'payments') {
+    $env:RCC_PAYMENT_BASE_URL = $env:RCC_CATALOG_BASE_URL
+    $env:RCC_PAYMENT_TEST_TOKEN = [Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(32))
+}
 $env:Logging__LogLevel__Default = 'Warning'
 $rccServer = $null
 $rccResult = 1
@@ -26,7 +30,8 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'No se pudo inicializar la base aislada.' }
     Remove-Item Env:Administrator__Password, Env:Administrator__Email
     $rccContentRoot = Join-Path $rccRoot 'src/Rcc.Api'
-    $rccServer = Start-Process -FilePath $rccDotnet -ArgumentList @('src/Rcc.Api/bin/Release/net10.0/Rcc.Api.dll', '--contentRoot', ('"' + $rccContentRoot + '"'), '--urls', $env:RCC_CATALOG_BASE_URL) -WorkingDirectory $rccRoot -WindowStyle Hidden -RedirectStandardOutput '.local/catalog-e2e-server.log' -RedirectStandardError '.local/catalog-e2e-server-error.log' -PassThru
+    $rccServerArgs = if ($Suite -eq 'payments') { @('tests/Rcc.PaymentHarness/bin/Release/net10.0/Rcc.PaymentHarness.dll', $Port) } else { @('src/Rcc.Api/bin/Release/net10.0/Rcc.Api.dll', '--contentRoot', ('"' + $rccContentRoot + '"'), '--urls', $env:RCC_CATALOG_BASE_URL) }
+    $rccServer = Start-Process -FilePath $rccDotnet -ArgumentList $rccServerArgs -WorkingDirectory $rccRoot -WindowStyle Hidden -RedirectStandardOutput '.local/catalog-e2e-server.log' -RedirectStandardError '.local/catalog-e2e-server-error.log' -PassThru
     $rccReady = $false
     for ($rccAttempt = 0; $rccAttempt -lt 40; $rccAttempt++) {
         if ($rccServer.HasExited) { break }

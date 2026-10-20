@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Rcc.Api\Rcc.Api.csproj" />
+    <Compile Include="../Shared/FakeStripeGateway.cs" Link="FakeStripeGateway.cs" />
   </ItemGroup>
 
 </Project>

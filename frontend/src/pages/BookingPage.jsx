@@ -454,8 +454,8 @@ export default function BookingPage() {
             </div>
             <p>
               {es
-                ? 'Sin cargos adicionales. Esta cotización no bloquea inventario. Al reservar, el servidor verifica de nuevo tarifa y disponibilidad. La reserva quedará pendiente durante 30 minutos; el pago de prueba se habilitará en el módulo 6.'
-                : 'No additional charges. This quote does not hold inventory. The server rechecks rates and availability when booking. Your reservation will be pending for 30 minutes; test payments will be enabled in module 6.'}
+                ? 'Sin cargos adicionales. Esta cotización no bloquea inventario. Al reservar, el servidor verifica de nuevo tarifa y disponibilidad. Tendrás 30 minutos para completar el pago de prueba, si está disponible. La confirmación requiere un pago verificado.'
+                : 'No additional charges. This quote does not hold inventory. The server rechecks rates and availability when booking. You have 30 minutes to complete test payment, if available. Confirmation requires a verified payment.'}
             </p>
             <label className="quote-accept">
               <input

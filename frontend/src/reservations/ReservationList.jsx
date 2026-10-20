@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext.jsx'
 import { catalogApi, money } from '../catalog/api.js'
@@ -20,6 +20,17 @@ export default function ReservationList({ language, admin = false }) {
   const [detail, setDetail] = useState(null),
     [detailError, setDetailError] = useState('')
   const [mutationError, setMutationError] = useState('')
+  const [paymentCapability, setPaymentCapability] = useState(null)
+  const checkoutKeys = useRef({})
+  useEffect(() => {
+    const controller = new AbortController()
+    catalogApi('/payments/status', { signal: controller.signal })
+      .then(setPaymentCapability)
+      .catch(() => {
+        if (!controller.signal.aborted) setPaymentCapability({ available: false })
+      })
+    return () => controller.abort()
+  }, [])
   const [arrivalFrom, setArrivalFrom] = useState(''),
     [arrivalTo, setArrivalTo] = useState('')
   const prefix = admin ? '/admin/reservations' : '/reservations'
@@ -104,6 +115,48 @@ export default function ReservationList({ language, admin = false }) {
       setBusy(false)
     }
   }
+  async function checkout(reservation) {
+    setBusy(true)
+    setMutationError('')
+    const storageKey = `rcc-checkout-${reservation.id}`
+    if (!checkoutKeys.current[reservation.id]) {
+      try {
+        checkoutKeys.current[reservation.id] = sessionStorage.getItem(storageKey)
+      } catch {
+        /* Optional storage. */
+      }
+      checkoutKeys.current[reservation.id] ||= crypto.randomUUID()
+      try {
+        sessionStorage.setItem(storageKey, checkoutKeys.current[reservation.id])
+      } catch {
+        /* Retry key stays in memory. */
+      }
+    }
+    try {
+      const response = await catalogApi(`/reservations/${reservation.id}/checkout`, {
+        method: 'POST',
+        body: {},
+        headers: { 'Idempotency-Key': checkoutKeys.current[reservation.id] },
+      })
+      if (response.status === 'Confirmed') setRefresh((value) => value + 1)
+      else {
+        const url = new URL(response.url)
+        if (
+          url.protocol !== 'https:' ||
+          url.hostname !== 'checkout.stripe.com' ||
+          url.username ||
+          url.password
+        )
+          throw new Error('Invalid payment URL')
+        window.location.assign(url.href)
+      }
+    } catch (error) {
+      setMutationError(bookingError(error, language))
+      setRefresh((value) => value + 1)
+    } finally {
+      setBusy(false)
+    }
+  }
   function card(reservation, featured = false) {
     return (
       <article
@@ -153,8 +206,8 @@ export default function ReservationList({ language, admin = false }) {
             </time>{' '}
             · Chongqing (UTC+8).{' '}
             {es
-              ? 'El pago de prueba estará disponible en el módulo 6; esta reserva aún no está confirmada.'
-              : 'Test payment will be available in module 6; this reservation is not confirmed yet.'}
+              ? 'Esta reserva aún no está confirmada. Reintentar el pago no extiende el bloqueo.'
+              : 'This reservation is not confirmed yet. Retrying payment does not extend the hold.'}
           </p>
         )}
         {reservation.status === 'Expired' && (
@@ -164,8 +217,79 @@ export default function ReservationList({ language, admin = false }) {
               : 'The hold expired and inventory was released.'}
           </p>
         )}
+        {!admin && reservation.status === 'PendingPayment' && (
+          <div className="payment-action">
+            <button
+              className="button button-cyan"
+              disabled={busy || !paymentCapability?.available}
+              onClick={() => checkout(reservation)}
+            >
+              {busy
+                ? es
+                  ? 'Preparando pago…'
+                  : 'Preparing payment…'
+                : es
+                  ? 'Pagar en Stripe · prueba'
+                  : 'Pay with Stripe · test'}
+            </button>
+            <p>
+              {paymentCapability === null
+                ? es
+                  ? 'Consultando pagos…'
+                  : 'Checking payments…'
+                : paymentCapability.available
+                  ? es
+                    ? 'Se abrirá Stripe Checkout de prueba. La confirmación depende del pago verificado por el servidor.'
+                    : 'Stripe test Checkout will open. Confirmation depends on server-verified payment.'
+                  : es
+                    ? 'Los pagos de prueba no están disponibles en este momento.'
+                    : 'Test payments are currently unavailable.'}
+            </p>
+          </div>
+        )}
+        {reservation.payments?.map((payment, i) => (
+          <div className="payment-summary" key={i}>
+            <p>
+              {es ? 'Pago de prueba' : 'Test payment'}:{' '}
+              {
+                {
+                  Creating: es ? 'preparando' : 'preparing',
+                  Open: es ? 'pendiente' : 'pending',
+                  Paid: es ? 'verificado' : 'verified',
+                  Expired: es ? 'vencido' : 'expired',
+                  Review: es ? 'requiere revisión' : 'needs review',
+                  Refunded: es ? 'reembolsado' : 'refunded',
+                }[payment.state]
+              }
+            </p>
+            {payment.refund && (
+              <p role="status">
+                {es ? 'Reembolso de prueba' : 'Test refund'}:{' '}
+                {
+                  {
+                    Pending: es ? 'pendiente' : 'pending',
+                    Processing: es ? 'en proceso' : 'processing',
+                    Succeeded: es ? 'completado' : 'completed',
+                    Failed: es ? 'fallido; requiere revisión' : 'failed; needs review',
+                    Review: es ? 'requiere revisión' : 'needs review',
+                  }[payment.refund.state]
+                }{' '}
+                · {money(payment.refund.amount, language)}
+              </p>
+            )}
+            {admin && (payment.lastError || payment.refund?.lastError) && (
+              <p className="booking-error">
+                {payment.lastError} {payment.refund?.lastError}
+              </p>
+            )}
+          </div>
+        ))}
         {!admin && reservation.canCancel && (
-          <button className="button button-outline" onClick={() => setSelected(reservation)}>
+          <button
+            className="button button-outline"
+            disabled={busy}
+            onClick={() => setSelected(reservation)}
+          >
             {es ? 'Cancelar reserva' : 'Cancel reservation'}
           </button>
         )}
@@ -198,6 +322,13 @@ export default function ReservationList({ language, admin = false }) {
     )
   return (
     <div className="reservation-list">
+      {!admin && params.has('pago') && (
+        <p className="booking-note" role="status">
+          {es
+            ? 'Has vuelto de Checkout. El regreso del navegador no confirma el pago: consulta el estado verificado de tu reserva. Si sigue pendiente, espera o actualiza.'
+            : 'You returned from Checkout. Returning does not confirm payment: check your reservation’s verified status. If it is pending, wait or refresh.'}
+        </p>
+      )}
       {admin && (
         <div className="booking-dates">
           <label>
@@ -335,6 +466,13 @@ export default function ReservationList({ language, admin = false }) {
               ? 'Se liberarán todas las habitaciones. Para cambiar las fechas, cancela y crea otra reserva. Esta operación no se puede deshacer.'
               : 'All rooms will be released. To change dates, cancel and make another reservation. This action cannot be undone.'}
           </p>
+          {selected.status === 'Confirmed' && (
+            <p>
+              {es
+                ? 'Se solicitará el reembolso total de prueba. La cancelación libera inventario inmediatamente; el reembolso puede tardar o requerir revisión.'
+                : 'A full test refund will be requested. Cancellation releases inventory immediately; the refund may take time or require review.'}
+            </p>
+          )}
           <button className="button button-cyan" disabled={busy} onClick={cancel}>
             {busy
               ? es

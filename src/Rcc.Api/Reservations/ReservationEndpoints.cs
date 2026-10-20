@@ -6,6 +6,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Rcc.Api.Catalog;
 using Rcc.Api.Data;
+using Rcc.Api.Payments;
 
 namespace Rcc.Api.Reservations;
 
@@ -136,22 +137,27 @@ public static class ReservationEndpoints
         await using var transaction = await db.Database.BeginTransactionAsync();
         await Inventory.LockAsync(db);
         var user = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var reservation = await db.Reservations.Include(x => x.Items).SingleOrDefaultAsync(x => x.Id == id && x.UserId == user);
+        var reservation = await db.Reservations.Include(x => x.Items).Include(x => x.Payments).ThenInclude(x => x.Refund).SingleOrDefaultAsync(x => x.Id == id && x.UserId == user);
         if (reservation is null) return Results.NotFound();
         if (reservation.Status == "Cancelled") return Results.Ok(View(reservation, clock));
         if (EffectiveStatus(reservation, clock.GetUtcNow()) == "Expired") return CatalogEndpoints.Error(409, "RESERVATION_EXPIRED");
         if (reservation.Arrival <= Inventory.Today(clock)) return CatalogEndpoints.Error(409, "CANCELLATION_CLOSED");
-        // Confirmed reservations cannot be produced in module 5. Refund jobs are
-        // introduced with verified payments in module 6; never claim a refund here.
-        if (reservation.Status == "Confirmed") return CatalogEndpoints.Error(409, "PAYMENT_MODULE_REQUIRED");
+        var payment = reservation.Payments.SingleOrDefault();
+        if (reservation.Status == "Confirmed" && (payment?.State != "Paid" || payment.PaymentIntentId is null)) return CatalogEndpoints.Error(409, "PAYMENT_REQUIRES_REVIEW");
         reservation.Status = "Cancelled";
+        if (payment is not null)
+        {
+            var refund = PaymentProcessor.QueueRefund(payment, clock.GetUtcNow());
+            if (refund is not null) db.RefundJobs.Add(refund);
+            payment.NextSyncAt = clock.GetUtcNow();
+        }
         await db.SaveChangesAsync(); await transaction.CommitAsync();
         return Results.Ok(View(reservation, clock));
     }
 
     private static async Task<IResult> Detail(Guid id, string? user, RccDbContext db, TimeProvider clock)
     {
-        var reservation = await db.Reservations.AsNoTracking().Include(x => x.Items).SingleOrDefaultAsync(x => x.Id == id && (user == null || x.UserId == user));
+        var reservation = await db.Reservations.AsNoTracking().Include(x => x.Items).Include(x => x.Payments).ThenInclude(x => x.Refund).SingleOrDefaultAsync(x => x.Id == id && (user == null || x.UserId == user));
         return reservation is null ? Results.NotFound() : Results.Ok(View(reservation, clock));
     }
 
@@ -167,7 +173,7 @@ public static class ReservationEndpoints
             ? query.Where(x => x.Status == "Expired" || (x.Status == "PendingPayment" && x.ExpiresAt <= now))
             : status == "PendingPayment" ? query.Where(x => x.Status == status && x.ExpiresAt > now) : query.Where(x => x.Status == status);
         var total = await query.CountAsync();
-        var records = await query.Include(x => x.Items).OrderByDescending(x => x.CreatedAt).ThenBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+        var records = await query.Include(x => x.Items).Include(x => x.Payments).ThenInclude(x => x.Refund).OrderByDescending(x => x.CreatedAt).ThenBy(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
         return Results.Ok(new { items = records.Select(x => View(x, clock)), page, pageSize, total, totalPages = (int)Math.Ceiling((double)total / pageSize) });
     }
 
@@ -176,8 +182,9 @@ public static class ReservationEndpoints
     {
         reservation.Id, reservation.Arrival, reservation.Departure, status = EffectiveStatus(reservation, clock.GetUtcNow()), reservation.CreatedAt, reservation.ExpiresAt,
         reservation.Total, reservation.Currency, reservation.Locale, isDemo = true, serverNow = clock.GetUtcNow(), timeZone = "Asia/Shanghai",
-        canCancel = EffectiveStatus(reservation, clock.GetUtcNow()) == "PendingPayment" && reservation.Arrival > Inventory.Today(clock),
-        paymentAvailable = false,
+        canCancel = EffectiveStatus(reservation, clock.GetUtcNow()) is "PendingPayment" or "Confirmed" && reservation.Arrival > Inventory.Today(clock),
+        payments = reservation.Payments.Select(x => new { state = x.State, amount = x.AmountMinor / 100m, currency = "CNY", x.LastError, x.NextSyncAt,
+            refund = x.Refund is null ? null : new { state = x.Refund.State, amount = x.Refund.AmountMinor / 100m, x.Refund.LastError, x.Refund.NextAttemptAt } }),
         items = reservation.Items.OrderBy(x => x.Id).Select(x => new { x.Id, x.NameEs, x.NameEn, x.NightlyRate, x.Adults, x.ChildAges, x.Subtotal })
     };
     private static string Hash(string value) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
