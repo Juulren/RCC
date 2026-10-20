@@ -10,6 +10,9 @@ public sealed class RccDbContext(DbContextOptions<RccDbContext> options) : Ident
     public DbSet<RoomType> RoomTypes => Set<RoomType>();
     public DbSet<PhysicalRoom> Rooms => Set<PhysicalRoom>();
     public DbSet<RoomImage> RoomImages => Set<RoomImage>();
+    public DbSet<Reservation> Reservations => Set<Reservation>();
+    public DbSet<ReservationItem> ReservationItems => Set<ReservationItem>();
+    public DbSet<IdempotencyRequest> IdempotencyRequests => Set<IdempotencyRequest>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -35,5 +38,6 @@ public sealed class RccDbContext(DbContextOptions<RccDbContext> options) : Ident
         hotel.Property(x => x.Longitude).HasPrecision(9, 6);
         hotel.Property(x => x.TimeZone).HasMaxLength(80).IsRequired();
         modelBuilder.ConfigureCatalog();
+        modelBuilder.ConfigureReservations();
     }
 }

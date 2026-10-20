@@ -198,3 +198,25 @@ se normaliza a mayúsculas. No se ofrecen endpoints de borrado de tipos ni unida
 Las ediciones de tarifas no tienen todavía reservas históricas sobre las que
 actuar. El bloqueo de desactivaciones/renumeraciones con reservas futuras vigentes
 se implementará y probará en el módulo 5, como se acordó al revisar el alcance.
+
+## Ajustes de implementación del módulo 5
+
+Disponibilidad, cotización y reserva usan `arrival`, `departure` y
+`rooms[{adults,childAges,roomTypeId}]`; en disponibilidad se omite el tipo.
+Límites operativos: 1–8 habitaciones, 1–30 noches, entrada entre hoy en Chongqing
+y 365 días después. Las reservas conservan nombres ES/EN y precios de cada línea.
+La cotización no bloquea stock; crear revalida el fingerprint y devuelve nueva
+cotización con 409 si cambia el precio. Idempotency-Key por usuario y contenido.
+
+Se implementan bloqueos transaccionales por hotel y filas físicas ordenadas,
+compartidos con cambios administrativos y cancelación/expiración. Reservas
+pendientes vencidas se ignoran inmediatamente y se persisten cada minuto. Las
+reservas confirmadas siguen ocupando inventario independientemente de expiresAt.
+Se bloquea la desactivación/renumeración de inventario con reservas vigentes cuya
+salida es posterior a hoy; no se modifica historia al cambiar tarifas/capacidades.
+
+El módulo 5 crea solo pendientes: permite su cancelación antes de la entrada,
+idempotente, y consulta propia/administrativa. No crea pagos ni confirmaciones.
+Cancelación de confirmadas y reembolsos se completan con el módulo 6 antes de
+habilitar confirmaciones verificadas. Los listados administrativos filtran
+status, arrivalFrom y arrivalTo (fecha de llegada inclusiva). Ver MODULO-5.md.

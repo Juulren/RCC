@@ -13,7 +13,8 @@
     "test": "vitest run",
     "test:browser": "playwright test",
     "test:auth": "playwright test --config playwright.auth.config.js",
-    "test:catalog": "playwright test --config playwright.catalog.config.js"
+    "test:catalog": "playwright test --config playwright.catalog.config.js",
+    "test:reservations": "playwright test --config playwright.reservations.config.js"
   },
   "dependencies": {
     "motion": "14.3.1",

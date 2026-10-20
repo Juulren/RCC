@@ -29,10 +29,10 @@ export const copy = {
     selection: 'Ajustar huéspedes',
     dateError:
       'La salida debe ser posterior a la llegada y la llegada no puede estar en el pasado.',
-    searchNote: 'Vista previa de diseño · Reservas próximamente',
+    searchNote: 'Continúa para distribuir huéspedes y consultar disponibilidad de demostración',
     summary: 'Tu próxima perspectiva',
     previewInfo:
-      'Esta es una vista previa. La disponibilidad real, la distribución por habitación y las reservas se habilitarán en los próximos módulos.',
+      'Esta selección es orientativa. Continúa al buscador para distribuir huéspedes y consultar las tarifas e inventario actuales de la demostración.',
     roomEyebrow: '01 / ESPACIOS PARA DESCONECTAR',
     roomTitle: 'Tu refugio,',
     roomAccent: 'sobre la ciudad.',
@@ -147,10 +147,10 @@ export const copy = {
     search: 'Explore your stay',
     selection: 'Adjust guests',
     dateError: 'Departure must be after arrival, and arrival cannot be in the past.',
-    searchNote: 'Design preview · Reservations coming soon',
+    searchNote: 'Continue to distribute guests and check demonstration availability',
     summary: 'Your next perspective',
     previewInfo:
-      'This is a preview. Live availability, guest distribution per room and reservations will be enabled in future modules.',
+      'This selection is illustrative. Continue to the booking search to distribute guests and check current demonstration rates and inventory.',
     roomEyebrow: '01 / ROOM TO SWITCH OFF',
     roomTitle: 'Your retreat,',
     roomAccent: 'above the city.',

@@ -5,6 +5,7 @@ using Rcc.Api.Data;
 using Rcc.Api.Health;
 using Rcc.Api.Auth;
 using Rcc.Api.Catalog;
+using Rcc.Api.Reservations;
 
 var initializeIdentity = args.Contains("--initialize-identity");
 var builder = WebApplication.CreateBuilder(args.Where(arg => arg != "--initialize-identity").ToArray());
@@ -19,6 +20,8 @@ builder.Services.AddProblemDetails();
 builder.Services.AddDbContext<RccDbContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddHealthChecks().AddCheck<DatabaseReadinessCheck>("postgresql", tags: ["ready"]);
 builder.Services.AddRccIdentity(builder.Environment);
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddHostedService<ReservationExpiry>();
 
 var app = builder.Build();
 if (initializeIdentity)
@@ -40,11 +43,12 @@ app.UseAuthorization();
 app.UseRateLimiter();
 app.MapRccAuth();
 app.MapRccCatalog();
+app.MapRccReservations();
 app.MapGet("/api/status", () => Results.Ok(new
 {
     application = "RCC",
-    module = 4,
-    stage = "catalog"
+    module = 5,
+    stage = "reservations"
 }));
 app.MapHealthChecks("/api/health/live", HealthOptions(ready: false));
 app.MapHealthChecks("/api/health/ready", HealthOptions(ready: true));

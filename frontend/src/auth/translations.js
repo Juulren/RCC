@@ -19,8 +19,6 @@ export const authCopy = {
     logout: 'Cerrar sesión',
     customer: 'Cliente',
     admin: 'Administrador',
-    future:
-      'Este es tu espacio personal. Las reservas y sus detalles llegarán en los próximos módulos.',
     explore: 'Explorar habitaciones',
     adminLink: 'Acceder a administración',
     retry: 'Volver a comprobar',
@@ -61,8 +59,6 @@ export const authCopy = {
     logout: 'Sign out',
     customer: 'Customer',
     admin: 'Administrator',
-    future:
-      'This is your personal space. Reservations and their details will arrive in future modules.',
     explore: 'Explore rooms',
     adminLink: 'Open administration',
     retry: 'Check again',

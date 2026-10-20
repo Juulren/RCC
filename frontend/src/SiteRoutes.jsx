@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Link, Route, Routes, useLocation } from 'react-router-dom'
 import App from './App.jsx'
 
@@ -6,7 +6,9 @@ import RoomsPage from './pages/RoomsPage.jsx'
 import ExperiencesPage from './pages/ExperiencesPage.jsx'
 import DestinationPage from './pages/DestinationPage.jsx'
 import AccountPage from './pages/AccountPage.jsx'
-import AdminPage from './pages/AdminPage.jsx'
+const AdminPage = lazy(() => import('./pages/AdminPage.jsx'))
+const BookingPage = lazy(() => import('./pages/BookingPage.jsx'))
+const ReservationsPage = lazy(() => import('./pages/ReservationsPage.jsx'))
 
 export default function SiteRoutes() {
   const { pathname } = useLocation()
@@ -15,25 +17,35 @@ export default function SiteRoutes() {
   }, [pathname])
   return (
     <div key={pathname} className="route-view">
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/habitaciones" element={<RoomsPage />} />
-        <Route path="/experiencias" element={<ExperiencesPage />} />
-        <Route path="/destino" element={<DestinationPage />} />
-        <Route path="/cuenta" element={<AccountPage />} />
-        <Route path="/admin" element={<AdminPage />} />
-        <Route
-          path="*"
-          element={
-            <main className="route-loading">
-              <h1>404</h1>
-              <Link className="button button-cyan" to="/">
-                RCC · Home / Inicio
-              </Link>
-            </main>
-          }
-        />
-      </Routes>
+      <Suspense
+        fallback={
+          <main className="route-loading" role="status">
+            RCC · Cargando / Loading…
+          </main>
+        }
+      >
+        <Routes>
+          <Route path="/" element={<App />} />
+          <Route path="/habitaciones" element={<RoomsPage />} />
+          <Route path="/experiencias" element={<ExperiencesPage />} />
+          <Route path="/destino" element={<DestinationPage />} />
+          <Route path="/cuenta" element={<AccountPage />} />
+          <Route path="/admin" element={<AdminPage />} />
+          <Route path="/reservar" element={<BookingPage />} />
+          <Route path="/mis-reservas" element={<ReservationsPage />} />
+          <Route
+            path="*"
+            element={
+              <main className="route-loading">
+                <h1>404</h1>
+                <Link className="button button-cyan" to="/">
+                  RCC · Home / Inicio
+                </Link>
+              </main>
+            }
+          />
+        </Routes>
+      </Suspense>
     </div>
   )
 }

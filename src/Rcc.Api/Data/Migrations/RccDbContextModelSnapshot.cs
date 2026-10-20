@@ -361,6 +361,47 @@ namespace Rcc.Api.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Rcc.Api.Data.IdempotencyRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Operation")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<string>("RequestHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("ResourceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ResourceId");
+
+                    b.HasIndex("UserId", "Operation", "Key")
+                        .IsUnique();
+
+                    b.ToTable("IdempotencyRequests");
+                });
+
             modelBuilder.Entity("Rcc.Api.Data.PhysicalRoom", b =>
                 {
                     b.Property<Guid>("Id")
@@ -523,6 +564,119 @@ namespace Rcc.Api.Data.Migrations
                             Number = "DEMO-702",
                             Revision = 1L,
                             RoomTypeId = new Guid("41000000-0000-0000-0000-000000000007")
+                        });
+                });
+
+            modelBuilder.Entity("Rcc.Api.Data.Reservation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("Arrival")
+                        .HasColumnType("date");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<DateOnly>("Departure")
+                        .HasColumnType("date");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<decimal>("Total")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Status", "ExpiresAt");
+
+                    b.HasIndex("UserId", "CreatedAt");
+
+                    b.ToTable("Reservations", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Reservations_Currency", "\"Currency\" = 'CNY'");
+
+                            t.HasCheckConstraint("CK_Reservations_Dates", "\"Departure\" > \"Arrival\"");
+
+                            t.HasCheckConstraint("CK_Reservations_Locale", "\"Locale\" IN ('es','en')");
+
+                            t.HasCheckConstraint("CK_Reservations_Status", "\"Status\" IN ('PendingPayment','Confirmed','Expired','Cancelled')");
+
+                            t.HasCheckConstraint("CK_Reservations_Total", "\"Total\" > 0");
+                        });
+                });
+
+            modelBuilder.Entity("Rcc.Api.Data.ReservationItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Adults")
+                        .HasColumnType("integer");
+
+                    b.PrimitiveCollection<int[]>("ChildAges")
+                        .IsRequired()
+                        .HasColumnType("integer[]");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(180)
+                        .HasColumnType("character varying(180)");
+
+                    b.Property<string>("NameEs")
+                        .IsRequired()
+                        .HasMaxLength(180)
+                        .HasColumnType("character varying(180)");
+
+                    b.Property<decimal>("NightlyRate")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.Property<Guid>("ReservationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RoomId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Subtotal")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.HasIndex("ReservationId", "RoomId")
+                        .IsUnique();
+
+                    b.ToTable("ReservationItems", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_ReservationItems_Guests", "\"Adults\" BETWEEN 1 AND 12 AND cardinality(\"ChildAges\") <= 11 AND 0 <= ALL(\"ChildAges\") AND 17 >= ALL(\"ChildAges\")");
+
+                            t.HasCheckConstraint("CK_ReservationItems_Price", "\"NightlyRate\" > 0 AND \"Subtotal\" > 0");
                         });
                 });
 
@@ -994,6 +1148,21 @@ namespace Rcc.Api.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Rcc.Api.Data.IdempotencyRequest", b =>
+                {
+                    b.HasOne("Rcc.Api.Data.Reservation", null)
+                        .WithMany()
+                        .HasForeignKey("ResourceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Rcc.Api.Data.PhysicalRoom", b =>
                 {
                     b.HasOne("Rcc.Api.Data.Hotel", null)
@@ -1010,6 +1179,32 @@ namespace Rcc.Api.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("RoomType");
+                });
+
+            modelBuilder.Entity("Rcc.Api.Data.Reservation", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Rcc.Api.Data.ReservationItem", b =>
+                {
+                    b.HasOne("Rcc.Api.Data.Reservation", "Reservation")
+                        .WithMany("Items")
+                        .HasForeignKey("ReservationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Rcc.Api.Data.PhysicalRoom", null)
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Reservation");
                 });
 
             modelBuilder.Entity("Rcc.Api.Data.RoomImage", b =>
@@ -1033,6 +1228,11 @@ namespace Rcc.Api.Data.Migrations
             modelBuilder.Entity("Rcc.Api.Data.Hotel", b =>
                 {
                     b.Navigation("Services");
+                });
+
+            modelBuilder.Entity("Rcc.Api.Data.Reservation", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Rcc.Api.Data.RoomType", b =>
