@@ -314,9 +314,3 @@ Esto valida una publicación local; **no equivale al despliegue en Render**. Det
 | [THIRD_PARTY.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/THIRD_PARTY.md) | Fuentes y licencias de terceros. |
 
 Las evidencias de cada módulo conservan su fecha: pueden describir una configuración que todavía estaba pendiente entonces. El estado actual se resume al inicio de este README y en las guías posteriores de integración.
-
-## Flujo de trabajo y autoría
-
-Una rama y un PR por módulo o ajuste. Los commits se etiquetan `[IA]`, `[HUMANO]` o `[MIXTO]` según la contribución registrada. Por indicación del responsable, los commits de módulos 6–8 y sus ajustes se reclasificaron como `[MIXTO]`. Ninguna etiqueta sustituye una revisión ni acredita aprobación independiente.
-
-La consigna original de `Tarea-1.pdf` pide un equipo de cuatro integrantes; este proyecto se desarrolla individualmente. La diferencia está documentada y no se inventan integrantes, revisiones entre compañeros ni bitácoras ajenas. La entrega final incluye documentación, historial de PR, autoría, bitácora individual y demostración de diez minutos.
