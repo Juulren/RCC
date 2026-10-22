@@ -402,6 +402,109 @@ namespace Rcc.Api.Data.Migrations
                     b.ToTable("IdempotencyRequests");
                 });
 
+            modelBuilder.Entity("Rcc.Api.Data.Payment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("AmountMinor")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CheckoutExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)");
+
+                    b.Property<string>("LastError")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<DateTimeOffset>("NextSyncAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PaymentIntentId")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<Guid>("ReservationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReturnOrigin")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("SessionId")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int>("SyncAttempts")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentIntentId")
+                        .IsUnique();
+
+                    b.HasIndex("ReservationId")
+                        .IsUnique();
+
+                    b.HasIndex("SessionId")
+                        .IsUnique();
+
+                    b.HasIndex("State", "NextSyncAt");
+
+                    b.ToTable("Payments", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_Payments_Amount", "\"AmountMinor\" BETWEEN 1 AND 99999999");
+
+                            t.HasCheckConstraint("CK_Payments_Currency", "\"Currency\" = 'cny'");
+
+                            t.HasCheckConstraint("CK_Payments_State", "\"State\" IN ('Creating','Open','Paid','Expired','Review','Refunded')");
+                        });
+                });
+
+            modelBuilder.Entity("Rcc.Api.Data.PaymentEvent", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Outcome")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<Guid?>("PaymentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("ReceivedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentId");
+
+                    b.ToTable("PaymentEvents");
+                });
+
             modelBuilder.Entity("Rcc.Api.Data.PhysicalRoom", b =>
                 {
                     b.Property<Guid>("Id")
@@ -564,6 +667,61 @@ namespace Rcc.Api.Data.Migrations
                             Number = "DEMO-702",
                             Revision = 1L,
                             RoomTypeId = new Guid("41000000-0000-0000-0000-000000000007")
+                        });
+                });
+
+            modelBuilder.Entity("Rcc.Api.Data.RefundJob", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("AmountMinor")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LastError")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<DateTimeOffset?>("LeaseUntil")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("NextAttemptAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("PaymentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("StripeRefundId")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaymentId")
+                        .IsUnique();
+
+                    b.HasIndex("StripeRefundId")
+                        .IsUnique();
+
+                    b.HasIndex("State", "NextAttemptAt");
+
+                    b.ToTable("RefundJobs", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_RefundJobs_Amount", "\"AmountMinor\" > 0");
+
+                            t.HasCheckConstraint("CK_RefundJobs_State", "\"State\" IN ('Pending','Processing','Succeeded','Failed','Review')");
                         });
                 });
 
@@ -1163,6 +1321,25 @@ namespace Rcc.Api.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Rcc.Api.Data.Payment", b =>
+                {
+                    b.HasOne("Rcc.Api.Data.Reservation", "Reservation")
+                        .WithMany("Payments")
+                        .HasForeignKey("ReservationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Reservation");
+                });
+
+            modelBuilder.Entity("Rcc.Api.Data.PaymentEvent", b =>
+                {
+                    b.HasOne("Rcc.Api.Data.Payment", null)
+                        .WithMany()
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
             modelBuilder.Entity("Rcc.Api.Data.PhysicalRoom", b =>
                 {
                     b.HasOne("Rcc.Api.Data.Hotel", null)
@@ -1179,6 +1356,17 @@ namespace Rcc.Api.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("RoomType");
+                });
+
+            modelBuilder.Entity("Rcc.Api.Data.RefundJob", b =>
+                {
+                    b.HasOne("Rcc.Api.Data.Payment", "Payment")
+                        .WithOne("Refund")
+                        .HasForeignKey("Rcc.Api.Data.RefundJob", "PaymentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("Rcc.Api.Data.Reservation", b =>
@@ -1230,9 +1418,16 @@ namespace Rcc.Api.Data.Migrations
                     b.Navigation("Services");
                 });
 
+            modelBuilder.Entity("Rcc.Api.Data.Payment", b =>
+                {
+                    b.Navigation("Refund");
+                });
+
             modelBuilder.Entity("Rcc.Api.Data.Reservation", b =>
                 {
                     b.Navigation("Items");
+
+                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("Rcc.Api.Data.RoomType", b =>

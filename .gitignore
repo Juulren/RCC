@@ -31,3 +31,5 @@ frontend/playwright-report-catalog/
 frontend/test-results-catalog/
 frontend/playwright-report-reservations/
 frontend/test-results-reservations/
+frontend/playwright-report-payments/
+frontend/test-results-payments/

@@ -96,3 +96,11 @@ y la marca tipográfica son propios del proyecto académico; no se copian logoti
 - Tarifas, capacidades y catorce unidades `DEMO-*` son datos ficticios del proyecto.
 - El administrador puede modificar los datos del catálogo. Procedencia y copyright
   de las imágenes son metadatos controlados por el servidor, no una licencia libre.
+
+## Stripe.net
+
+- SDK oficial Stripe.net 53.0.0, incorporado mediante NuGet, licencia MIT.
+- Fuente y licencia: https://github.com/stripe/stripe-dotnet/tree/v53.0.0 y
+  https://github.com/stripe/stripe-dotnet/blob/v53.0.0/LICENSE.
+- Usado únicamente en C# para Checkout, firma de eventos, consultas y reembolsos.
+  No se copian interfaces de tarjeta ni se integra código remoto en el frontend.

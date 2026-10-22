@@ -175,3 +175,25 @@ La matriz visual usa ahora el fondo de Inicio como referencia de comparación.
   2 catálogo y 4 reservas (90 comprobaciones); pruebas reales con bases aisladas.
 - Pagos/confirmaciones/reembolsos quedan en módulo 6; no se simulan como completados.
   El responsable sigue siendo único; no se inventa revisión humana.
+
+### Módulo 6: 2026-10-20
+
+- Solicitud literal: «empieza con la implementacion del modulo 6».
+- Respuesta sobre configuración: «Aún no tengo sandbox». No se inventan claves,
+  cuenta ni comprobaciones de cobros/reembolsos en Stripe externo.
+- Se implementan Checkout C# con SDK oficial, webhook firmado y lectura verificada,
+  conciliación, confirmación y cancelación con reembolso durable y lease SQL.
+- Se explicó la incompatibilidad de expires_at mínimo de Stripe con el bloqueo
+  preexistente: se preserva el plazo local de 30 minutos y se reembolsan pagos
+  tardíos, sin recuperar inventario ni prometer cierre remoto instantáneo.
+- Pruebas monetarias con PostgreSQL y proveedor separado, más verificación del
+  transporte del SDK. Navegador ES/EN prueba rechazo/reintento, confirmación,
+  cancelación/reembolso, retorno sin pago y vencimiento, con proveedor simulado.
+- Se corrige aislamiento entre cuentas simuladas de distintos escenarios y se
+  comprueba el pago tardío tras revender la misma unidad. Docker estaba detenido;
+  se inició para las pruebas. No se atribuye revisión humana inexistente.
+- Guía STRIPE-SANDBOX.md para la validación real pendiente; evidencia y límites
+  en MODULO-6.md. Módulos 7 a 9 pendientes.
+- Matriz: 84 .NET/PostgreSQL/transporte SDK, 7 Vitest, 21 diseño, 3 autenticación,
+  2 catálogo, 4 reservas y 3 pagos simulados (124 comprobaciones). Se prueba además
+  el webhook temprano antes de la respuesta de Checkout, sin expirar un pago ya verificado.

@@ -220,3 +220,26 @@ idempotente, y consulta propia/administrativa. No crea pagos ni confirmaciones.
 Cancelación de confirmadas y reembolsos se completan con el módulo 6 antes de
 habilitar confirmaciones verificadas. Los listados administrativos filtran
 status, arrivalFrom y arrivalTo (fecha de llegada inclusiva). Ver MODULO-5.md.
+
+## Ajustes de implementación del módulo 6 (2026-10-20)
+
+Se implementan Payment único por reserva, PaymentEvent deduplicado y RefundJob
+con lease/reintentos. Checkout requiere propietario, CSRF y clave idempotente;
+importe/moneda/origen provienen del servidor. Solo modo test y tarjeta, sin
+Adaptive Pricing, impuestos automáticos o promociones. La firma del webhook se
+valida con el SDK oficial y se consulta la sesión/intent de Stripe para verificar
+vínculo e importe antes de confirmar.
+
+Se mantiene el bloqueo local de 30 minutos. Stripe exige un mínimo de 30 minutos
+desde crear Checkout, por lo que se sustituye la alineación externa exacta del
+plan: Checkout tiene expiración fija de 31 minutos desde preparar el primer
+intento, se solicita cerrar al cancelar/vencer y cualquier pago tardío se
+reembolsa sin recuperar inventario. No se inicia con menos de un minuto local.
+
+Cancelar una confirmada antes de entrada libera inventario y programa reembolso
+total en la misma transacción. El resultado financiero se sigue por separado;
+no se informa éxito hasta verificarlo. Conciliación y reembolsos usan claves
+estables; resultados desconocidos pasadas 23 horas requieren revisión. La
+implementación automática usa proveedor aislado en CI. Falta validación real
+sandbox porque el responsable aún no tiene cuenta. Detalles en MODULO-6.md y
+STRIPE-SANDBOX.md; correos se incorporarán en el módulo 7.

@@ -6,6 +6,7 @@ using Rcc.Api.Health;
 using Rcc.Api.Auth;
 using Rcc.Api.Catalog;
 using Rcc.Api.Reservations;
+using Rcc.Api.Payments;
 
 var initializeIdentity = args.Contains("--initialize-identity");
 var builder = WebApplication.CreateBuilder(args.Where(arg => arg != "--initialize-identity").ToArray());
@@ -22,6 +23,11 @@ builder.Services.AddHealthChecks().AddCheck<DatabaseReadinessCheck>("postgresql"
 builder.Services.AddRccIdentity(builder.Environment);
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddHostedService<ReservationExpiry>();
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+builder.Services.AddHttpClient("stripe", client => client.Timeout = TimeSpan.FromSeconds(10));
+builder.Services.AddScoped<IStripeGateway, StripeGateway>();
+builder.Services.AddScoped<PaymentProcessor>();
+builder.Services.AddHostedService<PaymentWorker>();
 
 var app = builder.Build();
 if (initializeIdentity)
@@ -44,11 +50,12 @@ app.UseRateLimiter();
 app.MapRccAuth();
 app.MapRccCatalog();
 app.MapRccReservations();
+app.MapRccPayments();
 app.MapGet("/api/status", () => Results.Ok(new
 {
     application = "RCC",
-    module = 5,
-    stage = "reservations"
+    module = 6,
+    stage = "test-payments"
 }));
 app.MapHealthChecks("/api/health/live", HealthOptions(ready: false));
 app.MapHealthChecks("/api/health/ready", HealthOptions(ready: true));
