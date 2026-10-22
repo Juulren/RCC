@@ -5,28 +5,12 @@ using Rcc.Api.Reservations;
 namespace Rcc.Api.Recommendations;
 
 public sealed record RecommendationInput(DateOnly Arrival, DateOnly Departure, GuestInput?[]? Rooms, decimal? Budget, string[]? Preferences, string? Locale);
-public sealed record Candidate(string Id, Guid[] RoomTypeIds, decimal Total, int RiverRooms, int Area, string[] Names);
-public sealed record RankedChoice(string Id, string Explanation);
 public sealed record RecommendedStay(string Id, QuoteView Quote, string Explanation);
 public sealed record RecommendationResult(string Mode, string Reason, List<RecommendedStay> Options, bool IsDemo = true, string Currency = "CNY");
-public sealed class AiSettings
-{
-    public bool Enabled { get; set; }
-    public string Provider { get; set; } = "OpenAI";
-    public string ApiKey { get; set; } = "";
-    public string Model { get; set; } = "";
-    public int MaxOutputTokens { get; set; } = 1024;
-    public int DailyRequestLimit { get; set; } = 20;
-    public bool Ready => Enabled && (Provider == "Ollama" && Model == "qwen2.5:1.5b" || Provider == "OpenAI" && ApiKey.StartsWith("sk-", StringComparison.Ordinal)) && !string.IsNullOrWhiteSpace(Model) && Model.Length <= 100 && MaxOutputTokens is >= 256 and <= 2048 && DailyRequestLimit is >= 1 and <= 500;
-}
 public sealed class AiDailyUsage
 {
     public DateOnly Day { get; set; }
     public int Requests { get; set; }
-}
-public interface IRecommendationGateway
-{
-    Task<List<RankedChoice>> RankAsync(List<Candidate> candidates, string[] preferences, string locale, CancellationToken token);
 }
 public sealed class RecommendationService(RccDbContext db, IRecommendationGateway gateway, IOptions<AiSettings> settings, TimeProvider clock)
 {

@@ -1,0 +1,12 @@
+[extend]
+useDefault = true
+
+# Exactly one historical documentation placeholder, only in its original file/rule.
+# No directories, commits, tests or real credentials are excluded.
+[[allowlists]]
+description = "Historical Spanish Stripe replacement placeholder"
+targetRules = ["stripe-access-token"]
+condition = "AND"
+paths = ['''^docs/STRIPE-SANDBOX\.md$''']
+regexTarget = "line"
+regexes = ['''"Stripe:SecretKey"\s+"sk_test_(?:REEMPLAZAR)"''']
