@@ -1246,6 +1246,19 @@ namespace Rcc.Api.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Rcc.Api.Recommendations.AiDailyUsage", b =>
+                {
+                    b.Property<DateOnly>("Day")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Requests")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Day");
+
+                    b.ToTable("AiDailyUsages");
+                });
+
             modelBuilder.Entity("Rcc.Api.Services.Notification", b =>
                 {
                     b.Property<Guid>("Id")

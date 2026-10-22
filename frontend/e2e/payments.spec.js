@@ -45,7 +45,14 @@ async function booking(page, es) {
   for (const section of await page.locator('.space-selection').all())
     await section.getByRole('radio', { name: 'Classic Room', exact: true }).check()
   await page.getByRole('button', { name: es ? 'Cotizar selección' : 'Get quote' }).click()
-  await page.getByRole('checkbox').check()
+  await page
+    .getByRole('checkbox', {
+      name: es
+        ? 'Acepto esta cotización y las fechas seleccionadas.'
+        : 'I accept this quote and the selected dates.',
+      exact: true,
+    })
+    .check()
   await page
     .getByRole('button', { name: es ? 'Reservar por 30 minutos' : 'Reserve for 30 minutes' })
     .click()

@@ -1,11 +1,6 @@
 # Entregas y verificación
 
-Estado al 2026-10-20: módulos 0 a 5 publicados en PR #1 a #6. Módulo 6
-implementado en `codex/modulo-6-pagos`, con SDK Stripe, webhook, conciliación y
-reembolsos. Validación automática con proveedor aislado; falta la prueba real en
-Stripe sandbox porque el responsable aún no tiene cuenta. Evidencia y límites
-en MODULO-6.md y guía STRIPE-SANDBOX.md. Revisión humana e integración pendientes.
-Módulos 7 a 9 no implementados. No se fusionan PR automáticamente.
+Estado al 2026-10-20: módulos 0–7 publicados en PR #1–#8; módulo 8 implementado en `codex/modulo-8-recomendaciones`. Pagos, Maps, Resend y OpenAI requieren cuentas/configuración y validación externa controlada. Open-Meteo ya comprobado desde la API local. Evidencias por módulo y guía conjunta CONFIGURACION-SERVICIOS.md. Revisión humana e integración pendientes; no se fusionan PR automáticamente. Módulo 9 pendiente.
 
 Una rama y un PR por módulo. Trabajar en tareas pequeñas, revisar diff y ejecutar
 pruebas aplicables antes del commit final. No comenzar el siguiente módulo hasta
@@ -21,7 +16,7 @@ revisar el anterior. Ningún servicio externo se declara integrado por un mock.
 | 5 | codex/modulo-5-reservas | Disponibilidad/cotización/reserva/cancelación; pruebas con PostgreSQL de fechas, capacidad, precios, idempotencia y concurrencia real. |
 | 6 | codex/modulo-6-pagos | Implementación y pruebas aisladas de Checkout/webhook/reconciliación/reembolso; validación real sandbox pendiente antes de dar por operativa la integración externa. |
 | 7 | feat/modulo-7-servicios | Clima/mapa/correo reales configurados; caché, fallback, colas, reintentos y prueba controlada de correo recibido. |
-| 8 | feat/modulo-8-ia | Recomendaciones con LLM real y salida validada; pruebas de capacidad, presupuesto, IDs inventados, timeout y fallback marcado. |
+| 8 | codex/modulo-8-recomendaciones | Recomendaciones con LLM real y salida validada; pruebas de capacidad, presupuesto, IDs inventados, timeout y fallback marcado. |
 | 9 | chore/modulo-9-entrega | Render/Neon, HTTPS, migración controlada, enlace público, prueba end-to-end, README completo, autoría, bitácora y demo. |
 
 ## Trazabilidad con el PDF
@@ -64,3 +59,8 @@ autoría y límites (1). Preparar cuentas y datos ficticios, nunca claves en pan
 ## Estado del módulo 7 (2026-10-20)
 
 Implementación de clima, mapa opcional y correos durables en `codex/modulo-7-servicios`. Evidencia: MODULO-7.md. Alta y configuración: SERVICIOS-EXTERNOS.md. Open-Meteo comprobado desde la API local; Maps Embed y Resend quedan pendientes de cuentas/claves y validación real del responsable. No se sustituye recepción real por pruebas simuladas ni se inicia módulo 8 automáticamente.
+
+
+## Estado del módulo 8 (2026-10-20)
+
+Recomendaciones implementadas con candidatos verificados por C#, Responses API con salida estructurada y cálculo local explícito sin configuración/fallo. Cuota diaria durable, rate limit, privacidad y selección/cotización explícitas. Validación externa con OpenAI pendiente; los dobles HTTP no la acreditan. Ver MODULO-8.md y CONFIGURACION-SERVICIOS.md. El usuario solicita configurar proveedores después; no se bloquea la implementación por claves ausentes.

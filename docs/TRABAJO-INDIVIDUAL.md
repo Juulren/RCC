@@ -209,3 +209,16 @@ La matriz visual usa ahora el fondo de Inicio como referencia de comparación.
 - Sin envíos externos ni prueba de Maps con clave. La validación real de esas cuentas y de Stripe continúa pendiente. Módulos 8 y 9 fuera de alcance.
 
 - Matriz del módulo 7: 103 .NET, 7 Vitest, 29 diseño/servicios y 12 recorridos integrados (151). Revisión de capturas 360/1440 y consulta real puntual a Open-Meteo. Se añade regresión para respuestas de leases vencidos y se evita comparar timestamps con distinta precisión entre C# y PostgreSQL.
+
+
+### Módulo 8: 2026-10-20
+
+- Solicitud: «vamos a implementar el modulo 8, para que luego empiece a configurar los servicios que faltan».
+- Implementación asistida de candidatos C# por capacidad/inventario/presupuesto total, ranking OpenAI con esquema estricto y alternativa local marcada.
+- Panel ES/EN en Reservar, preferencias enumeradas, selección que no reserva y nueva cotización explícita. Sin transmisión de identidad/fechas/edades/pagos al modelo.
+- Cuota diaria en PostgreSQL, rate limit, límites de salida/HTTP y validación de respuesta. Pruebas de concurrencia, stock compartido, privacidad, texto seguro y respuestas tardías.
+- Guía conjunta CONFIGURACION-SERVICIOS.md para la configuración posterior que solicita el responsable. No hay llamadas reales a OpenAI ni se inventa revisión humana independiente. Módulo 9 fuera de alcance.
+
+- Matriz del módulo 8: 119 .NET, 11 Vitest, 29 visuales/servicios, 3 autenticación, 2 catálogo, 6 reservas/recomendaciones y 3 pagos: 173 comprobaciones. Se adaptan selectores antiguos a la casilla exacta de aceptación; las preferencias nuevas no sustituyen esa aceptación.
+
+- La CI inicial encontró acumulación del cupo de login entre suites rápidas en un solo proceso. Se aíslan procesos entre suites, conservando base y límites de seguridad; los escenarios específicos de rate limit siguen verificándolos.

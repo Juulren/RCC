@@ -111,3 +111,8 @@ y la marca tipográfica son propios del proyecto académico; no se copian logoti
 - Datos climáticos Open-Meteo, atribución visible y enlace https://open-meteo.com/; datos bajo CC BY 4.0 según https://open-meteo.com/en/docs. Uso académico no comercial; revisar condiciones antes de publicar/comercializar.
 - Google Maps Embed carga el contenido de Google solo bajo acción del usuario con clave restringida configurada; conserva controles/atribuciones del iframe. https://developers.google.com/maps/documentation/embed/embedding-map
 - Resend mediante API HTTP desde C#, sin SDK ni plantillas copiadas: https://resend.com/docs/api-reference/emails/send-email . Claves y remitentes ajenos al repositorio.
+
+
+## Recomendaciones del módulo 8
+
+API OpenAI Responses desde C# mediante HTTP estándar; sin SDK ni contenido de terceros copiado. Contrato basado en documentación oficial: https://developers.openai.com/api/docs/guides/structured-outputs?api-mode=responses . Modelo configurable, store=false, sin datos personales y sin claves en frontend. Uso/costes/políticas del proveedor se verifican al habilitar el proyecto; prueba externa pendiente.

@@ -19,6 +19,8 @@ public sealed class RccDbContext(DbContextOptions<RccDbContext> options) : Ident
 
     public DbSet<Rcc.Api.Services.Notification> Notifications => Set<Rcc.Api.Services.Notification>();
 
+    public DbSet<Rcc.Api.Recommendations.AiDailyUsage> AiDailyUsages => Set<Rcc.Api.Recommendations.AiDailyUsage>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -45,6 +47,7 @@ public sealed class RccDbContext(DbContextOptions<RccDbContext> options) : Ident
         modelBuilder.ConfigureCatalog();
         modelBuilder.ConfigureReservations();
         modelBuilder.ConfigurePayments();
+        modelBuilder.Entity<Rcc.Api.Recommendations.AiDailyUsage>().HasKey(x => x.Day);
         var notification = modelBuilder.Entity<Rcc.Api.Services.Notification>();
         notification.ToTable("Notifications", table =>
         {

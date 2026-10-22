@@ -11,6 +11,9 @@ if (-not $rccConfig.POSTGRES_USER -or -not $rccConfig.POSTGRES_PASSWORD) { throw
 $rccDatabase = 'rcc_e2e_' + [Guid]::NewGuid().ToString('N')
 $env:ConnectionStrings__Rcc = "Host=127.0.0.1;Port=5432;Database=$rccDatabase;Username=$($rccConfig.POSTGRES_USER);Password=$($rccConfig.POSTGRES_PASSWORD)"
 $env:ASPNETCORE_ENVIRONMENT = 'Development'
+# External services stay disabled in disposable browser test databases.
+$env:OpenAI__Enabled = 'false'
+$env:Resend__Enabled = 'false'
 $env:RCC_E2E_ADMIN_EMAIL = "e2e-$([Guid]::NewGuid().ToString('N'))@example.test"
 $env:RCC_E2E_ADMIN_PASSWORD = [Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(24)) + 'Aa1!'
 $env:Administrator__Email = $env:RCC_E2E_ADMIN_EMAIL

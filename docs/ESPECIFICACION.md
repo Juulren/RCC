@@ -250,3 +250,10 @@ STRIPE-SANDBOX.md; correos se incorporarán en el módulo 7.
 Se añade Notifications con unicidad por reserva/evento, encolada atómicamente al confirmar o cancelar. Envío Resend fuera de transacciones, lease SQL, reintentos y estado Review para error permanente o resultado ambiguo fuera de ventana idempotente. Accepted no equivale a entrega. Configuración desactivada conserva pendientes. Consulta Admin paginada sin exponer destinatario/cuerpo/secretos.
 
 GET /api/weather ofrece condiciones actuales de referencia de Chongqing, caché 15 minutos y dato anterior marcado hasta dos horas ante caída. GET /api/location ofrece enlace Google Maps e iframe opcional por dirección/nombre con clave pública restringida. No se usan coordenadas aproximadas como pin preciso. La apariencia y recepción externas de Maps/Resend quedan pendientes de cuentas del responsable. Detalles y guía: MODULO-7.md y SERVICIOS-EXTERNOS.md.
+
+
+## Ajustes del módulo 8 (2026-10-20)
+
+POST /api/recommendations requiere sesión/CSRF y tres consultas por minuto por usuario/instancia. C# genera candidatos acotados por disponibilidad, capacidad y presupuesto total CNY; preferencias river/space/value suaves. Hasta 12 candidatos al proveedor, hasta tres devueltos. Se revalida cotización tras la llamada y se descartan cambios. OpenAI ordena IDs efímeros y explica cifras mediante Responses/JSON Schema estricto, sin datos personales. Fallback determinista marcado ante ausencia/fallo/límite/salida inválida. Elegir cambia solo borrador; cotizar y reservar siguen explícitos.
+
+AiDailyUsages registra día UTC y llamadas mediante incremento atómico compartido por instancias. Cupo por defecto 20 intentos/día; salida 1024 tokens; modelo/clave/habilitación configurables y desactivados por defecto. No representa un límite monetario. Prueba real OpenAI pendiente de configuración posterior, según solicitud del usuario. Ver MODULO-8.md.

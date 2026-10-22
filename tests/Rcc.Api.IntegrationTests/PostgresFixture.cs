@@ -42,6 +42,7 @@ public sealed class PostgresFixture : IAsyncLifetime
         new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
             builder.UseEnvironment("Testing");
+            builder.ConfigureServices(services => Microsoft.Extensions.DependencyInjection.OptionsServiceCollectionExtensions.PostConfigure<Rcc.Api.Recommendations.AiSettings>(services, options => options.Enabled = false));
             builder.ConfigureServices(services => Microsoft.Extensions.DependencyInjection.OptionsServiceCollectionExtensions.PostConfigure<Rcc.Api.Services.EmailSettings>(services, options => options.Enabled = false));
             builder.UseSetting("ConnectionStrings:Rcc", connection ?? ConnectionString);
         });
