@@ -197,3 +197,15 @@ La matriz visual usa ahora el fondo de Inicio como referencia de comparación.
 - Matriz: 84 .NET/PostgreSQL/transporte SDK, 7 Vitest, 21 diseño, 3 autenticación,
   2 catálogo, 4 reservas y 3 pagos simulados (124 comprobaciones). Se prueba además
   el webhook temprano antes de la respuesta de Checkout, sin expirar un pago ya verificado.
+
+
+### Módulo 7: 2026-10-20
+
+- Solicitud: «vamos a empezar con el modulo 7».
+- El responsable aún no tiene Resend ni Google Maps; se entregan pasos de alta/configuración local sin solicitar claves en el chat ni crear cuentas/facturación.
+- Implementación asistida de clima C# con caché/fallback, mapa integrado opcional y enlace permanente, paneles responsivos ES/EN y cola SQL durable de correos.
+- Eventos de confirmación/cancelación en la transacción de reserva; HTTP Resend separado, lease, backoff, idempotencia y consulta administrativa privada. No se afirma entrega por aceptación HTTP.
+- Pruebas de transporte, caída, concurrencia, persistencia, privacidad y navegador; resultados en MODULO-7.md. No se atribuye revisión humana independiente.
+- Sin envíos externos ni prueba de Maps con clave. La validación real de esas cuentas y de Stripe continúa pendiente. Módulos 8 y 9 fuera de alcance.
+
+- Matriz del módulo 7: 103 .NET, 7 Vitest, 29 diseño/servicios y 12 recorridos integrados (151). Revisión de capturas 360/1440 y consulta real puntual a Open-Meteo. Se añade regresión para respuestas de leases vencidos y se evita comparar timestamps con distinta precisión entre C# y PostgreSQL.

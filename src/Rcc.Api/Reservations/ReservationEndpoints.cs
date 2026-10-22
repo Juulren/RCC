@@ -145,6 +145,7 @@ public static class ReservationEndpoints
         var payment = reservation.Payments.SingleOrDefault();
         if (reservation.Status == "Confirmed" && (payment?.State != "Paid" || payment.PaymentIntentId is null)) return CatalogEndpoints.Error(409, "PAYMENT_REQUIRES_REVIEW");
         reservation.Status = "Cancelled";
+        await Rcc.Api.Services.NotificationQueue.EnqueueAsync(db, reservation, "Cancelled", clock.GetUtcNow());
         if (payment is not null)
         {
             var refund = PaymentProcessor.QueueRefund(payment, clock.GetUtcNow());

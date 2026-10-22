@@ -33,6 +33,7 @@ public static class HarnessMain
             {
                 foreach (var registration in services.Where(x => x.ServiceType == typeof(IHostedService) && (x.ImplementationType == typeof(PaymentWorker) || x.ImplementationType == typeof(ReservationExpiry))).ToArray()) services.Remove(registration);
                 services.RemoveAll<IStripeGateway>(); services.AddSingleton<FakeStripeGateway>(); services.AddSingleton<IStripeGateway>(sp => sp.GetRequiredService<FakeStripeGateway>());
+                services.PostConfigure<Rcc.Api.Services.EmailSettings>(settings => settings.Enabled = false);
                 services.PostConfigure<StripeSettings>(settings => { settings.SecretKey = "sk_test_harness_only"; settings.WebhookSecret = WebhookSecret; settings.PublicOrigin = origin; });
                 services.AddSingleton<IStartupFilter>(new Driver(token, origin));
             });

@@ -16,7 +16,7 @@ public sealed class FoundationTests(PostgresFixture postgres) : IClassFixture<Po
         using var client = factory.CreateClient();
         var status = await client.GetFromJsonAsync<JsonElement>("/api/status");
         Assert.Equal("RCC", status.GetProperty("application").GetString());
-        Assert.Equal(6, status.GetProperty("module").GetInt32());
+        Assert.Equal(7, status.GetProperty("module").GetInt32());
     }
 
     [Fact]

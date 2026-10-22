@@ -34,7 +34,10 @@ public sealed class PaymentProcessor(RccDbContext db, IStripeGateway stripe, Tim
                 if (payment.State != "Refunded") payment.State = "Paid";
                 var reservation = payment.Reservation;
                 if (reservation.Status == "PendingPayment" && reservation.ExpiresAt > now && payment.Refund is null)
+                {
                     reservation.Status = "Confirmed";
+                    await Rcc.Api.Services.NotificationQueue.EnqueueAsync(db, reservation, "Confirmed", now);
+                }
                 else if (reservation.Status != "Confirmed")
                 {
                     if (reservation.Status == "PendingPayment") reservation.Status = "Expired";

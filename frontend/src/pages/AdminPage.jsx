@@ -7,6 +7,7 @@ import './auth.css'
 import AdminCatalog from '../catalog/AdminCatalog.jsx'
 import { useAuth } from '../auth/AuthContext.jsx'
 import ReservationList from '../reservations/ReservationList.jsx'
+import NotificationPanel from '../services/NotificationPanel.jsx'
 
 export default function AdminPage() {
   const [language, setLanguage] = usePageLanguage()
@@ -69,6 +70,9 @@ export default function AdminPage() {
             <h2>{language === 'es' ? 'Reservas del hotel' : 'Hotel reservations'}</h2>
             <ReservationList language={language} admin />
           </section>
+        )}
+        {status === 'allowed' && (
+          <NotificationPanel language={language} onAccessLost={onAccessLost} />
         )}
         {status === 'error' && (
           <button className="button button-outline" onClick={() => setAttempt(attempt + 1)}>

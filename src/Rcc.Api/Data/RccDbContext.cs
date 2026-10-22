@@ -17,6 +17,8 @@ public sealed class RccDbContext(DbContextOptions<RccDbContext> options) : Ident
     public DbSet<PaymentEvent> PaymentEvents => Set<PaymentEvent>();
     public DbSet<RefundJob> RefundJobs => Set<RefundJob>();
 
+    public DbSet<Rcc.Api.Services.Notification> Notifications => Set<Rcc.Api.Services.Notification>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -43,5 +45,22 @@ public sealed class RccDbContext(DbContextOptions<RccDbContext> options) : Ident
         modelBuilder.ConfigureCatalog();
         modelBuilder.ConfigureReservations();
         modelBuilder.ConfigurePayments();
+        var notification = modelBuilder.Entity<Rcc.Api.Services.Notification>();
+        notification.ToTable("Notifications", table =>
+        {
+            table.HasCheckConstraint("CK_Notifications_State", "\"State\" IN ('Pending','Accepted','Review')");
+            table.HasCheckConstraint("CK_Notifications_Kind", "\"Kind\" IN ('Confirmed','Cancelled')");
+        });
+        notification.HasKey(x => x.Id);
+        notification.HasOne<Reservation>().WithMany().HasForeignKey(x => x.ReservationId).OnDelete(DeleteBehavior.Restrict);
+        notification.HasIndex(x => new { x.ReservationId, x.Kind }).IsUnique();
+        notification.HasIndex(x => new { x.State, x.NextAttemptAt });
+        notification.Property(x => x.Recipient).HasMaxLength(320);
+        notification.Property(x => x.Subject).HasMaxLength(200);
+        notification.Property(x => x.Sender).HasMaxLength(500);
+        notification.Property(x => x.Kind).HasMaxLength(20);
+        notification.Property(x => x.State).HasMaxLength(20);
+        notification.Property(x => x.LastError).HasMaxLength(100);
+        notification.Property(x => x.ProviderId).HasMaxLength(100);
     }
 }

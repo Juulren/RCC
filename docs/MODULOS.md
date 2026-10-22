@@ -59,3 +59,8 @@ para la entrega solo documental. Conservar resultados/capturas de fallos útiles
 Guion final de 10 minutos: contexto/diseño (1), registro/login (1), selección y
 reserva/pago (3), cancelación e integraciones/IA (2), arquitectura/pruebas/CI (2),
 autoría y límites (1). Preparar cuentas y datos ficticios, nunca claves en pantalla.
+
+
+## Estado del módulo 7 (2026-10-20)
+
+Implementación de clima, mapa opcional y correos durables en `codex/modulo-7-servicios`. Evidencia: MODULO-7.md. Alta y configuración: SERVICIOS-EXTERNOS.md. Open-Meteo comprobado desde la API local; Maps Embed y Resend quedan pendientes de cuentas/claves y validación real del responsable. No se sustituye recepción real por pruebas simuladas ni se inicia módulo 8 automáticamente.

@@ -243,3 +243,10 @@ estables; resultados desconocidos pasadas 23 horas requieren revisión. La
 implementación automática usa proveedor aislado en CI. Falta validación real
 sandbox porque el responsable aún no tiene cuenta. Detalles en MODULO-6.md y
 STRIPE-SANDBOX.md; correos se incorporarán en el módulo 7.
+
+
+## Ajustes de implementación del módulo 7 (2026-10-20)
+
+Se añade Notifications con unicidad por reserva/evento, encolada atómicamente al confirmar o cancelar. Envío Resend fuera de transacciones, lease SQL, reintentos y estado Review para error permanente o resultado ambiguo fuera de ventana idempotente. Accepted no equivale a entrega. Configuración desactivada conserva pendientes. Consulta Admin paginada sin exponer destinatario/cuerpo/secretos.
+
+GET /api/weather ofrece condiciones actuales de referencia de Chongqing, caché 15 minutos y dato anterior marcado hasta dos horas ante caída. GET /api/location ofrece enlace Google Maps e iframe opcional por dirección/nombre con clave pública restringida. No se usan coordenadas aproximadas como pin preciso. La apariencia y recepción externas de Maps/Resend quedan pendientes de cuentas del responsable. Detalles y guía: MODULO-7.md y SERVICIOS-EXTERNOS.md.

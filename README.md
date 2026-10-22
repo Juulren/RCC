@@ -6,14 +6,14 @@ Repositorio: https://github.com/Juulren/RCC
 
 ## Estado
 
-Módulo 6 implementado: Stripe Checkout de prueba desde C#, webhook firmado,
-confirmación verificada, conciliación, cancelación de confirmadas y reembolsos
-durables. Se conservan catálogo, reservas de varias habitaciones, bloqueo local
-de 30 minutos, ES/EN y administración. Tarifas y stock son ficticios.
-**Pendiente de validación con Stripe sandbox real:** el responsable aún no tiene
-cuenta. Sin claves, los pagos están desactivados. Las pruebas automáticas usan
-proveedor aislado y no acreditan cobros externos reales. No hay despliegue público
-ni integraciones de clima/correo/IA configuradas.
+Módulo 7 implementado: clima Open-Meteo con caché y alternativas ante fallos,
+ubicación Google Maps con enlace alternativo y cola durable de correos Resend
+para confirmación/cancelación. Paneles ES/EN responsivos y consulta administrativa.
+Se conservan catálogo, reservas de varias habitaciones y pagos de prueba.
+**Pendientes de validación externa:** Google Maps y Resend aún sin cuentas/claves;
+Stripe sigue sin sandbox real. Sin configuración no se envían correos ni se
+habilitan pagos. Las pruebas automáticas usan proveedores aislados. Tarifas y
+stock ficticios; sin despliegue público ni IA del módulo 8.
 
 ## Documentación
 
@@ -27,6 +27,8 @@ ni integraciones de clima/correo/IA configuradas.
 - [Catálogo, inventario y administración del módulo 4](docs/MODULO-4.md)
 - [Disponibilidad, cotización y reservas del módulo 5](docs/MODULO-5.md)
 - [Pagos, conciliación y reembolsos del módulo 6](docs/MODULO-6.md)
+- [Servicios externos y pruebas del módulo 7](docs/MODULO-7.md)
+- [Crear y configurar Google Maps / Resend](docs/SERVICIOS-EXTERNOS.md)
 - [Configurar y validar Stripe sandbox](docs/STRIPE-SANDBOX.md)
 - [Fuentes y licencias de imágenes/componentes](THIRD_PARTY.md)
 
@@ -295,3 +297,10 @@ Este script usa un proveedor **simulado** en un harness separado, PostgreSQL
 real y callbacks firmados al webhook de RCC. No pide tarjetas ni usa una cuenta
 Stripe. La prueba real pendiente y la limitación de expires_at están documentadas
 en [MODULO-6.md](docs/MODULO-6.md). Clima, correos e IA siguen pendientes.
+
+
+## Servicios externos (módulo 7)
+
+En `/destino` se muestran condiciones actuales de Chongqing y ubicación del hotel. No hay pronóstico asociado a fechas de reserva. Sin clave Maps se conserva enlace externo. Sin habilitar Resend, las confirmaciones/cancelaciones quedan pendientes en la cola SQL, consultable por el administrador.
+
+Configuración y alta de cuentas: [SERVICIOS-EXTERNOS.md](docs/SERVICIOS-EXTERNOS.md). Detalles, límites y matriz de 151 comprobaciones: [MODULO-7.md](docs/MODULO-7.md). La CI usa HTTP simulado para servicios externos; la prueba local de Open-Meteo sí consultó el proveedor. Validaciones reales de Maps/Resend pendientes de configuración.

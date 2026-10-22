@@ -104,3 +104,10 @@ y la marca tipográfica son propios del proyecto académico; no se copian logoti
   https://github.com/stripe/stripe-dotnet/blob/v53.0.0/LICENSE.
 - Usado únicamente en C# para Checkout, firma de eventos, consultas y reembolsos.
   No se copian interfaces de tarjeta ni se integra código remoto en el frontend.
+
+
+## Servicios del módulo 7
+
+- Datos climáticos Open-Meteo, atribución visible y enlace https://open-meteo.com/; datos bajo CC BY 4.0 según https://open-meteo.com/en/docs. Uso académico no comercial; revisar condiciones antes de publicar/comercializar.
+- Google Maps Embed carga el contenido de Google solo bajo acción del usuario con clave restringida configurada; conserva controles/atribuciones del iframe. https://developers.google.com/maps/documentation/embed/embedding-map
+- Resend mediante API HTTP desde C#, sin SDK ni plantillas copiadas: https://resend.com/docs/api-reference/emails/send-email . Claves y remitentes ajenos al repositorio.
