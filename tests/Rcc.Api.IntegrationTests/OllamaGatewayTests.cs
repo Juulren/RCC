@@ -59,4 +59,3 @@ public sealed class OllamaGatewayTests
         Assert.False(new AiSettings { Enabled = true, Provider = "OpenAI", Model = "model" }.Ready);
     }
 }
-
