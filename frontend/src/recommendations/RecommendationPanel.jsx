@@ -163,6 +163,13 @@ export default function RecommendationPanel({ draft, language, disabled, onChoos
                 ? 'Cálculo local · No intervino IA'
                 : 'Local calculation · No AI was used'}
           </p>
+          {result.reason === 'AI_NOT_CONFIGURED' && (
+            <p>
+              {es
+                ? 'OpenAI no está configurado o está desactivado en el servidor. Por ahora usamos el cálculo local.'
+                : 'OpenAI is not configured or is disabled on the server. For now we use the local calculation.'}
+            </p>
+          )}
           {result.reason === 'AI_DAILY_LIMIT' && (
             <p>
               {es

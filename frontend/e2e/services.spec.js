@@ -72,7 +72,7 @@ test('network failure keeps map link and weather can recover on retry', async ({
   await panel.getByRole('button', { name: 'Actualizar', exact: true }).click()
   await expect(panel).toContainText('21°')
 })
-test('configured map loads only on user action and keeps external fallback', async ({ page }) => {
+test('configured map loads automatically and keeps external fallback', async ({ page }) => {
   await page.route('**/api/location', (route) =>
     route.fulfill({
       json: {
@@ -83,11 +83,10 @@ test('configured map loads only on user action and keeps external fallback', asy
   )
   await page.route('https://www.google.com/maps/embed/**', (route) => route.abort())
   await page.goto('/destino')
-  await expect(page.locator('.map-panel iframe')).toHaveCount(0)
-  await page.getByRole('button', { name: 'Cargar mapa de Google' }).click()
   await expect(page.locator('.map-panel iframe')).toHaveAttribute(
     'title',
     'Ubicación de Regent Chongqing',
   )
+  await expect(page.getByRole('button', { name: 'Cargar mapa de Google' })).toHaveCount(0)
   await expect(page.getByRole('link', { name: 'Abrir ubicación en Google Maps' })).toBeVisible()
 })

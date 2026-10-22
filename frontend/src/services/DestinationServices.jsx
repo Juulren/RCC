@@ -1,13 +1,41 @@
 import { useEffect, useState } from 'react'
 import './services.css'
 
+function HotelMap({ embedUrl, es }) {
+  const [state, setState] = useState('loading')
+  useEffect(() => {
+    if (state !== 'loading') return
+    const timer = setTimeout(() => setState('error'), 12000)
+    return () => clearTimeout(timer)
+  }, [state])
+  return (
+    <>
+      {state === 'loading' && <p role="status">{es ? 'Cargando mapa…' : 'Loading map…'}</p>}
+      {state === 'error' && (
+        <p role="status">
+          {es
+            ? 'Si el mapa no carga, utiliza el enlace directo.'
+            : 'If the map cannot load, use the direct link.'}
+        </p>
+      )}
+      <iframe
+        title={es ? 'Ubicación de Regent Chongqing' : 'Regent Chongqing location'}
+        src={embedUrl}
+        referrerPolicy="strict-origin-when-cross-origin"
+        allowFullScreen
+        onLoad={() => setState('loaded')}
+        onError={() => setState('error')}
+      />
+    </>
+  )
+}
+
 export default function DestinationServices({ language }) {
   const es = language === 'es'
   const [weather, setWeather] = useState(null)
   const [location, setLocation] = useState(null)
   const [attempt, setAttempt] = useState(0)
-  const [showMap, setShowMap] = useState(false)
-  const [mapState, setMapState] = useState('idle')
+  const showMap = Boolean(location?.embedUrl)
   useEffect(() => {
     const controller = new AbortController()
     setWeather(null)
@@ -26,11 +54,6 @@ export default function DestinationServices({ language }) {
       })
     return () => controller.abort()
   }, [attempt])
-  useEffect(() => {
-    if (!showMap || mapState !== 'loading') return
-    const timer = setTimeout(() => setMapState('error'), 12000)
-    return () => clearTimeout(timer)
-  }, [showMap, mapState])
   const current = weather?.current
   const search =
     location?.searchUrl || 'https://www.google.com/maps/search/?api=1&query=Regent+Chongqing+China'
@@ -102,39 +125,7 @@ export default function DestinationServices({ language }) {
               : 'Explore the hotel location on Google Maps.'}
           </p>
         )}
-        {location?.embedUrl && !showMap && (
-          <button
-            className="button button-outline"
-            onClick={() => {
-              setShowMap(true)
-              setMapState('loading')
-            }}
-          >
-            {es ? 'Cargar mapa de Google' : 'Load Google map'}
-          </button>
-        )}
-        {showMap && (
-          <>
-            {mapState === 'loading' && (
-              <p role="status">{es ? 'Cargando mapa…' : 'Loading map…'}</p>
-            )}
-            {mapState === 'error' && (
-              <p role="status">
-                {es
-                  ? 'Si el mapa no carga, utiliza el enlace directo.'
-                  : 'If the map cannot load, use the direct link.'}
-              </p>
-            )}
-            <iframe
-              title={es ? 'Ubicación de Regent Chongqing' : 'Regent Chongqing location'}
-              src={location.embedUrl}
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-              onLoad={() => setMapState('loaded')}
-              onError={() => setMapState('error')}
-            />
-          </>
-        )}
+        {showMap && <HotelMap key={location.embedUrl} embedUrl={location.embedUrl} es={es} />}
         <a className="button button-cyan" href={search} target="_blank" rel="noreferrer">
           {es ? 'Abrir ubicación en Google Maps' : 'Open location in Google Maps'}
         </a>
