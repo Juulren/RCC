@@ -27,3 +27,7 @@ Referencias: [Windows](https://docs.ollama.com/windows), [API generate y esquema
 En el equipo de desarrollo se instaló Ollama 0.40.8 y se descargó Qwen 2.5 1.5B. Se ejecutó el gateway C# real contra Ollama: devolvió IDs válidos y colocó primero la combinación con vista al río para la preferencia river. La versión final tardó aproximadamente 9 segundos en esta prueba con dos combinaciones; el tiempo puede variar. Las explicaciones finales se construyeron desde C#, sin texto libre inventado. Esta prueba de transporte no sustituye la demostración final desde la sesión del responsable después de reiniciar la API.
 
 Validación aislada: 12 pruebas Vitest, 29 Playwright de diseño/páginas/servicios, compilación frontend y 5 pruebas del gateway local (incluidas en el conjunto de integración). No se llama a proveedores reales desde CI.
+
+## Validación del responsable
+
+El 22 de octubre de 2026, el responsable confirmó en la conversación que la IA local ya funciona en la aplicación después de seguir los pasos de configuración y reinicio. Se registra como comprobación manual informada por el responsable, adicional a la prueba de transporte C# y las pruebas automatizadas. La publicación y la ejecución del modelo en producción siguen pendientes del módulo 9.
