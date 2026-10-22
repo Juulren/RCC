@@ -24,4 +24,5 @@
     <Compile Include="../Shared/FakeStripeGateway.cs" Link="FakeStripeGateway.cs" />
   </ItemGroup>
 
+  <ItemGroup><ProjectReference Include="../../src/Rcc.AiRelay/Rcc.AiRelay.csproj" /></ItemGroup>
 </Project>

@@ -44,9 +44,14 @@ builder.Services.AddHttpClient("ollama", client => { client.Timeout = TimeSpan.F
     .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false, UseProxy = false });
 builder.Services.AddScoped<OpenAiGateway>();
 builder.Services.AddScoped<OllamaGateway>();
+builder.Services.AddHttpClient("ai-relay", client => { client.Timeout = TimeSpan.FromSeconds(120); client.MaxResponseContentBufferSize = 65536; })
+    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false, UseProxy = false });
+builder.Services.AddScoped<RelayGateway>();
 builder.Services.AddScoped<IRecommendationGateway>(services =>
     services.GetRequiredService<Microsoft.Extensions.Options.IOptions<AiSettings>>().Value.Provider == "Ollama"
-        ? services.GetRequiredService<OllamaGateway>() : services.GetRequiredService<OpenAiGateway>());
+        ? services.GetRequiredService<OllamaGateway>()
+        : services.GetRequiredService<Microsoft.Extensions.Options.IOptions<AiSettings>>().Value.Provider == "OllamaRelay"
+            ? services.GetRequiredService<RelayGateway>() : services.GetRequiredService<OpenAiGateway>());
 builder.Services.AddScoped<RecommendationService>();
 var app = builder.Build();
 if (initializeIdentity)

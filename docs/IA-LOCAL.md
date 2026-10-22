@@ -31,3 +31,7 @@ Validación aislada: 12 pruebas Vitest, 29 Playwright de diseño/páginas/servic
 ## Validación del responsable
 
 El 22 de octubre de 2026, el responsable confirmó en la conversación que la IA local ya funciona en la aplicación después de seguir los pasos de configuración y reinicio. Se registra como comprobación manual informada por el responsable, adicional a la prueba de transporte C# y las pruebas automatizadas. La publicación y la ejecución del modelo en producción siguen pendientes del módulo 9.
+
+## Conexión desde otro servidor
+
+Se añadió un [puente autenticado temporal](PUENTE-IA.md) para conectar un backend publicado con esta PC. No expone Ollama directamente y requiere configuración separada del túnel y del servicio publicado. No cambia el proveedor local existente automáticamente.
