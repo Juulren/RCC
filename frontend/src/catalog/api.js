@@ -9,12 +9,12 @@ export class CatalogError extends Error {
 
 export async function catalogApi(
   path,
-  { method = 'GET', body, signal, headers: extraHeaders = {} } = {},
+  { method = 'GET', body, signal, headers: extraHeaders = {}, timeoutMs = 15000 } = {},
 ) {
   try {
     const requestSignal = signal
-      ? AbortSignal.any([signal, AbortSignal.timeout(15000)])
-      : AbortSignal.timeout(15000)
+      ? AbortSignal.any([signal, AbortSignal.timeout(timeoutMs)])
+      : AbortSignal.timeout(timeoutMs)
     const headers = { ...extraHeaders }
     if (method !== 'GET') {
       const tokenResponse = await fetch('/api/auth/csrf', {

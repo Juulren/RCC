@@ -224,3 +224,5 @@ La matriz visual usa ahora el fondo de Inicio como referencia de comparación.
 - La CI inicial encontró acumulación del cupo de login entre suites rápidas en un solo proceso. Se aíslan procesos entre suites, conservando base y límites de seguridad; los escenarios específicos de rate limit siguen verificándolos.
 
 - 2026-10-22: asistencia IA para carga automatica de Maps, aviso de OpenAI sin configurar y guia local de activacion. Validacion: 12 pruebas Vitest, 8 Playwright de servicios y build frontend. El responsable reporto pago, correo y cancelacion funcionales; prueba real OpenAI pendiente.
+
+- 2026-10-22: adaptación asistida por IA para Ollama local, instalación y descarga de Qwen 2.5 1.5B, gateway C# sin clave y explicaciones verificadas en servidor. Prueba real local y pruebas aisladas documentadas en IA-LOCAL.md; demostración web tras reinicio a cargo del responsable.

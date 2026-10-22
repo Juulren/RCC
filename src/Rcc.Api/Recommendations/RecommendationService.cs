@@ -12,11 +12,12 @@ public sealed record RecommendationResult(string Mode, string Reason, List<Recom
 public sealed class AiSettings
 {
     public bool Enabled { get; set; }
+    public string Provider { get; set; } = "OpenAI";
     public string ApiKey { get; set; } = "";
     public string Model { get; set; } = "";
     public int MaxOutputTokens { get; set; } = 1024;
     public int DailyRequestLimit { get; set; } = 20;
-    public bool Ready => Enabled && ApiKey.StartsWith("sk-", StringComparison.Ordinal) && !string.IsNullOrWhiteSpace(Model) && Model.Length <= 100 && MaxOutputTokens is >= 256 and <= 2048 && DailyRequestLimit is >= 1 and <= 500;
+    public bool Ready => Enabled && (Provider == "Ollama" && Model == "qwen2.5:1.5b" || Provider == "OpenAI" && ApiKey.StartsWith("sk-", StringComparison.Ordinal)) && !string.IsNullOrWhiteSpace(Model) && Model.Length <= 100 && MaxOutputTokens is >= 256 and <= 2048 && DailyRequestLimit is >= 1 and <= 500;
 }
 public sealed class AiDailyUsage
 {
