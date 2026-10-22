@@ -44,6 +44,7 @@ export default function RecommendationPanel({ draft, language, disabled, onChoos
     try {
       const response = await catalogApi('/recommendations', {
         method: 'POST',
+        timeoutMs: 130000,
         signal: controller.signal,
         body: {
           arrival: draft.arrival,
@@ -136,8 +137,8 @@ export default function RecommendationPanel({ draft, language, disabled, onChoos
             </div>
             <p className="booking-note">
               {es
-                ? 'Si la IA está habilitada, OpenAI recibe solo cifras de las opciones y estas preferencias. No enviamos tu identidad, fechas, edades ni datos de pago. Sin IA usamos un cálculo local.'
-                : 'When AI is enabled, OpenAI receives only option figures and these preferences. We do not send your identity, dates, ages or payment data. Without AI we use a local calculation.'}
+                ? 'Si la IA está habilitada, el modelo configurado recibe solo cifras de las opciones y estas preferencias. No enviamos tu identidad, fechas, edades ni datos de pago. Sin IA usamos un cálculo local.'
+                : 'When AI is enabled, the configured model receives only option figures and these preferences. We do not send your identity, dates, ages or payment data. Without AI we use a local calculation.'}
             </p>
             <button className="button button-outline" type="submit">
               {busy
@@ -166,8 +167,8 @@ export default function RecommendationPanel({ draft, language, disabled, onChoos
           {result.reason === 'AI_NOT_CONFIGURED' && (
             <p>
               {es
-                ? 'OpenAI no está configurado o está desactivado en el servidor. Por ahora usamos el cálculo local.'
-                : 'OpenAI is not configured or is disabled on the server. For now we use the local calculation.'}
+                ? 'La IA no está configurada o está desactivada en el servidor. Por ahora usamos el cálculo local.'
+                : 'AI is not configured or is disabled on the server. For now we use the local calculation.'}
             </p>
           )}
           {result.reason === 'AI_DAILY_LIMIT' && (

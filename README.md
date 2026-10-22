@@ -6,14 +6,18 @@ Repositorio: https://github.com/Juulren/RCC
 
 ## Estado
 
-Módulo 8 implementado: recomendaciones de combinaciones de habitaciones con
-validación C# de capacidad, inventario y presupuesto total. OpenAI puede ordenar
-opciones y explicarlas; sin configuración/fallo se usa cálculo local marcado.
-Panel ES/EN en Reservar, selección explícita y cotización antes de reservar.
-Se conservan clima, mapa, correos durables y pagos de prueba.
-**Pendiente:** configurar y comprobar OpenAI, Maps, Resend y Stripe sandbox con
-las cuentas del responsable. No se acreditan llamadas IA, correos ni pagos reales
-por pruebas simuladas. Tarifas/stock ficticios; módulo 9 y despliegue pendientes.
+Módulos 1–8 implementados. El responsable confirmó en desarrollo local el pago
+Stripe de prueba, correo Resend, cancelación, Google Maps y recomendaciones con
+Ollama + Qwen 2.5 1.5B. La IA local no requiere clave ni cargos de API; C# valida
+inventario, capacidad y precio, y redacta las explicaciones con datos verificados.
+
+**Pendiente: módulo 9 y despliegue.** Faltan empaquetado Docker, configuración de
+producción, Neon, HTTPS, pruebas del entorno publicado y entregables finales.
+Ollama en la PC no estará accesible desde Render: habrá que disponer de un servidor
+para el modelo o usar el cálculo determinista en el despliegue. Las tarifas y el
+inventario son de demostración; Stripe permanece en modo de prueba.
+
+Guía de la alternativa sin cargos por consulta: [IA local](docs/IA-LOCAL.md).
 
 ## Documentación
 

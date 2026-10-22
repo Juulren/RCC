@@ -71,6 +71,7 @@ it('renders AI text safely and selecting only changes the draft', async () => {
   expect(choose).toHaveBeenCalledWith(['server-id'])
   expect(api).toHaveBeenCalledTimes(1)
   expect(api.mock.calls[0][0]).toBe('/recommendations')
+  expect(api.mock.calls[0][1].timeoutMs).toBe(130000)
 })
 it('discards an in-flight response after the stay changes', async () => {
   let resolve
@@ -105,6 +106,6 @@ it('explains when OpenAI is not configured while retaining local options', async
   api.mockResolvedValue({ ...result, mode: 'deterministic', reason: 'AI_NOT_CONFIGURED' })
   render(view())
   fireEvent.click(screen.getByRole('button', { name: 'Pedir recomendaciones' }))
-  expect(await screen.findByText(/OpenAI no está configurado/)).toBeVisible()
+  expect(await screen.findByText(/La IA no está configurada/)).toBeVisible()
   expect(screen.getByRole('button', { name: 'Usar esta combinación' })).toBeVisible()
 })

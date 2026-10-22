@@ -14,7 +14,11 @@ Módulos 6–8 implementados; configuración y comprobaciones externas aún pend
 
 Puedes preparar las cuentas en otro orden. No se habilitan pagos/correos/IA por el hecho de crear la cuenta. No hace falta configurarlos para ejecutar las pruebas aisladas.
 
-## OpenAI
+## Alternativa sin cargos por consulta
+
+Usa [Ollama local](IA-LOCAL.md). No requiere clave ni saldo. Esta alternativa ejecuta el modelo en el equipo del backend y requiere recursos locales; no habilita por sí sola IA en Render.
+
+## OpenAI (opcional, de pago)
 
 1. Accede a [OpenAI Platform](https://platform.openai.com/), crea/selecciona un proyecto exclusivo para RCC y revisa su facturación, acceso a modelos y límites. Sigue el [inicio oficial](https://developers.openai.com/api/docs/quickstart). No se contratan créditos ni se crean claves automáticamente desde este trabajo.
 2. Crea una clave privada de proyecto con permiso para Responses. Conserva su valor localmente.
