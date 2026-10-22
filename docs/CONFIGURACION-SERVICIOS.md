@@ -7,7 +7,7 @@ Módulos 6–8 implementados; configuración y comprobaciones externas aún pend
 | Servicio | Preparación y guía | Comprobación real |
 |---|---|---|
 | Open-Meteo | No requiere clave para este uso académico; ya consultado desde C#. | Destino muestra fuente/hora y datos actuales; no previsión de fechas de reserva. |
-| Google Maps | Proyecto Cloud, Maps Embed API y clave restringida a API y dominios. [SERVICIOS-EXTERNOS.md](SERVICIOS-EXTERNOS.md). | Cargar mapa en Destino y comprobar hotel/dirección; probar enlace alternativo. |
+| Google Maps | Proyecto Cloud, Maps Embed API y clave restringida a API y dominios. [SERVICIOS-EXTERNOS.md](SERVICIOS-EXTERNOS.md). | Carga automática del mapa en Destino y comprobar hotel/dirección; probar enlace alternativo. |
 | Stripe test | Cuenta/sandbox, claves de prueba y webhook local. [STRIPE-SANDBOX.md](STRIPE-SANDBOX.md). | Pago válido, rechazo, evento repetido, cancelación y reembolso en sandbox. |
 | Resend | Cuenta, dominio verificado y remitente. [SERVICIOS-EXTERNOS.md](SERVICIOS-EXTERNOS.md). | Cancelación con destinatario propio: aceptación y recepción verificadas por separado. Confirmación después de Stripe. |
 | OpenAI | Proyecto API, clave y modelo compatible; pasos siguientes. | mode=ai con opciones válidas y consumo visible; después desactivar para comprobar cálculo local. |
@@ -57,3 +57,9 @@ Variables equivalentes para otros entornos: `OpenAI__Enabled`, `OpenAI__ApiKey`,
 - HTTP 429 de RCC: tres consultas por minuto por usuario. Espera y reintenta; no es necesariamente un error del proveedor.
 
 `store=false` evita almacenar la respuesta como recurso persistente de Responses; no implica que toda retención del proveedor desaparezca. RCC no envía datos personales ni historial. Las explicaciones se muestran como texto y deben verificarse; la IA no puede confirmar reservas ni cambiar precios.
+
+## Asistente local de configuración (22 de octubre de 2026)
+
+En este equipo se preparó `.local/configurar-ia.ps1`, excluido de Git. Desde la raíz ejecuta `powershell -ExecutionPolicy Bypass -File .\.local\configurar-ia.ps1`; cuando lo solicite, copia la clave del proyecto desde OpenAI y vuelve a la terminal para pulsar Enter sin pegarla. Guarda y verifica las opciones sin imprimir la clave. Usa `gpt-5.4-mini`, 1024 tokens de salida y 20 intentos diarios; no realiza una llamada de pago. El modelo admite Responses y Structured Outputs según su [ficha oficial](https://developers.openai.com/api/docs/models/gpt-5.4-mini); el acceso depende de tu proyecto.
+
+Detén la API con Ctrl+C y vuelve a ejecutar `.\.local\iniciar-rcc.ps1` para importar los ajustes en el proceso correcto junto con PostgreSQL. La configuración manual de arriba sigue siendo la alternativa reproducible en otro equipo. La API puede generar cargos; revisa facturación antes de probar. El límite diario de RCC cuenta intentos, no dinero.

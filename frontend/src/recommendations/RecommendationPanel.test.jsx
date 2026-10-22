@@ -100,3 +100,11 @@ it('explains rate limits and permits a later local retry', async () => {
   expect(await screen.findByText('Cálculo local · No intervino IA')).toBeVisible()
   expect(screen.queryByRole('alert')).toBeNull()
 })
+
+it('explains when OpenAI is not configured while retaining local options', async () => {
+  api.mockResolvedValue({ ...result, mode: 'deterministic', reason: 'AI_NOT_CONFIGURED' })
+  render(view())
+  fireEvent.click(screen.getByRole('button', { name: 'Pedir recomendaciones' }))
+  expect(await screen.findByText(/OpenAI no está configurado/)).toBeVisible()
+  expect(screen.getByRole('button', { name: 'Usar esta combinación' })).toBeVisible()
+})
