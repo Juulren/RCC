@@ -1,0 +1,25 @@
+# Allowlist: nothing from Git history, local credentials, tests or documents enters the build.
+**
+!Dockerfile
+!global.json
+!src/
+!src/Rcc.Api/
+!src/Rcc.Api/**
+!src/Rcc.Ai/
+!src/Rcc.Ai/**
+!frontend/
+!frontend/**
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/wwwroot/
+**/.env
+**/.env.*
+**/*.local.json
+**/secrets.json
+**/*.pfx
+**/*.pem
+**/*.key
+frontend/test-results*/
+frontend/playwright-report*/

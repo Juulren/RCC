@@ -16,7 +16,7 @@ public sealed class FoundationTests(PostgresFixture postgres) : IClassFixture<Po
         using var client = factory.CreateClient();
         var status = await client.GetFromJsonAsync<JsonElement>("/api/status");
         Assert.Equal("RCC", status.GetProperty("application").GetString());
-        Assert.Equal(8, status.GetProperty("module").GetInt32());
+        Assert.Equal(9, status.GetProperty("module").GetInt32());
     }
 
     [Fact]
@@ -38,7 +38,10 @@ public sealed class FoundationTests(PostgresFixture postgres) : IClassFixture<Po
     {
         var unavailable = new NpgsqlConnectionStringBuilder(postgres.ConnectionString)
         {
-            Host = "127.0.0.1", Port = 1, Timeout = 1, Pooling = false
+            Host = "127.0.0.1",
+            Port = 1,
+            Timeout = 1,
+            Pooling = false
         }.ConnectionString;
         await using var factory = postgres.CreateFactory(unavailable);
         using var client = factory.CreateClient();
@@ -102,8 +105,13 @@ public sealed class FoundationTests(PostgresFixture postgres) : IClassFixture<Po
 
     private static Hotel NewHotel(Guid id) => new()
     {
-        Id = id, Slug = $"demo-{id:N}", Name = "RCC Demo",
-        DescriptionEs = "Demostración en Chongqing", DescriptionEn = "Chongqing demonstration",
-        Address = "Dirección ficticia de prueba", Latitude = 29.564700m, Longitude = 106.550700m
+        Id = id,
+        Slug = $"demo-{id:N}",
+        Name = "RCC Demo",
+        DescriptionEs = "Demostración en Chongqing",
+        DescriptionEn = "Chongqing demonstration",
+        Address = "Dirección ficticia de prueba",
+        Latitude = 29.564700m,
+        Longitude = 106.550700m
     };
 }
