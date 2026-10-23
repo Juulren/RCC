@@ -6,11 +6,15 @@ Repositorio oficial: [Juulren/RCC](https://github.com/Juulren/RCC). Responsable 
 
 ## Estado del proyecto
 
-**Código fuente:** esta actualización publica la documentación en `main`. La implementación completa sigue en la [rama de desarrollo](https://github.com/Juulren/RCC/tree/codex/puente-ia-seguro), pendiente de integrar mediante sus PR. Los enlaces técnicos de esta portada apuntan a la versión documentada del proyecto.
+El código completo está en la rama `codex/modulo-9-despliegue`, pendiente de revisión en el [PR #13](https://github.com/Juulren/RCC/pull/13). Esta actualización de `main` publica únicamente el README.
 
 Los módulos **0–8 están implementados**. El responsable confirmó en desarrollo local pago Stripe sandbox, recepción de correo Resend, cancelación, Maps y recomendaciones con Ollama. También se implementó y probó localmente un puente autenticado para conectar un backend remoto con la IA de la PC.
 
-**El despliegue público del módulo 9 sigue pendiente:** Docker para la aplicación, Neon, configuración de producción, HTTPS, comprobaciones del sitio publicado y entrega final. El puente no está conectado todavía a un backend publicado: faltan abrir/configurar el túnel y establecer sus variables privadas. No se han fusionado los PR automáticamente.
+**Módulo 9 en preparación:** imagen Docker de producción y Blueprint Render Free implementados, con migraciones controladas, claves de sesión cifradas/persistentes en PostgreSQL y prueba del contenedor aprobada. **Falta el despliegue público:** crear/configurar cuentas Render y Neon y comprobar HTTPS, integraciones e IA remota. No se han fusionado los PR automáticamente.
+
+- [Desplegar paso a paso en Render y Neon](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/DESPLIEGUE.md).
+- [Alcance y aceptación del módulo 9](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/MODULO-9.md).
+- [Guion de diez minutos](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/DEMO-10-MINUTOS.md) y [registro de autoría](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/AUTORIA.md).
 
 ## Especificaciones y funcionalidades
 
@@ -50,9 +54,9 @@ Los módulos **0–8 están implementados**. El responsable confirmó en desarro
 | Puente de IA | Proceso ASP.NET separado, autenticación por credencial aleatoria y transporte HTTPS mediante túnel temporal. |
 | Pruebas | xUnit, ASP.NET TestHost/WebApplicationFactory, PostgreSQL real, Vitest, Testing Library y Playwright. |
 | Herramientas | Git, GitHub Actions, Docker Compose para PostgreSQL y Gitleaks para detección de secretos. |
-| Publicación prevista | Frontend y API bajo el mismo dominio en Render; PostgreSQL en Neon. Pendiente del módulo 9. |
+| Publicación preparada | Imagen Docker y Blueprint Render Free, con PostgreSQL en Neon. Validación pública pendiente. |
 
-Las versiones exactas de dependencias están en los archivos `.csproj`, `frontend/package.json` y `frontend/package-lock.json`. Las fuentes, adaptaciones y licencias de imágenes/componentes están en [THIRD_PARTY.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/THIRD_PARTY.md).
+Las versiones exactas de dependencias están en los archivos `.csproj`, `frontend/package.json` y `frontend/package-lock.json`. Las fuentes, adaptaciones y licencias de imágenes/componentes están en [THIRD_PARTY.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/THIRD_PARTY.md).
 
 ## Integraciones
 
@@ -110,7 +114,7 @@ cd RCC
 Mientras el PR de estos cambios no esté integrado, usa la rama que contiene la implementación:
 
 ```powershell
-git switch codex/puente-ia-seguro
+git switch codex/modulo-9-despliegue
 ```
 
 Una vez integrado en `main`, ese cambio de rama deja de ser necesario. Restaura dependencias:
@@ -156,7 +160,7 @@ Remove-Variable rccDb, rccConnection
 
 Si cambias la contraseña de `.env` después de crear el volumen, PostgreSQL no cambia automáticamente la contraseña del usuario existente. No borres el volumen para resolverlo si contiene datos que quieras conservar.
 
-Alternativa sin Docker en Windows: [scripts/dev-postgres.ps1](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/scripts/dev-postgres.ps1). Requiere binarios PostgreSQL ya instalados y admite `-PostgresBin`; crea una instancia separada en `.local/`, puerto **55432**, y configura user-secrets. No ejecutes ambos procedimientos contra la misma carpeta de datos.
+Alternativa sin Docker en Windows: [scripts/dev-postgres.ps1](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/scripts/dev-postgres.ps1). Requiere binarios PostgreSQL ya instalados y admite `-PostgresBin`; crea una instancia separada en `.local/`, puerto **55432**, y configura user-secrets. No ejecutes ambos procedimientos contra la misma carpeta de datos.
 
 ### 3. Aplicar migraciones, compilar React e iniciar
 
@@ -184,7 +188,7 @@ Abre **[http://localhost:5173](http://localhost:5173)**. Vite reenvía `/api` a 
 
 ### 5. Cuentas y administración
 
-Registra un cliente desde `/cuenta`. No hay credenciales fijas de administrador. Para crear el administrador propio, sigue [MODULO-3.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/MODULO-3.md) y ejecuta la inicialización explícita con sus valores privados. Retira la contraseña de inicialización después de usarla.
+Registra un cliente desde `/cuenta`. No hay credenciales fijas de administrador. Para crear el administrador propio, sigue [MODULO-3.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/MODULO-3.md) y ejecuta la inicialización explícita con sus valores privados. Retira la contraseña de inicialización después de usarla.
 
 Páginas principales: `/`, `/habitaciones`, `/experiencias`, `/destino`, `/cuenta`, `/reservar` y `/mis-reservas`. El administrador accede al panel desde su cuenta.
 
@@ -198,7 +202,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\configurar-ia-local.ps1
 
 El script descarga `qwen2.5:1.5b` y configura el proveedor local en user-secrets. Reinicia RCC; después inicia sesión, busca disponibilidad y pulsa **Pedir recomendaciones**. Debe aparecer la indicación de opciones ordenadas con IA. Mantén Ollama abierto.
 
-El modelo ocupa aproximadamente 986 MB de descarga y utiliza memoria/CPU de la PC. No tiene cargos por consulta; la velocidad depende del equipo. [Configuración y límites](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/IA-LOCAL.md).
+El modelo ocupa aproximadamente 986 MB de descarga y utiliza memoria/CPU de la PC. No tiene cargos por consulta; la velocidad depende del equipo. [Configuración y límites](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/IA-LOCAL.md).
 
 ### IA de la PC desde un backend publicado
 
@@ -208,7 +212,7 @@ El puente local se inicia con:
 powershell -ExecutionPolicy Bypass -File .\scripts\iniciar-puente-local.ps1
 ```
 
-Esto **no abre un túnel público**: genera una credencial de sesión y escucha únicamente en `127.0.0.1:5092`. El túnel, sus variables privadas en el backend y la prueba desde el sitio público se preparan por separado siguiendo [PUENTE-IA.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/PUENTE-IA.md).
+Esto **no abre un túnel público**: genera una credencial de sesión y escucha únicamente en `127.0.0.1:5092`. El túnel, sus variables privadas en el backend y la prueba desde el sitio público se preparan por separado siguiendo [PUENTE-IA.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/PUENTE-IA.md).
 
 No expongas directamente el puerto de Ollama. La conexión es temporal: PC encendida, credencial con vencimiento inferior a ocho horas y nueva configuración al reiniciar el puente/túnel. La validación del despliegue remoto sigue pendiente.
 
@@ -216,11 +220,11 @@ No expongas directamente el puerto de Ollama. La conexión es temporal: PC encen
 
 | Integración | Guía |
 |---|---|
-| Stripe test y webhook local | [STRIPE-SANDBOX.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/STRIPE-SANDBOX.md) |
-| Google Maps y Resend | [SERVICIOS-EXTERNOS.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/SERVICIOS-EXTERNOS.md) |
-| Opciones de proveedores y OpenAI de pago | [CONFIGURACION-SERVICIOS.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/CONFIGURACION-SERVICIOS.md) |
-| IA local gratuita | [IA-LOCAL.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/IA-LOCAL.md) |
-| Puente remoto autenticado | [PUENTE-IA.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/PUENTE-IA.md) |
+| Stripe test y webhook local | [STRIPE-SANDBOX.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/STRIPE-SANDBOX.md) |
+| Google Maps y Resend | [SERVICIOS-EXTERNOS.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/SERVICIOS-EXTERNOS.md) |
+| Opciones de proveedores y OpenAI de pago | [CONFIGURACION-SERVICIOS.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/CONFIGURACION-SERVICIOS.md) |
+| IA local gratuita | [IA-LOCAL.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/IA-LOCAL.md) |
+| Puente remoto autenticado | [PUENTE-IA.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/PUENTE-IA.md) |
 
 En producción las claves se guardan en variables privadas del backend; en Development, en user-secrets. Ninguna clave privada debe ir en variables `VITE_*`, código, capturas, documentación o commits. Las credenciales de Stripe deben ser de sandbox.
 
@@ -284,16 +288,27 @@ Las contraseñas públicas del servicio PostgreSQL de CI son exclusivas de su en
 - `/api/health/ready`: base accesible y migraciones aplicadas; 503 si falta preparación.
 - `/api/payments/status`: disponibilidad del pago y modo de prueba.
 
-Para preparar la publicación conjunta:
+La imagen de producción se compila y comprueba con PostgreSQL temporal:
+
+```powershell
+docker build -t rcc:module9 .
+python scripts/test-container.py
+```
+
+La prueba necesita Docker, PostgreSQL local de Compose y OpenSSL (incluido en Git para Windows). No usa claves reales ni modifica reservas del usuario. Consulta [DESPLIEGUE.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/DESPLIEGUE.md) antes de publicar: Production requiere origen HTTPS, conexión privada y certificado para claves de sesión. En Neon se exige TLS con VerifyFull.
+
+Para preparar la publicación conjunta sin contenedor:
 
 ```powershell
 node scripts/build-web.mjs
 dotnet publish src/Rcc.Api --configuration Release --output artifacts/publish
 ```
 
-Antes de ejecutar el resultado, proporciona `ConnectionStrings__Rcc` y los servicios elegidos en el entorno del proceso. En desarrollo local, con esa conexión ya configurada:
+Antes de ejecutar el resultado en Production, proporciona `ConnectionStrings__Rcc`, `Deployment__PublicOrigin` HTTPS y las dos variables privadas DataProtection descritas en DESPLIEGUE.md. El certificado puede prepararse con `dotnet run --project src/Rcc.Api -- --prepare-deployment`. Para ejecutar una publicación HTTP solo local, configura Development y su conexión sin confundirlo con una prueba HTTPS de producción. En desarrollo local, con esa conexión ya configurada:
 
 ```powershell
+$env:ASPNETCORE_ENVIRONMENT = "Development"
+$env:DOTNET_ENVIRONMENT = "Development"
 dotnet artifacts/publish/Rcc.Api.dll --contentRoot "$((Get-Location).Path)/artifacts/publish" --urls http://127.0.0.1:5081
 ```
 
@@ -303,14 +318,14 @@ Esto valida una publicación local; **no equivale al despliegue en Render**. Det
 
 | Documento | Contenido |
 |---|---|
-| [ESPECIFICACION.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/ESPECIFICACION.md) | Historias de usuario, datos, API y reglas. |
-| [DISENO.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/DISENO.md) | Dirección visual y bocetos. |
-| [MODULOS.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/MODULOS.md) | Entregas, aceptación y trazabilidad académica. |
-| [MODULO-1.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/MODULO-1.md) · [MODULO-2.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/MODULO-2.md) | Base técnica y sistema visual. |
-| [MODULO-3.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/MODULO-3.md) · [MODULO-4.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/MODULO-4.md) | Identidad, roles, catálogo y administración. |
-| [MODULO-5.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/MODULO-5.md) · [MODULO-6.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/MODULO-6.md) | Reservas, pagos y reembolsos. |
-| [MODULO-7.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/MODULO-7.md) · [MODULO-8.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/MODULO-8.md) | Servicios externos y recomendaciones. |
-| [TRABAJO-INDIVIDUAL.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/docs/TRABAJO-INDIVIDUAL.md) | Responsabilidad, autoría y bitácora. |
-| [THIRD_PARTY.md](https://github.com/Juulren/RCC/blob/927a6ce6a5f1f10634f99812ec9b75e96317e672/THIRD_PARTY.md) | Fuentes y licencias de terceros. |
+| [ESPECIFICACION.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/ESPECIFICACION.md) | Historias de usuario, datos, API y reglas. |
+| [DISENO.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/DISENO.md) | Dirección visual y bocetos. |
+| [MODULOS.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/MODULOS.md) | Entregas, aceptación y trazabilidad académica. |
+| [MODULO-1.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/MODULO-1.md) · [MODULO-2.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/MODULO-2.md) | Base técnica y sistema visual. |
+| [MODULO-3.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/MODULO-3.md) · [MODULO-4.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/MODULO-4.md) | Identidad, roles, catálogo y administración. |
+| [MODULO-5.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/MODULO-5.md) · [MODULO-6.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/MODULO-6.md) | Reservas, pagos y reembolsos. |
+| [MODULO-7.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/MODULO-7.md) · [MODULO-8.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/MODULO-8.md) | Servicios externos y recomendaciones. |
+| [TRABAJO-INDIVIDUAL.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/docs/TRABAJO-INDIVIDUAL.md) | Responsabilidad, autoría y bitácora. |
+| [THIRD_PARTY.md](https://github.com/Juulren/RCC/blob/3eeb6347ca3eb1512f7cf74e957071d1f84e970e/THIRD_PARTY.md) | Fuentes y licencias de terceros. |
 
 Las evidencias de cada módulo conservan su fecha: pueden describir una configuración que todavía estaba pendiente entonces. El estado actual se resume al inicio de este README y en las guías posteriores de integración.
