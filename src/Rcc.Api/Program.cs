@@ -9,9 +9,12 @@ using Rcc.Api.Reservations;
 using Rcc.Api.Payments;
 using Rcc.Api.Services;
 using Rcc.Api.Recommendations;
+using Rcc.Api.Deployment;
 
+if (args.Contains("--prepare-deployment")) { DeploymentSecrets.Prepare(); return; }
+var migrateOnly = args.Contains("--migrate");
 var initializeIdentity = args.Contains("--initialize-identity");
-var builder = WebApplication.CreateBuilder(args.Where(arg => arg != "--initialize-identity").ToArray());
+var builder = WebApplication.CreateBuilder(args.Where(arg => arg is not ("--initialize-identity" or "--migrate")).ToArray());
 var connectionString = builder.Configuration.GetConnectionString("Rcc");
 if (string.IsNullOrWhiteSpace(connectionString))
 {
@@ -19,6 +22,9 @@ if (string.IsNullOrWhiteSpace(connectionString))
         "Configure ConnectionStrings:Rcc mediante user-secrets o ConnectionStrings__Rcc.");
 }
 
+if (int.TryParse(Environment.GetEnvironmentVariable("PORT"), out var port) && port is > 0 and <= 65535)
+    builder.WebHost.UseUrls("http://0.0.0.0:" + port);
+builder.AddRccProduction();
 builder.Services.AddProblemDetails();
 builder.Services.AddDbContext<RccDbContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddHealthChecks().AddCheck<DatabaseReadinessCheck>("postgresql", tags: ["ready"]);
@@ -54,11 +60,18 @@ builder.Services.AddScoped<IRecommendationGateway>(services =>
             ? services.GetRequiredService<RelayGateway>() : services.GetRequiredService<OpenAiGateway>());
 builder.Services.AddScoped<RecommendationService>();
 var app = builder.Build();
+if (migrateOnly || builder.Configuration.GetValue<bool>("Deployment:ApplyMigrations"))
+{
+    using var scope = app.Services.CreateScope();
+    await scope.ServiceProvider.GetRequiredService<RccDbContext>().Database.MigrateAsync();
+    if (migrateOnly) return;
+}
 if (initializeIdentity)
 {
     await IdentityBootstrap.InitializeAsync(app.Services, app.Configuration);
     return;
 }
+app.UseForwardedHeaders();
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 if (!app.Environment.IsDevelopment() && !app.Environment.IsEnvironment("Testing"))
@@ -80,8 +93,8 @@ app.MapRccRecommendations();
 app.MapGet("/api/status", () => Results.Ok(new
 {
     application = "RCC",
-    module = 8,
-    stage = "room-recommendations"
+    module = 9,
+    stage = "deployment-preparation"
 }));
 app.MapHealthChecks("/api/health/live", HealthOptions(ready: false));
 app.MapHealthChecks("/api/health/ready", HealthOptions(ready: true));

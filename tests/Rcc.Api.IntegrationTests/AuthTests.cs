@@ -172,7 +172,13 @@ public sealed class AuthTests(PostgresFixture postgres) : IClassFixture<Postgres
     [Fact]
     public async Task Production_cookies_require_https_httponly_and_host_prefix()
     {
-        await using var factory = postgres.CreateFactory().WithWebHostBuilder(builder => builder.UseEnvironment("Production"));
+        var productionSettings = ProductionTests.Settings();
+        productionSettings["Deployment:PublicOrigin"] = "https://localhost";
+        await using var factory = postgres.CreateFactory().WithWebHostBuilder(builder =>
+        {
+            builder.UseEnvironment("Production");
+            foreach (var pair in productionSettings) builder.UseSetting(pair.Key, pair.Value);
+        });
         using var client = factory.CreateClient(new WebApplicationFactoryClientOptions { BaseAddress = new Uri("https://localhost") });
         var email = Email();
         var csrf = await client.GetAsync("/api/auth/csrf");

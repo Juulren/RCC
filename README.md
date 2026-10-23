@@ -8,7 +8,11 @@ Repositorio oficial: [Juulren/RCC](https://github.com/Juulren/RCC). Responsable 
 
 Los módulos **0–8 están implementados**. El responsable confirmó en desarrollo local pago Stripe sandbox, recepción de correo Resend, cancelación, Maps y recomendaciones con Ollama. También se implementó y probó localmente un puente autenticado para conectar un backend remoto con la IA de la PC.
 
-**El despliegue público del módulo 9 sigue pendiente:** Docker para la aplicación, Neon, configuración de producción, HTTPS, comprobaciones del sitio publicado y entrega final. El puente no está conectado todavía a un backend publicado: faltan abrir/configurar el túnel y establecer sus variables privadas. No se han fusionado los PR automáticamente.
+**Módulo 9 en preparación:** imagen Docker de producción y Blueprint Render Free implementados, con migraciones controladas, claves de sesión cifradas/persistentes en PostgreSQL y prueba del contenedor aprobada. **Falta el despliegue público:** crear/configurar cuentas Render y Neon y comprobar HTTPS, integraciones e IA remota. No se han fusionado los PR automáticamente.
+
+- [Desplegar paso a paso en Render y Neon](docs/DESPLIEGUE.md).
+- [Alcance y aceptación del módulo 9](docs/MODULO-9.md).
+- [Guion de diez minutos](docs/DEMO-10-MINUTOS.md) y [registro de autoría](docs/AUTORIA.md).
 
 ## Especificaciones y funcionalidades
 
@@ -48,7 +52,7 @@ Los módulos **0–8 están implementados**. El responsable confirmó en desarro
 | Puente de IA | Proceso ASP.NET separado, autenticación por credencial aleatoria y transporte HTTPS mediante túnel temporal. |
 | Pruebas | xUnit, ASP.NET TestHost/WebApplicationFactory, PostgreSQL real, Vitest, Testing Library y Playwright. |
 | Herramientas | Git, GitHub Actions, Docker Compose para PostgreSQL y Gitleaks para detección de secretos. |
-| Publicación prevista | Frontend y API bajo el mismo dominio en Render; PostgreSQL en Neon. Pendiente del módulo 9. |
+| Publicación preparada | Imagen Docker y Blueprint Render Free, con PostgreSQL en Neon. Validación pública pendiente. |
 
 Las versiones exactas de dependencias están en los archivos `.csproj`, `frontend/package.json` y `frontend/package-lock.json`. Las fuentes, adaptaciones y licencias de imágenes/componentes están en [THIRD_PARTY.md](THIRD_PARTY.md).
 
@@ -108,7 +112,7 @@ cd RCC
 Mientras el PR de estos cambios no esté integrado, usa la rama que contiene la implementación:
 
 ```powershell
-git switch codex/puente-ia-seguro
+git switch codex/modulo-9-despliegue
 ```
 
 Una vez integrado en `main`, ese cambio de rama deja de ser necesario. Restaura dependencias:
@@ -282,16 +286,27 @@ Las contraseñas públicas del servicio PostgreSQL de CI son exclusivas de su en
 - `/api/health/ready`: base accesible y migraciones aplicadas; 503 si falta preparación.
 - `/api/payments/status`: disponibilidad del pago y modo de prueba.
 
-Para preparar la publicación conjunta:
+La imagen de producción se compila y comprueba con PostgreSQL temporal:
+
+```powershell
+docker build -t rcc:module9 .
+python scripts/test-container.py
+```
+
+La prueba necesita Docker, PostgreSQL local de Compose y OpenSSL (incluido en Git para Windows). No usa claves reales ni modifica reservas del usuario. Consulta [DESPLIEGUE.md](docs/DESPLIEGUE.md) antes de publicar: Production requiere origen HTTPS, conexión privada y certificado para claves de sesión. En Neon se exige TLS con VerifyFull.
+
+Para preparar la publicación conjunta sin contenedor:
 
 ```powershell
 node scripts/build-web.mjs
 dotnet publish src/Rcc.Api --configuration Release --output artifacts/publish
 ```
 
-Antes de ejecutar el resultado, proporciona `ConnectionStrings__Rcc` y los servicios elegidos en el entorno del proceso. En desarrollo local, con esa conexión ya configurada:
+Antes de ejecutar el resultado en Production, proporciona `ConnectionStrings__Rcc`, `Deployment__PublicOrigin` HTTPS y las dos variables privadas DataProtection descritas en DESPLIEGUE.md. El certificado puede prepararse con `dotnet run --project src/Rcc.Api -- --prepare-deployment`. Para ejecutar una publicación HTTP solo local, configura Development y su conexión sin confundirlo con una prueba HTTPS de producción. En desarrollo local, con esa conexión ya configurada:
 
 ```powershell
+$env:ASPNETCORE_ENVIRONMENT = "Development"
+$env:DOTNET_ENVIRONMENT = "Development"
 dotnet artifacts/publish/Rcc.Api.dll --contentRoot "$((Get-Location).Path)/artifacts/publish" --urls http://127.0.0.1:5081
 ```
 

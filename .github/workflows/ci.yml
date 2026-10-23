@@ -11,7 +11,7 @@ permissions:
 jobs:
   foundation:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     services:
       postgres:
         image: postgres:17.6
@@ -108,6 +108,13 @@ jobs:
           done
           curl --fail --silent "$RCC_PAYMENT_BASE_URL/api/health/ready"
           npm run test:payments --prefix frontend
+      - name: Imagen Production y smoke aislado
+        env:
+          RCC_DOCKER_POSTGRES_USER: rcc_ci
+          RCC_DOCKER_POSTGRES_PASSWORD: ci_only_ephemeral_password
+        run: |
+          docker build -t rcc:module9 .
+          python3 scripts/test-container.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:

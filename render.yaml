@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: rcc
+    runtime: docker
+    plan: free
+    branch: codex/modulo-9-despliegue
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health/ready
+    autoDeployTrigger: "off"
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: DOTNET_ENVIRONMENT
+        value: Production
+      - key: Deployment__RenderProxy
+        value: "true"
+      - key: Deployment__ApplyMigrations
+        value: "true"
+      - key: ConnectionStrings__Rcc
+        sync: false
+      - key: DataProtection__CertificateBase64
+        sync: false
+      - key: DataProtection__CertificatePassword
+        sync: false
+      - key: OpenAI__Enabled
+        value: "false"
+      - key: Resend__Enabled
+        value: "false"

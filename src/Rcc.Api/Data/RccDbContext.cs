@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Rcc.Api.Data;
 
-public sealed class RccDbContext(DbContextOptions<RccDbContext> options) : IdentityDbContext<IdentityUser>(options)
+public sealed class RccDbContext(DbContextOptions<RccDbContext> options) : IdentityDbContext<IdentityUser>(options), IDataProtectionKeyContext
 {
+    public DbSet<DataProtectionKey> DataProtectionKeys { get; set; } = null!;
     public DbSet<Hotel> Hotels => Set<Hotel>();
     public DbSet<RoomType> RoomTypes => Set<RoomType>();
     public DbSet<PhysicalRoom> Rooms => Set<PhysicalRoom>();
