@@ -113,7 +113,7 @@ cd RCC
 Mientras el PR de estos cambios no esté integrado, usa la rama que contiene la implementación:
 
 ```powershell
-git switch codex/modulo-9-despliegue
+git switch codex/gemini-gratuito
 ```
 
 Una vez integrado en `main`, ese cambio de rama deja de ser necesario. Restaura dependencias:
