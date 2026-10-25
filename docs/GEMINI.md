@@ -37,7 +37,7 @@ Para desarrollo local, las mismas propiedades se guardan como `Gemini:...` en us
 
 1. Con sesión iniciada en la URL de Render, abre Reservar, selecciona fechas futuras, huéspedes y preferencias, y pulsa **Pedir recomendaciones**.
 2. Debe aparecer la indicación de opciones ordenadas con IA. En DevTools → Network, la respuesta de `POST /api/recommendations` debe contener `mode: "ai"` y `reason: "AI_RANKED"`. Ver la lista de habitaciones por sí sola no demuestra una llamada al modelo.
-3. Con cuota agotada, timeout, error de proveedor o respuesta inválida, se conserva la lista validada por C# y se informa que no intervino IA: `mode: "deterministic"`. `AI_DAILY_LIMIT` corresponde al cupo local; `AI_UNAVAILABLE` puede ser cuota Google, clave, modelo o disponibilidad. Consulta el uso/cuota en AI Studio sin publicar credenciales.
+3. Con cuota agotada, timeout, error de proveedor o respuesta inválida, se conserva la lista validada por C# y se informa que no intervino IA: `mode: "deterministic"`. `AI_DAILY_LIMIT` corresponde al cupo local; El diagnóstico distingue `AI_PROVIDER_QUOTA` (429), `AI_PROVIDER_AUTH` (401/403), `AI_MODEL_UNAVAILABLE` (404), `AI_PROVIDER_REQUEST` (400), `AI_PROVIDER_TIMEOUT` y `AI_INVALID_RESPONSE`. `AI_UNAVAILABLE` queda para otros fallos de conexión/proveedor. No incluye el cuerpo privado del error. Consulta el uso/cuota en AI Studio sin publicar credenciales.
 4. Precios, capacidad, fechas, cotización y confirmación de reserva siguen comprobándose en el servidor. La IA no reserva ni cambia tarifas.
 
 El contador diario ya existente en PostgreSQL es compartido por todos los proveedores/instancias y se reinicia al cambiar el día UTC. Los intentos fallidos también consumen ese cupo; cambiar de Ollama a Gemini no borra el uso del día. Las cuotas de Google son independientes y pueden ser inferiores. No hay reintentos automáticos ni cambio de modelo al recibir 429.
@@ -55,3 +55,17 @@ Referencias oficiales verificadas el 24 de octubre de 2026: [precios](https://ai
 ## Evidencia de implementación
 
 Pruebas locales aisladas: **52 aprobadas** de gateways y puente, incluidas 19 de Gemini (ES/EN, solicitud privada y esquema, errores 429/403/503 sin reintento, modelo no permitido, respuesta truncada/inventada/duplicada/vacía, tamaño máximo y prioridad de configuración). Proveedores simulados, sin llamadas reales ni clave de Google. La CI ejecuta la matriz completa con PostgreSQL; no se atribuye esa validación a la ejecución local sin base.
+
+## Diagnóstico del primer despliegue
+
+Si el panel indica cuota del proveedor, comprueba los límites activos del modelo en AI Studio. Un 429 puede corresponder a límites por minuto o por día, o a cuota gratuita no disponible para ese proyecto; no se soluciona cambiando a un proveedor de pago ni aumentando el cupo local de RCC. Si el mensaje es de acceso, revisa que Render tenga la clave del mismo proyecto, sin espacios/comillas, y que sus restricciones permitan Generative Language API. Si aparece solicitud rechazada, comprueba clave/configuración del modelo y disponibilidad del nivel Free para el proyecto/región. No actives Billing para intentar resolverlo sin revisar los costos.
+
+Estos códigos fijos mantienen la alternativa determinista. No se devuelven mensajes crudos de Google, prompts, claves ni datos personales. La clasificación HTTP está cubierta en pruebas de integración con proveedores simulados y los avisos del panel en ES/EN.
+
+## Preferencias comprensibles
+
+El panel muestra noches, número de habitaciones y huéspedes de la búsqueda real. El presupuesto se aplica al total de todas las habitaciones/noches en CNY (yuan chino); al introducirlo se muestra el promedio máximo por habitación y noche, aclarando que no es una tarifa ofrecida. Sin presupuesto no se añade un máximo; sin prioridades el cálculo determinista favorece menor precio.
+
+Vista al río prioriza más habitaciones con esa vista; más espacio, la suma de m²; menor precio, el total de la estancia. Son preferencias de orden y no filtros obligatorios. Capacidad, inventario, fechas y presupuesto se validan como antes. Se conservan las tres preferencias enumeradas; no se añaden servicios o características que el catálogo no pueda comprobar.
+
+Validación del ajuste: 19 pruebas frontend y seis pruebas de navegador con proveedores simulados (360/768/1440, ES/EN, teclado, movimiento reducido, diagnóstico de cuota y respuesta ordenada). Las 52 pruebas aisladas de conectores/puente también pasaron. Ocho casos adicionales de diagnóstico en PostgreSQL quedan a CI porque Docker local no arrancó; no se volvió a intentar abrirlo después del reporte del responsable.

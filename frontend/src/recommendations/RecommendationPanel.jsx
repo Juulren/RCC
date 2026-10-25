@@ -14,6 +14,11 @@ export default function RecommendationPanel({ draft, language, disabled, onChoos
   const [error, setError] = useState('')
   const [selected, setSelected] = useState(null)
   const request = useRef(null)
+  const nights = (Date.parse(draft.departure) - Date.parse(draft.arrival)) / 86400000
+  const roomCount = draft.rooms.length
+  const adults = draft.rooms.reduce((total, room) => total + room.adults, 0)
+  const children = draft.rooms.reduce((total, room) => total + room.childAges.length, 0)
+  const validStay = Number.isInteger(nights) && nights > 0 && roomCount > 0
   const signature = JSON.stringify({
     arrival: draft.arrival,
     departure: draft.departure,
@@ -87,9 +92,36 @@ export default function RecommendationPanel({ draft, language, disabled, onChoos
       </h3>
       <p>
         {es
-          ? 'Comparamos habitaciones disponibles para la distribución que elegiste. Tú decides qué cotizar.'
-          : 'We compare available rooms for your guest distribution. You decide what to quote.'}
+          ? 'Te ayudamos a elegir entre las habitaciones disponibles para tus fechas y huéspedes. Ajusta tus prioridades y pide hasta tres opciones.'
+          : 'Choose from available rooms for your dates and guests. Set your priorities and request up to three options.'}
       </p>
+      {validStay && (
+        <dl
+          className="recommendation-stay"
+          aria-label={es ? 'Tu búsqueda actual' : 'Your current search'}
+        >
+          <div>
+            <dt>{es ? 'Estancia' : 'Stay'}</dt>
+            <dd>
+              {nights}{' '}
+              {es ? (nights === 1 ? 'noche' : 'noches') : nights === 1 ? 'night' : 'nights'}
+            </dd>
+          </div>
+          <div>
+            <dt>{es ? 'Habitaciones' : 'Rooms'}</dt>
+            <dd>{roomCount}</dd>
+          </div>
+          <div>
+            <dt>{es ? 'Huéspedes' : 'Guests'}</dt>
+            <dd>
+              {adults}{' '}
+              {es ? (adults === 1 ? 'adulto' : 'adultos') : adults === 1 ? 'adult' : 'adults'}
+              {children > 0 &&
+                ` · ${children} ${es ? (children === 1 ? 'niño' : 'niños') : children === 1 ? 'child' : 'children'}`}
+            </dd>
+          </div>
+        </dl>
+      )}
       {auth.status !== 'authenticated' ? (
         <Link className="text-link" to="/cuenta">
           {es ? 'Inicia sesión para recibir recomendaciones' : 'Sign in to get recommendations'}
@@ -97,7 +129,9 @@ export default function RecommendationPanel({ draft, language, disabled, onChoos
       ) : (
         <form onSubmit={recommend}>
           <fieldset disabled={busy || disabled}>
-            <legend>{es ? 'Tus prioridades' : 'Your priorities'}</legend>
+            <legend>
+              {es ? '¿Qué prefieres para tu estancia?' : 'What matters most for your stay?'}
+            </legend>
             <label className="recommendation-budget" htmlFor="recommendation-budget">
               {es
                 ? 'Presupuesto total de la estancia (CNY, opcional)'
@@ -110,18 +144,58 @@ export default function RecommendationPanel({ draft, language, disabled, onChoos
               max="100000000"
               step="0.01"
               inputMode="decimal"
+              placeholder={es ? 'Sin límite de presupuesto' : 'No budget limit'}
+              aria-describedby="recommendation-budget-help"
               value={budget}
               onChange={(e) => setBudget(e.target.value)}
             />
+            <p id="recommendation-budget-help" className="recommendation-help">
+              {es
+                ? 'CNY es el yuan chino. Este máximo cubre todas las habitaciones y noches, no es por persona. Déjalo vacío si no tienes un límite.'
+                : 'CNY is the Chinese yuan. This limit covers all rooms and nights, not each guest. Leave empty if you have no limit.'}
+            </p>
+            {validStay && Number(budget) > 0 && Number.isFinite(Number(budget)) && (
+              <p className="recommendation-budget-average">
+                {es ? 'Tu límite equivale a una media de ' : 'Your limit averages '}
+                <strong>{money(Number(budget) / (nights * roomCount), language)}</strong>
+                {es
+                  ? ' por habitación y noche. No es una tarifa ofrecida por el hotel.'
+                  : ' per room per night. This is not a hotel rate.'}
+              </p>
+            )}
+            <p className="recommendation-help">
+              {es
+                ? 'Puedes combinar prioridades. Son preferencias para ordenar opciones, no requisitos garantizados. La disponibilidad, la capacidad y tu presupuesto sí se respetan.'
+                : 'You can combine priorities. These preferences rank options; they are not guaranteed requirements. Availability, capacity and your budget are always respected.'}
+            </p>
             <div className="recommendation-preferences">
               {[
-                ['river', es ? 'Vista al río' : 'River view'],
-                ['space', es ? 'Más espacio' : 'More space'],
-                ['value', es ? 'Menor precio' : 'Lower price'],
-              ].map(([value, label]) => (
-                <label key={value}>
+                [
+                  'river',
+                  es ? 'Vista al río' : 'River view',
+                  es
+                    ? 'Prioriza combinaciones con más habitaciones con vista al río.'
+                    : 'Prefer combinations with more rooms overlooking the river.',
+                ],
+                [
+                  'space',
+                  es ? 'Más espacio' : 'More space',
+                  es
+                    ? 'Prioriza mayor superficie total en m² entre tus habitaciones.'
+                    : 'Prefer a larger combined floor area in m² across your rooms.',
+                ],
+                [
+                  'value',
+                  es ? 'Menor precio' : 'Lower price',
+                  es
+                    ? 'Prioriza el menor total de la estancia dentro de tus opciones.'
+                    : 'Prefer the lowest total stay price among your options.',
+                ],
+              ].map(([value, label, description]) => (
+                <label key={value} className={preferences.includes(value) ? 'is-selected' : ''}>
                   <input
                     type="checkbox"
+                    aria-label={label}
                     checked={preferences.includes(value)}
                     onChange={(e) =>
                       setPreferences(
@@ -131,10 +205,20 @@ export default function RecommendationPanel({ draft, language, disabled, onChoos
                       )
                     }
                   />
-                  {label}
+                  <span>
+                    <strong>{label}</strong>
+                    <small>{description}</small>
+                  </span>
                 </label>
               ))}
             </div>
+            {preferences.length === 0 && (
+              <p className="recommendation-help">
+                {es
+                  ? 'Sin preferencias, el cálculo local prioriza el menor precio total.'
+                  : 'Without preferences, local calculation prioritizes the lowest total price.'}
+              </p>
+            )}
             <p className="booking-note">
               {es
                 ? 'Si la IA está habilitada, el modelo configurado recibe solo cifras de las opciones y estas preferencias. No enviamos tu identidad, fechas, edades ni datos de pago. Sin IA usamos un cálculo local.'
@@ -178,7 +262,49 @@ export default function RecommendationPanel({ draft, language, disabled, onChoos
                 : 'The daily AI limit was reached; using the local calculation.'}
             </p>
           )}
-          {['AI_UNAVAILABLE', 'AI_INVALID_RESPONSE'].includes(result.reason) && (
+          {result.reason === 'AI_PROVIDER_QUOTA' && (
+            <p>
+              {es
+                ? 'El proveedor de IA alcanzó su cuota disponible. Usamos el cálculo local; puedes intentarlo más tarde.'
+                : 'The AI provider reached its available quota. Using local calculation; try again later.'}
+            </p>
+          )}
+          {result.reason === 'AI_PROVIDER_AUTH' && (
+            <p>
+              {es
+                ? 'El proveedor rechazó el acceso a la IA. Es necesario revisar la clave y sus permisos en el servidor. Usamos el cálculo local.'
+                : 'The provider denied AI access. The server API key and permissions need to be checked. Using local calculation.'}
+            </p>
+          )}
+          {result.reason === 'AI_MODEL_UNAVAILABLE' && (
+            <p>
+              {es
+                ? 'El modelo de IA configurado no está disponible. Usamos el cálculo local.'
+                : 'The configured AI model is unavailable. Using local calculation.'}
+            </p>
+          )}
+          {result.reason === 'AI_PROVIDER_REQUEST' && (
+            <p>
+              {es
+                ? 'El proveedor rechazó la solicitud de IA. Es necesario revisar la clave y la configuración del modelo. Usamos el cálculo local.'
+                : 'The provider rejected the AI request. The API key and model configuration need to be checked. Using local calculation.'}
+            </p>
+          )}
+          {result.reason === 'AI_PROVIDER_TIMEOUT' && (
+            <p>
+              {es
+                ? 'La IA tardó demasiado en responder. Usamos el cálculo local.'
+                : 'AI took too long to respond. Using local calculation.'}
+            </p>
+          )}
+          {result.reason === 'AI_INVALID_RESPONSE' && (
+            <p>
+              {es
+                ? 'La IA devolvió una respuesta que no pudimos validar. Usamos el cálculo local para mostrar opciones verificadas.'
+                : 'AI returned a response we could not validate. Using local calculation to show verified options.'}
+            </p>
+          )}
+          {result.reason === 'AI_UNAVAILABLE' && (
             <p>
               {es
                 ? 'La IA no pudo completar la consulta; usamos el cálculo local.'

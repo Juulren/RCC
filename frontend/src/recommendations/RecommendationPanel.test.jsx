@@ -109,3 +109,52 @@ it('explains when OpenAI is not configured while retaining local options', async
   expect(await screen.findByText(/La IA no está configurada/)).toBeVisible()
   expect(screen.getByRole('button', { name: 'Usar esta combinación' })).toBeVisible()
 })
+
+it.each([
+  ['AI_PROVIDER_QUOTA', 'alcanzó su cuota disponible', 'reached its available quota'],
+  ['AI_PROVIDER_AUTH', 'rechazó el acceso', 'denied AI access'],
+  [
+    'AI_MODEL_UNAVAILABLE',
+    'modelo de IA configurado no está disponible',
+    'AI model is unavailable',
+  ],
+  ['AI_PROVIDER_REQUEST', 'rechazó la solicitud', 'rejected the AI request'],
+  ['AI_PROVIDER_TIMEOUT', 'tardó demasiado', 'too long'],
+  ['AI_INVALID_RESPONSE', 'no pudimos validar', 'could not validate'],
+])(
+  'explains %s in both languages while keeping verified options',
+  async (reason, spanish, english) => {
+    api.mockResolvedValue({ ...result, mode: 'deterministic', reason })
+    const { rerender } = render(view())
+    fireEvent.click(screen.getByRole('button', { name: 'Pedir recomendaciones' }))
+    expect(await screen.findByText(new RegExp(spanish))).toBeVisible()
+    expect(screen.getByRole('button', { name: 'Usar esta combinación' })).toBeVisible()
+    rerender(view({ language: 'en' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Get recommendations' }))
+    expect(await screen.findByText(new RegExp(english))).toBeVisible()
+    expect(api).toHaveBeenCalledTimes(2)
+  },
+)
+
+it('explains the whole-stay budget and sends actual controlled preferences', async () => {
+  api.mockResolvedValue(result)
+  render(view())
+  expect(screen.getByLabelText('Tu búsqueda actual')).toBeVisible()
+  expect(screen.getByText('2 noches')).toBeVisible()
+  expect(screen.getByText('2 adultos')).toBeVisible()
+  expect(screen.getByText(/no es por persona/)).toBeVisible()
+  expect(screen.getByText(/Sin preferencias/)).toBeVisible()
+  fireEvent.change(screen.getByLabelText('Presupuesto total de la estancia (CNY, opcional)'), {
+    target: { value: '4000' },
+  })
+  expect(screen.getByText(/2,000/)).toBeVisible()
+  fireEvent.click(screen.getByRole('checkbox', { name: 'Vista al río' }))
+  expect(screen.queryByText(/Sin preferencias/)).toBeNull()
+  fireEvent.click(screen.getByRole('button', { name: 'Pedir recomendaciones' }))
+  await waitFor(() => expect(api).toHaveBeenCalledTimes(1))
+  expect(api.mock.calls[0][1].body).toMatchObject({
+    budget: 4000,
+    preferences: ['river'],
+    rooms: [{ adults: 2, childAges: [] }],
+  })
+})
