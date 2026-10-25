@@ -80,7 +80,20 @@ public sealed class RecommendationService(RccDbContext db, IRecommendationGatewa
                     if (ValidRanking(result, candidates)) { ranked = result; reason = "AI_RANKED"; }
                     else reason = "AI_INVALID_RESPONSE";
                 }
-                catch (Exception error) when (error is System.Net.Http.HttpRequestException or System.Text.Json.JsonException or InvalidOperationException or KeyNotFoundException || error is OperationCanceledException && !token.IsCancellationRequested) { /* Explicit deterministic fallback; do not expose provider errors. */ }
+                catch (System.Net.Http.HttpRequestException error)
+                {
+                    // Only a fixed diagnostic code leaves the server, never a provider body or credential.
+                    reason = error.StatusCode switch
+                    {
+                        System.Net.HttpStatusCode.TooManyRequests => "AI_PROVIDER_QUOTA",
+                        System.Net.HttpStatusCode.Unauthorized or System.Net.HttpStatusCode.Forbidden => "AI_PROVIDER_AUTH",
+                        System.Net.HttpStatusCode.NotFound => "AI_MODEL_UNAVAILABLE",
+                        System.Net.HttpStatusCode.BadRequest => "AI_PROVIDER_REQUEST",
+                        _ => "AI_UNAVAILABLE"
+                    };
+                }
+                catch (OperationCanceledException) when (!token.IsCancellationRequested) { reason = "AI_PROVIDER_TIMEOUT"; }
+                catch (Exception error) when (error is System.Text.Json.JsonException or InvalidOperationException or KeyNotFoundException) { reason = "AI_INVALID_RESPONSE"; }
             }
         }
         var choices = ranked ?? candidates.Take(3).Select(x => new RankedChoice(x.Id, input.Locale == "es" ? "Opción calculada por capacidad, preferencias y precio. No intervino IA." : "Option calculated by capacity, preferences and price. No AI was used.")).ToList();

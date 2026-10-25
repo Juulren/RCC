@@ -21,6 +21,9 @@ public sealed class RecommendationTests(PostgresFixture postgres) : IClassFixtur
         {
             Interlocked.Increment(ref Calls); if (DuringCall is not null) await DuringCall();
             if (Mode == "fail") throw new HttpRequestException("private provider error");
+            if (Mode.StartsWith("http-")) throw new HttpRequestException("private provider error", null, (HttpStatusCode)int.Parse(Mode[5..]));
+            if (Mode == "timeout") throw new TaskCanceledException("private provider timeout");
+            if (Mode == "malformed") throw new JsonException("private provider payload");
             if (Mode == "invalid") return [new("invented-id", "Do not trust this")];
             if (Mode == "duplicate") return [new(candidates[0].Id, "First"), new(candidates[0].Id, "Second")];
             return candidates.Take(2).Select(x => new RankedChoice(x.Id, locale == "es" ? "Comparación de precio y espacio." : "Price and space comparison.")).ToList();
@@ -79,6 +82,14 @@ public sealed class RecommendationTests(PostgresFixture postgres) : IClassFixtur
     [InlineData("fail", "AI_UNAVAILABLE")]
     [InlineData("invalid", "AI_INVALID_RESPONSE")]
     [InlineData("duplicate", "AI_INVALID_RESPONSE")]
+    [InlineData("http-429", "AI_PROVIDER_QUOTA")]
+    [InlineData("http-401", "AI_PROVIDER_AUTH")]
+    [InlineData("http-403", "AI_PROVIDER_AUTH")]
+    [InlineData("http-404", "AI_MODEL_UNAVAILABLE")]
+    [InlineData("http-400", "AI_PROVIDER_REQUEST")]
+    [InlineData("http-503", "AI_UNAVAILABLE")]
+    [InlineData("timeout", "AI_PROVIDER_TIMEOUT")]
+    [InlineData("malformed", "AI_INVALID_RESPONSE")]
     public async Task Provider_failure_or_invented_duplicate_id_uses_explicit_local_fallback(string mode, string reason)
     {
         var result = await Run(Input(), new Gateway { Mode = mode }, true); Assert.Equal("deterministic", result.Mode); Assert.Equal(reason, result.Reason); Assert.NotEmpty(result.Options); Assert.All(result.Options, x => Assert.Contains("No intervino IA", x.Explanation));

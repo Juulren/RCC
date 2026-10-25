@@ -1,6 +1,6 @@
 # Despliegue académico: Render Free + Neon Free
 
-Este procedimiento publica React y ASP.NET bajo el mismo dominio. La imagen Docker ya se prueba localmente; **no existe todavía un despliegue público verificado**. No compartas claves, cadenas PostgreSQL, certificados ni archivos privados en chat, capturas, Git o variables VITE.
+Este procedimiento publica React y ASP.NET bajo el mismo dominio. La imagen Docker ya se prueba localmente; **RCC ya fue publicado y aceptado por el responsable el 24 de octubre de 2026** en https://rcc-7gqa.onrender.com. Los pasos se conservan para reproducir la configuración. No compartas claves, cadenas PostgreSQL, certificados ni archivos privados en chat, capturas, Git o variables VITE.
 
 ## 1. Crear cuentas gratuitas
 
@@ -14,7 +14,7 @@ Los niveles gratuitos tienen cupos. Render duerme tras 15 minutos sin tráfico, 
 
 En el proyecto Neon abre **Connect** y selecciona tu base/rol. Para el primer despliegue usa el endpoint directo: desactiva la opción Connection pooling del panel. Npgsql mantiene su propio pool, limitado a 10 conexiones.
 
-Puedes copiar la cadena del ejemplo C# y establecer `SSL Mode=VerifyFull;Maximum Pool Size=10`, o usar el asistente que convierte una URI PostgreSQL de Neon al formato de ASP.NET:
+Puedes copiar la cadena del ejemplo C# y establecer `SSL Mode=VerifyFull;Maximum Pool Size=10;GSS Encryption Mode=Disable`, o usar el asistente que convierte una URI PostgreSQL de Neon al formato de ASP.NET:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\preparar-neon.ps1 -DesdePortapapeles
@@ -97,7 +97,7 @@ Inicializa un administrador explícitamente contra la base Neon siguiendo MODULO
 - **Resend:** activa `Resend__Enabled=true` y configura ApiKey/From privados. El remitente de prueba conserva las restricciones de destinatario de tu cuenta. Comprueba recepción; aceptación HTTP no equivale a llegada a bandeja.
 - **Maps:** configura `GoogleMaps__EmbedKey`; agrega el referente HTTPS publicado y restringe la API a Maps Embed. Es una clave pública en el iframe, no un secreto de backend.
 - **Clima:** no requiere una clave para esta integración; comprueba fuente/hora y alternativa ante fallo.
-- **IA:** por decisión del responsable se mantiene **Ollama con puente**, no Gemini. Sigue PUENTE-IA.md. Mantén la PC, Ollama, puente y túnel abiertos; configura Provider=OllamaRelay, URL y token solo en Render. Repite la configuración al cambiar credencial/hostname y apaga la conexión al terminar. La API jamás cambia automáticamente a OpenAI de pago.
+- **IA:** la decisión actual es **Gemini en un proyecto Free**, según [GEMINI.md](GEMINI.md). Configura sus variables privadas y despliega la rama del ajuste; no necesita PC ni túnel. El responsable confirmó Gemini funcionando; la comprobación técnica de una consulta sigue siendo `AI_RANKED`. Ollama/puente queda como alternativa documentada para desarrollo, sin fallback automático.
 
 ## 8. Límites, operación y reversión
 
@@ -105,6 +105,6 @@ Al dormir Render Free, los workers de notificaciones, conciliación y reembolsos
 
 Mantén las claves de proveedores fuera de Git e imagen; revisa uso y límites de las cuentas. Un rollback de imagen **no revierte una migración PostgreSQL**. Antes de aplicar migraciones en un entorno con datos importantes, crea un respaldo/snapshot dentro de las opciones de tu plan y verifica su restauración. No borres la base Neon para resolver un fallo de despliegue.
 
-Render/Neon no se declaran operativos hasta ejecutar las comprobaciones HTTPS con tus cuentas. Esta guía y el Blueprint preparan la publicación; no constituyen una contratación ni una comprobación de las cuentas externas.
+El responsable realizó la configuración de Render/Neon y confirmó el sitio funcional. La aceptación de cierre está en MODULO-9.md. Esta guía conserva los pasos de configuración; no autoriza contratar planes de pago.
 
 Referencias: [Render Free](https://render.com/docs/free), [Docker en Render](https://render.com/docs/docker), [variables administradas](https://render.com/docs/environment-variables), [Neon Free](https://neon.com/pricing), [TLS en Npgsql](https://www.npgsql.org/doc/security.html).
