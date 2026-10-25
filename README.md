@@ -6,15 +6,17 @@ Repositorio oficial: [Juulren/RCC](https://github.com/Juulren/RCC). Responsable 
 
 ## Estado del proyecto
 
-El código completo está en la rama `codex/gemini-gratuito`, pendiente de revisión en el [PR #14](https://github.com/Juulren/RCC/pull/14). Esta actualización de `main` publica únicamente el README.
+El código completo está en la rama `codex/gemini-gratuito` ([PR #14](https://github.com/Juulren/RCC/pull/14)). Esta actualización de `main` publica únicamente el README.
 
-Los módulos **0–8 están implementados**. El responsable confirmó en desarrollo local pago Stripe sandbox, recepción de correo Resend, cancelación, Maps y recomendaciones con Ollama. También se implementó y probó localmente un puente autenticado para conectar un backend remoto con la IA de la PC.
+Los módulos **0–9 están implementados y el proyecto fue dado por concluido por Juulren el 24 de octubre de 2026**, tras sus pruebas manuales.
 
-**Módulo 9 publicado y en validación:** [RCC en Render](https://rcc-7gqa.onrender.com). La API respondió Healthy y el responsable confirmó registro/login, pago sandbox, correo y Maps. Docker de producción, claves de sesión cifradas/persistentes y prueba del contenedor están implementados. La transición a Gemini está preparada, pendiente de clave y prueba real. Quedan comprobaciones de aceptación y demostración; no se han fusionado los PR automáticamente.
+**Sitio publicado:** [RCC en Render](https://rcc-7gqa.onrender.com), con PostgreSQL en Neon. El responsable confirmó registro/login, pagos Stripe sandbox, correo Resend, Maps e IA Gemini. La API y la base responden Healthy, y la CI y el escaneo de secretos de la versión funcional pasaron. Gemini ya no requiere PC ni túnel; conserva el proyecto Google en Free sin activar facturación.
 
-- [Desplegar paso a paso en Render y Neon](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/DESPLIEGUE.md).
-- [Alcance y aceptación del módulo 9](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/MODULO-9.md).
-- [Guion de diez minutos](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/DEMO-10-MINUTOS.md) y [registro de autoría](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/AUTORIA.md).
+El cierre es la aceptación del responsable; las evidencias y su alcance se registran en [MODULO-9.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/MODULO-9.md). No fusiona automáticamente los PR ni acredita una revisión humana independiente.
+
+- [Desplegar paso a paso en Render y Neon](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/DESPLIEGUE.md).
+- [Alcance y aceptación del módulo 9](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/MODULO-9.md).
+- [Guion de diez minutos](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/DEMO-10-MINUTOS.md) y [registro de autoría](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/AUTORIA.md).
 
 ## Especificaciones y funcionalidades
 
@@ -54,9 +56,9 @@ Los módulos **0–8 están implementados**. El responsable confirmó en desarro
 | Puente de IA | Proceso ASP.NET separado, autenticación por credencial aleatoria y transporte HTTPS mediante túnel temporal. |
 | Pruebas | xUnit, ASP.NET TestHost/WebApplicationFactory, PostgreSQL real, Vitest, Testing Library y Playwright. |
 | Herramientas | Git, GitHub Actions, Docker Compose para PostgreSQL y Gitleaks para detección de secretos. |
-| Publicación preparada | Imagen Docker y Blueprint Render Free, con PostgreSQL en Neon. Validación pública pendiente. |
+| Publicación | Docker en Render y PostgreSQL en Neon. Sitio publicado y aceptado por el responsable. |
 
-Las versiones exactas de dependencias están en los archivos `.csproj`, `frontend/package.json` y `frontend/package-lock.json`. Las fuentes, adaptaciones y licencias de imágenes/componentes están en [THIRD_PARTY.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/THIRD_PARTY.md).
+Las versiones exactas de dependencias están en los archivos `.csproj`, `frontend/package.json` y `frontend/package-lock.json`. Las fuentes, adaptaciones y licencias de imágenes/componentes están en [THIRD_PARTY.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/THIRD_PARTY.md).
 
 ## Integraciones
 
@@ -66,9 +68,9 @@ Las versiones exactas de dependencias están en los archivos `.csproj`, `fronten
 | **Resend** | Correos transaccionales mediante cola SQL. Recepción comprobada por el responsable; las restricciones del remitente de prueba dependen de la cuenta configurada. |
 | **Open-Meteo** | Clima actual de Chongqing, con caché y alternativa ante fallos. No es un pronóstico para las fechas de la reserva. |
 | **Google Maps Embed** | Mapa automático en Destino y enlace alternativo. La clave de Embed es pública en el navegador y necesita restricciones de API y referente. |
-| **Gemini API** | Proveedor elegido para Render, sin depender de la PC. Proyecto Free, cuotas y configuración en [GEMINI.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/GEMINI.md); inferencia real pendiente. |
+| **Gemini API** | Proveedor elegido para Render, sin depender de la PC. Proyecto Free, cuotas y configuración en [GEMINI.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/GEMINI.md); inferencia real confirmada por el responsable. |
 | **Ollama local** | IA sin cargos por consulta, ejecutada en la PC. C# redacta las explicaciones con cifras verificadas para evitar detalles inventados por el modelo pequeño. |
-| **Cloudflare Quick Tunnel** | Conexión temporal prevista entre el backend y el puente local. Cloudflared instalado; falta configurar y comprobar el acceso desde el despliegue. |
+| **Cloudflare Quick Tunnel, opcional** | Alternativa para conectar Ollama local. No se utiliza en el despliegue final con Gemini. |
 | **OpenAI, opcional** | Proveedor alternativo de pago mediante Responses API; no se necesita para usar Ollama. No se ha acreditado una inferencia real con este proveedor. |
 
 Sin proveedor de IA disponible, RCC conserva recomendaciones por cálculo determinista y avisa que no intervino IA. Ningún fallo del puente cambia automáticamente a un proveedor de pago.
@@ -161,7 +163,7 @@ Remove-Variable rccDb, rccConnection
 
 Si cambias la contraseña de `.env` después de crear el volumen, PostgreSQL no cambia automáticamente la contraseña del usuario existente. No borres el volumen para resolverlo si contiene datos que quieras conservar.
 
-Alternativa sin Docker en Windows: [scripts/dev-postgres.ps1](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/scripts/dev-postgres.ps1). Requiere binarios PostgreSQL ya instalados y admite `-PostgresBin`; crea una instancia separada en `.local/`, puerto **55432**, y configura user-secrets. No ejecutes ambos procedimientos contra la misma carpeta de datos.
+Alternativa sin Docker en Windows: [scripts/dev-postgres.ps1](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/scripts/dev-postgres.ps1). Requiere binarios PostgreSQL ya instalados y admite `-PostgresBin`; crea una instancia separada en `.local/`, puerto **55432**, y configura user-secrets. No ejecutes ambos procedimientos contra la misma carpeta de datos.
 
 ### 3. Aplicar migraciones, compilar React e iniciar
 
@@ -189,15 +191,15 @@ Abre **[http://localhost:5173](http://localhost:5173)**. Vite reenvía `/api` a 
 
 ### 5. Cuentas y administración
 
-Registra un cliente desde `/cuenta`. No hay credenciales fijas de administrador. Para crear el administrador propio, sigue [MODULO-3.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/MODULO-3.md) y ejecuta la inicialización explícita con sus valores privados. Retira la contraseña de inicialización después de usarla.
+Registra un cliente desde `/cuenta`. No hay credenciales fijas de administrador. Para crear el administrador propio, sigue [MODULO-3.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/MODULO-3.md) y ejecuta la inicialización explícita con sus valores privados. Retira la contraseña de inicialización después de usarla.
 
 Páginas principales: `/`, `/habitaciones`, `/experiencias`, `/destino`, `/cuenta`, `/reservar` y `/mis-reservas`. El administrador accede al panel desde su cuenta.
 
 ## IA del despliegue: Gemini gratuito
 
-El proveedor elegido para Render es **Gemini API**, modelo `gemini-3.5-flash-lite`, en un proyecto Google **Free sin facturación**. No necesita PC encendida ni túnel. La integración está preparada; la inferencia real queda pendiente de configurar la clave y comprobar `AI_RANKED`.
+El proveedor elegido para Render es **Gemini API**, modelo `gemini-3.5-flash-lite`, en un proyecto Google **Free sin facturación**. No necesita PC encendida ni túnel. El responsable confirmó la inferencia real funcionando en el sitio publicado.
 
-Configura `Gemini__Enabled=true`, `Gemini__ApiKey` (privada), `Gemini__Model=gemini-3.5-flash-lite`, `Gemini__DailyRequestLimit=20`, `Gemini__MaxOutputTokens=1024` y `OpenAI__Enabled=false` en Render. Mientras el PR no esté integrado, selecciona la rama `codex/gemini-gratuito`. Conserva el resto de variables de producción. Pasos y condiciones en [GEMINI.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/GEMINI.md).
+Configura `Gemini__Enabled=true`, `Gemini__ApiKey` (privada), `Gemini__Model=gemini-3.5-flash-lite`, `Gemini__DailyRequestLimit=20`, `Gemini__MaxOutputTokens=1024` y `OpenAI__Enabled=false` en Render. Mientras el PR no esté integrado, selecciona la rama `codex/gemini-gratuito`. Conserva el resto de variables de producción. Pasos y condiciones en [GEMINI.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/GEMINI.md).
 
 La gratuidad depende del proyecto/modelo de Google: el código no detecta Billing. No actives facturación ni reutilices un proyecto de Maps con Billing. El cupo diario reduce uso; no es un presupuesto monetario. Si falla Gemini o se agota la cuota, se muestran opciones calculadas sin IA, sin cambiar a otro proveedor. Solo salen cifras y preferencias controladas; las explicaciones se generan con datos comprobados por C#. El nivel Free de Google puede usar contenido para mejorar sus productos.
 
@@ -211,7 +213,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\configurar-ia-local.ps1
 
 El script descarga `qwen2.5:1.5b` y configura el proveedor local en user-secrets. Reinicia RCC; después inicia sesión, busca disponibilidad y pulsa **Pedir recomendaciones**. Debe aparecer la indicación de opciones ordenadas con IA. Mantén Ollama abierto.
 
-El modelo ocupa aproximadamente 986 MB de descarga y utiliza memoria/CPU de la PC. No tiene cargos por consulta; la velocidad depende del equipo. [Configuración y límites](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/IA-LOCAL.md).
+El modelo ocupa aproximadamente 986 MB de descarga y utiliza memoria/CPU de la PC. No tiene cargos por consulta; la velocidad depende del equipo. [Configuración y límites](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/IA-LOCAL.md).
 
 ### IA de la PC desde un backend publicado
 
@@ -221,7 +223,7 @@ El puente local se inicia con:
 powershell -ExecutionPolicy Bypass -File .\scripts\iniciar-puente-local.ps1
 ```
 
-Esto **no abre un túnel público**: genera una credencial de sesión y escucha únicamente en `127.0.0.1:5092`. El túnel, sus variables privadas en el backend y la prueba desde el sitio público se preparan por separado siguiendo [PUENTE-IA.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/PUENTE-IA.md).
+Esto **no abre un túnel público**: genera una credencial de sesión y escucha únicamente en `127.0.0.1:5092`. El túnel, sus variables privadas en el backend y la prueba desde el sitio público se preparan por separado siguiendo [PUENTE-IA.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/PUENTE-IA.md).
 
 No expongas directamente el puerto de Ollama. La conexión es temporal: PC encendida, credencial con vencimiento inferior a ocho horas y nueva configuración al reiniciar el puente/túnel. Esta alternativa se conserva para desarrollo; el proveedor elegido actualmente para Render es Gemini.
 
@@ -229,11 +231,11 @@ No expongas directamente el puerto de Ollama. La conexión es temporal: PC encen
 
 | Integración | Guía |
 |---|---|
-| Stripe test y webhook local | [STRIPE-SANDBOX.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/STRIPE-SANDBOX.md) |
-| Google Maps y Resend | [SERVICIOS-EXTERNOS.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/SERVICIOS-EXTERNOS.md) |
-| Opciones de proveedores y OpenAI de pago | [CONFIGURACION-SERVICIOS.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/CONFIGURACION-SERVICIOS.md) |
-| IA local gratuita | [IA-LOCAL.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/IA-LOCAL.md) |
-| Puente remoto autenticado | [PUENTE-IA.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/PUENTE-IA.md) |
+| Stripe test y webhook local | [STRIPE-SANDBOX.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/STRIPE-SANDBOX.md) |
+| Google Maps y Resend | [SERVICIOS-EXTERNOS.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/SERVICIOS-EXTERNOS.md) |
+| Opciones de proveedores y OpenAI de pago | [CONFIGURACION-SERVICIOS.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/CONFIGURACION-SERVICIOS.md) |
+| IA local gratuita | [IA-LOCAL.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/IA-LOCAL.md) |
+| Puente remoto autenticado | [PUENTE-IA.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/PUENTE-IA.md) |
 
 En producción las claves se guardan en variables privadas del backend; en Development, en user-secrets. Ninguna clave privada debe ir en variables `VITE_*`, código, capturas, documentación o commits. Las credenciales de Stripe deben ser de sandbox.
 
@@ -304,7 +306,7 @@ docker build -t rcc:module9 .
 python scripts/test-container.py
 ```
 
-La prueba necesita Docker, PostgreSQL local de Compose y OpenSSL (incluido en Git para Windows). No usa claves reales ni modifica reservas del usuario. Consulta [DESPLIEGUE.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/DESPLIEGUE.md) antes de publicar: Production requiere origen HTTPS, conexión privada y certificado para claves de sesión. En Neon se exige TLS con VerifyFull.
+La prueba necesita Docker, PostgreSQL local de Compose y OpenSSL (incluido en Git para Windows). No usa claves reales ni modifica reservas del usuario. Consulta [DESPLIEGUE.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/DESPLIEGUE.md) antes de publicar: Production requiere origen HTTPS, conexión privada y certificado para claves de sesión. En Neon se exige TLS con VerifyFull.
 
 Para preparar la publicación conjunta sin contenedor:
 
@@ -327,14 +329,14 @@ Esto valida una publicación local; **no equivale al despliegue en Render**. Det
 
 | Documento | Contenido |
 |---|---|
-| [ESPECIFICACION.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/ESPECIFICACION.md) | Historias de usuario, datos, API y reglas. |
-| [DISENO.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/DISENO.md) | Dirección visual y bocetos. |
-| [MODULOS.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/MODULOS.md) | Entregas, aceptación y trazabilidad académica. |
-| [MODULO-1.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/MODULO-1.md) · [MODULO-2.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/MODULO-2.md) | Base técnica y sistema visual. |
-| [MODULO-3.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/MODULO-3.md) · [MODULO-4.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/MODULO-4.md) | Identidad, roles, catálogo y administración. |
-| [MODULO-5.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/MODULO-5.md) · [MODULO-6.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/MODULO-6.md) | Reservas, pagos y reembolsos. |
-| [MODULO-7.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/MODULO-7.md) · [MODULO-8.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/MODULO-8.md) | Servicios externos y recomendaciones. |
-| [TRABAJO-INDIVIDUAL.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/docs/TRABAJO-INDIVIDUAL.md) | Responsabilidad, autoría y bitácora. |
-| [THIRD_PARTY.md](https://github.com/Juulren/RCC/blob/5d3994c2adaf1f8cf4cdf39f74f1a3f06f15459c/THIRD_PARTY.md) | Fuentes y licencias de terceros. |
+| [ESPECIFICACION.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/ESPECIFICACION.md) | Historias de usuario, datos, API y reglas. |
+| [DISENO.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/DISENO.md) | Dirección visual y bocetos. |
+| [MODULOS.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/MODULOS.md) | Entregas, aceptación y trazabilidad académica. |
+| [MODULO-1.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/MODULO-1.md) · [MODULO-2.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/MODULO-2.md) | Base técnica y sistema visual. |
+| [MODULO-3.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/MODULO-3.md) · [MODULO-4.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/MODULO-4.md) | Identidad, roles, catálogo y administración. |
+| [MODULO-5.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/MODULO-5.md) · [MODULO-6.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/MODULO-6.md) | Reservas, pagos y reembolsos. |
+| [MODULO-7.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/MODULO-7.md) · [MODULO-8.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/MODULO-8.md) | Servicios externos y recomendaciones. |
+| [TRABAJO-INDIVIDUAL.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/docs/TRABAJO-INDIVIDUAL.md) | Responsabilidad, autoría y bitácora. |
+| [THIRD_PARTY.md](https://github.com/Juulren/RCC/blob/2a9c1a59f001fa6fbaf30d479e79ef4a3eea4d09/THIRD_PARTY.md) | Fuentes y licencias de terceros. |
 
 Las evidencias de cada módulo conservan su fecha: pueden describir una configuración que todavía estaba pendiente entonces. El estado actual se resume al inicio de este README y en las guías posteriores de integración.
