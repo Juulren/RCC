@@ -22,7 +22,7 @@ En Environment agrega:
 |---|---|
 | `Gemini__Enabled` | `true` |
 | `Gemini__ApiKey` | Clave privada del proyecto Free de AI Studio. |
-| `Gemini__Model` | `gemini-2.5-flash-lite` |
+| `Gemini__Model` | `gemini-3.5-flash-lite` |
 | `Gemini__DailyRequestLimit` | `20` |
 | `Gemini__MaxOutputTokens` | `1024` |
 | `OpenAI__Enabled` | `false` |
@@ -69,3 +69,13 @@ El panel muestra noches, número de habitaciones y huéspedes de la búsqueda re
 Vista al río prioriza más habitaciones con esa vista; más espacio, la suma de m²; menor precio, el total de la estancia. Son preferencias de orden y no filtros obligatorios. Capacidad, inventario, fechas y presupuesto se validan como antes. Se conservan las tres preferencias enumeradas; no se añaden servicios o características que el catálogo no pueda comprobar.
 
 Validación del ajuste: 19 pruebas frontend y seis pruebas de navegador con proveedores simulados (360/768/1440, ES/EN, teclado, movimiento reducido, diagnóstico de cuota y respuesta ordenada). Las 52 pruebas aisladas de conectores/puente también pasaron. Ocho casos adicionales de diagnóstico en PostgreSQL quedan a CI porque Docker local no arrancó; no se volvió a intentar abrirlo después del reporte del responsable.
+
+## Corrección de disponibilidad del modelo
+
+El primer despliegue reportó `AI_MODEL_UNAVAILABLE` (HTTP 404). La documentación de Google limita los modelos 2.5 a proyectos con uso anterior y recomienda 3.5 Flash-Lite/3.8 Flash para proyectos nuevos. RCC se actualiza a **gemini-3.5-flash-lite**, cuya tabla de precios mantiene entrada/salida Free. En Render debe cambiarse explícitamente `Gemini__Model` a ese valor y desplegar la versión corregida. La clave y el proyecto Free no cambian.
+
+Se eliminan los parámetros heredados temperature y thinkingBudget=0; se usa el razonamiento mínimo predeterminado de 3.5 Flash-Lite, conservando el máximo de salida, esquema JSON, cuota y validación. El modelo anterior ya no habilita llamadas; no hay migración/fallback silencioso entre modelos. La confirmación real sigue pendiente de una respuesta `AI_RANKED` en el proyecto del responsable.
+
+Fuentes: [disponibilidad de modelos](https://ai.google.dev/gemini-api/docs/deprecations), [3.5 Flash-Lite](https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash-lite), [precios](https://ai.google.dev/gemini-api/docs/pricing), [razonamiento](https://ai.google.dev/gemini-api/docs/thinking).
+
+Validación local de esta corrección: 53 pruebas de gateways/puente aprobadas, incluido rechazo explícito del modelo 2.5 anterior y comprobación de la URL y parámetros de 3.5. No se usó una clave real ni se realizó inferencia externa.

@@ -193,9 +193,9 @@ Páginas principales: `/`, `/habitaciones`, `/experiencias`, `/destino`, `/cuent
 
 ## IA del despliegue: Gemini gratuito
 
-El proveedor elegido para Render es **Gemini API**, modelo `gemini-2.5-flash-lite`, en un proyecto Google **Free sin facturación**. No necesita PC encendida ni túnel. La integración está preparada; la inferencia real queda pendiente de configurar la clave y comprobar `AI_RANKED`.
+El proveedor elegido para Render es **Gemini API**, modelo `gemini-3.5-flash-lite`, en un proyecto Google **Free sin facturación**. No necesita PC encendida ni túnel. La integración está preparada; la inferencia real queda pendiente de configurar la clave y comprobar `AI_RANKED`.
 
-Configura `Gemini__Enabled=true`, `Gemini__ApiKey` (privada), `Gemini__Model=gemini-2.5-flash-lite`, `Gemini__DailyRequestLimit=20`, `Gemini__MaxOutputTokens=1024` y `OpenAI__Enabled=false` en Render. Mientras el PR no esté integrado, selecciona la rama `codex/gemini-gratuito`. Conserva el resto de variables de producción. Pasos y condiciones en [GEMINI.md](docs/GEMINI.md).
+Configura `Gemini__Enabled=true`, `Gemini__ApiKey` (privada), `Gemini__Model=gemini-3.5-flash-lite`, `Gemini__DailyRequestLimit=20`, `Gemini__MaxOutputTokens=1024` y `OpenAI__Enabled=false` en Render. Mientras el PR no esté integrado, selecciona la rama `codex/gemini-gratuito`. Conserva el resto de variables de producción. Pasos y condiciones en [GEMINI.md](docs/GEMINI.md).
 
 La gratuidad depende del proyecto/modelo de Google: el código no detecta Billing. No actives facturación ni reutilices un proyecto de Maps con Billing. El cupo diario reduce uso; no es un presupuesto monetario. Si falla Gemini o se agota la cuota, se muestran opciones calculadas sin IA, sin cambiar a otro proveedor. Solo salen cifras y preferencias controladas; las explicaciones se generan con datos comprobados por C#. El nivel Free de Google puede usar contenido para mejorar sus productos.
 

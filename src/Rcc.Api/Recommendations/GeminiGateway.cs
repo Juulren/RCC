@@ -6,7 +6,7 @@ namespace Rcc.Api.Recommendations;
 public sealed class GeminiGateway(IHttpClientFactory clients, IOptions<AiSettings> settings) : IRecommendationGateway
 {
     // Pinned model with a Free tier. Billing status is controlled by the Google project, not this API.
-    public const string AllowedModel = "gemini-2.5-flash-lite";
+    public const string AllowedModel = "gemini-3.5-flash-lite";
     public async Task<List<RankedChoice>> RankAsync(List<Candidate> candidates, string[] preferences, string locale, CancellationToken token)
     {
         var config = settings.Value;
@@ -21,10 +21,8 @@ public sealed class GeminiGateway(IHttpClientFactory clients, IOptions<AiSetting
             contents = new[] { new { role = "user", parts = new[] { new { text = input } } } },
             generationConfig = new
             {
-                temperature = 0,
                 candidateCount = 1,
                 maxOutputTokens = config.MaxOutputTokens,
-                thinkingConfig = new { thinkingBudget = 0 },
                 responseMimeType = "application/json",
                 responseJsonSchema = new
                 {

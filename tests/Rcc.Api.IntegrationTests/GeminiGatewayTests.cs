@@ -32,12 +32,13 @@ public sealed class GeminiGatewayTests
     {
         using var transport = new Transport(); var settings = Settings();
         var result = await new GeminiGateway(transport, Options.Create(settings)).RankAsync([Candidate], ["river"], locale, default);
-        Assert.Equal("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent", transport.Url!.AbsoluteUri);
+        Assert.Equal("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent", transport.Url!.AbsoluteUri);
         Assert.Equal(settings.ApiKey, transport.Key); Assert.DoesNotContain(settings.ApiKey, transport.Body!);
         Assert.DoesNotContain("PRIVATE NAME", transport.Body!); Assert.DoesNotContain(Candidate.RoomTypeIds[0].ToString(), transport.Body!);
         using var body = JsonDocument.Parse(transport.Body!);
         var config = body.RootElement.GetProperty("generationConfig");
-        Assert.Equal(0, config.GetProperty("thinkingConfig").GetProperty("thinkingBudget").GetInt32());
+        Assert.False(config.TryGetProperty("thinkingConfig", out _));
+        Assert.False(config.TryGetProperty("temperature", out _));
         Assert.Equal(1024, config.GetProperty("maxOutputTokens").GetInt32());
         Assert.Equal("application/json", config.GetProperty("responseMimeType").GetString());
         Assert.Equal("option-0", config.GetProperty("responseJsonSchema").GetProperty("properties").GetProperty("options").GetProperty("items").GetProperty("properties").GetProperty("id").GetProperty("enum")[0].GetString());
@@ -84,6 +85,7 @@ public sealed class GeminiGatewayTests
     [Theory]
     [InlineData(false, GeminiGateway.AllowedModel)]
     [InlineData(true, "paid-or-unknown-model")]
+    [InlineData(true, "gemini-2.5-flash-lite")]
     public async Task Disabled_or_non_allowlisted_model_never_sends_a_request(bool enabled, string model)
     {
         using var transport = new Transport(); var settings = Settings(); settings.Enabled = enabled; settings.Model = model;
