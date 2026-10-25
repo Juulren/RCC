@@ -2,7 +2,7 @@
 
 Aplicación académica responsiva de reservas, inspirada en **Regent Chongqing**. Combina un diseño de lujo futurista, interfaz en español e inglés, administración del hotel, reservas de varias habitaciones, pagos de prueba y recomendaciones con IA.
 
-Repositorio oficial: [Juulren/RCC](https://github.com/Juulren/RCC). Responsable único: **Juulren**, con asistencia de Codex. No es el sitio oficial del hotel: las tarifas, el inventario y los pagos son de demostración.
+Repositorio oficial: [Juulren/RCC](https://github.com/Juulren/RCC). Responsable único: **Juulren**, con asistencia de Codex y Gemini. No es el sitio oficial del hotel: las tarifas, el inventario y los pagos son de demostración.
 
 ## Estado del proyecto
 
