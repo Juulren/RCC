@@ -1,6 +1,6 @@
 # Gemini API: nivel gratuito para RCC
 
-Decisión del responsable: 24 de octubre de 2026. Sustituye Ollama/túnel como proveedor del despliegue; los conectores anteriores siguen disponibles para desarrollo. Implementación preparada, **inferencia real pendiente de configurar la clave y probar en Render**.
+Decisión del responsable: 24 de octubre de 2026. Sustituye Ollama/túnel como proveedor del despliegue; los conectores anteriores siguen disponibles para desarrollo. **Integración publicada y funcionamiento real confirmado por el responsable el 24 de octubre de 2026**.
 
 ## 1. Crear la clave sin activar facturación
 
@@ -74,8 +74,12 @@ Validación del ajuste: 19 pruebas frontend y seis pruebas de navegador con prov
 
 El primer despliegue reportó `AI_MODEL_UNAVAILABLE` (HTTP 404). La documentación de Google limita los modelos 2.5 a proyectos con uso anterior y recomienda 3.5 Flash-Lite/3.8 Flash para proyectos nuevos. RCC se actualiza a **gemini-3.5-flash-lite**, cuya tabla de precios mantiene entrada/salida Free. En Render debe cambiarse explícitamente `Gemini__Model` a ese valor y desplegar la versión corregida. La clave y el proyecto Free no cambian.
 
-Se eliminan los parámetros heredados temperature y thinkingBudget=0; se usa el razonamiento mínimo predeterminado de 3.5 Flash-Lite, conservando el máximo de salida, esquema JSON, cuota y validación. El modelo anterior ya no habilita llamadas; no hay migración/fallback silencioso entre modelos. La confirmación real sigue pendiente de una respuesta `AI_RANKED` en el proyecto del responsable.
+Se eliminan los parámetros heredados temperature y thinkingBudget=0; se usa el razonamiento mínimo predeterminado de 3.5 Flash-Lite, conservando el máximo de salida, esquema JSON, cuota y validación. El modelo anterior ya no habilita llamadas; no hay migración/fallback silencioso entre modelos. Tras configurar el modelo y desplegar, el responsable confirmó que la IA funciona.
 
 Fuentes: [disponibilidad de modelos](https://ai.google.dev/gemini-api/docs/deprecations), [3.5 Flash-Lite](https://ai.google.dev/gemini-api/docs/models/gemini-3.5-flash-lite), [precios](https://ai.google.dev/gemini-api/docs/pricing), [razonamiento](https://ai.google.dev/gemini-api/docs/thinking).
 
 Validación local de esta corrección: 53 pruebas de gateways/puente aprobadas, incluido rechazo explícito del modelo 2.5 anterior y comprobación de la URL y parámetros de 3.5. No se usó una clave real ni se realizó inferencia externa.
+
+## Cierre
+
+El responsable confirmó Gemini funcionando y dio el proyecto por concluido el 24 de octubre de 2026. La CI completa y el escaneo de secretos del commit funcional 5d3994c pasaron. Las pruebas locales con proveedores simulados no se confunden con esta confirmación manual del despliegue.

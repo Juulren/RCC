@@ -6,9 +6,11 @@ Repositorio oficial: [Juulren/RCC](https://github.com/Juulren/RCC). Responsable 
 
 ## Estado del proyecto
 
-Los módulos **0–8 están implementados**. El responsable confirmó en desarrollo local pago Stripe sandbox, recepción de correo Resend, cancelación, Maps y recomendaciones con Ollama. También se implementó y probó localmente un puente autenticado para conectar un backend remoto con la IA de la PC.
+Los módulos **0–9 están implementados y el proyecto fue dado por concluido por Juulren el 24 de octubre de 2026**, tras sus pruebas manuales.
 
-**Módulo 9 publicado y en validación:** [RCC en Render](https://rcc-7gqa.onrender.com). La API respondió Healthy y el responsable confirmó registro/login, pago sandbox, correo y Maps. Docker de producción, claves de sesión cifradas/persistentes y prueba del contenedor están implementados. La transición a Gemini está preparada, pendiente de clave y prueba real. Quedan comprobaciones de aceptación y demostración; no se han fusionado los PR automáticamente.
+**Sitio publicado:** [RCC en Render](https://rcc-7gqa.onrender.com), con PostgreSQL en Neon. El responsable confirmó registro/login, pagos Stripe sandbox, correo Resend, Maps e IA Gemini. La API y la base responden Healthy, y la CI y el escaneo de secretos de la versión funcional pasaron. Gemini ya no requiere PC ni túnel; conserva el proyecto Google en Free sin activar facturación.
+
+El cierre es la aceptación del responsable; las evidencias y su alcance se registran en [MODULO-9.md](docs/MODULO-9.md). No fusiona automáticamente los PR ni acredita una revisión humana independiente.
 
 - [Desplegar paso a paso en Render y Neon](docs/DESPLIEGUE.md).
 - [Alcance y aceptación del módulo 9](docs/MODULO-9.md).
@@ -52,7 +54,7 @@ Los módulos **0–8 están implementados**. El responsable confirmó en desarro
 | Puente de IA | Proceso ASP.NET separado, autenticación por credencial aleatoria y transporte HTTPS mediante túnel temporal. |
 | Pruebas | xUnit, ASP.NET TestHost/WebApplicationFactory, PostgreSQL real, Vitest, Testing Library y Playwright. |
 | Herramientas | Git, GitHub Actions, Docker Compose para PostgreSQL y Gitleaks para detección de secretos. |
-| Publicación preparada | Imagen Docker y Blueprint Render Free, con PostgreSQL en Neon. Validación pública pendiente. |
+| Publicación | Docker en Render y PostgreSQL en Neon. Sitio publicado y aceptado por el responsable. |
 
 Las versiones exactas de dependencias están en los archivos `.csproj`, `frontend/package.json` y `frontend/package-lock.json`. Las fuentes, adaptaciones y licencias de imágenes/componentes están en [THIRD_PARTY.md](THIRD_PARTY.md).
 
@@ -64,9 +66,9 @@ Las versiones exactas de dependencias están en los archivos `.csproj`, `fronten
 | **Resend** | Correos transaccionales mediante cola SQL. Recepción comprobada por el responsable; las restricciones del remitente de prueba dependen de la cuenta configurada. |
 | **Open-Meteo** | Clima actual de Chongqing, con caché y alternativa ante fallos. No es un pronóstico para las fechas de la reserva. |
 | **Google Maps Embed** | Mapa automático en Destino y enlace alternativo. La clave de Embed es pública en el navegador y necesita restricciones de API y referente. |
-| **Gemini API** | Proveedor elegido para Render, sin depender de la PC. Proyecto Free, cuotas y configuración en [GEMINI.md](docs/GEMINI.md); inferencia real pendiente. |
+| **Gemini API** | Proveedor elegido para Render, sin depender de la PC. Proyecto Free, cuotas y configuración en [GEMINI.md](docs/GEMINI.md); inferencia real confirmada por el responsable. |
 | **Ollama local** | IA sin cargos por consulta, ejecutada en la PC. C# redacta las explicaciones con cifras verificadas para evitar detalles inventados por el modelo pequeño. |
-| **Cloudflare Quick Tunnel** | Conexión temporal prevista entre el backend y el puente local. Cloudflared instalado; falta configurar y comprobar el acceso desde el despliegue. |
+| **Cloudflare Quick Tunnel, opcional** | Alternativa para conectar Ollama local. No se utiliza en el despliegue final con Gemini. |
 | **OpenAI, opcional** | Proveedor alternativo de pago mediante Responses API; no se necesita para usar Ollama. No se ha acreditado una inferencia real con este proveedor. |
 
 Sin proveedor de IA disponible, RCC conserva recomendaciones por cálculo determinista y avisa que no intervino IA. Ningún fallo del puente cambia automáticamente a un proveedor de pago.
@@ -193,7 +195,7 @@ Páginas principales: `/`, `/habitaciones`, `/experiencias`, `/destino`, `/cuent
 
 ## IA del despliegue: Gemini gratuito
 
-El proveedor elegido para Render es **Gemini API**, modelo `gemini-3.5-flash-lite`, en un proyecto Google **Free sin facturación**. No necesita PC encendida ni túnel. La integración está preparada; la inferencia real queda pendiente de configurar la clave y comprobar `AI_RANKED`.
+El proveedor elegido para Render es **Gemini API**, modelo `gemini-3.5-flash-lite`, en un proyecto Google **Free sin facturación**. No necesita PC encendida ni túnel. El responsable confirmó la inferencia real funcionando en el sitio publicado.
 
 Configura `Gemini__Enabled=true`, `Gemini__ApiKey` (privada), `Gemini__Model=gemini-3.5-flash-lite`, `Gemini__DailyRequestLimit=20`, `Gemini__MaxOutputTokens=1024` y `OpenAI__Enabled=false` en Render. Mientras el PR no esté integrado, selecciona la rama `codex/gemini-gratuito`. Conserva el resto de variables de producción. Pasos y condiciones en [GEMINI.md](docs/GEMINI.md).
 

@@ -1,6 +1,9 @@
 # Módulo 9 — publicación y entrega
 
-Fecha: 22 de octubre de 2026. Responsable único: Juulren. Rama `codex/modulo-9-despliegue`, apilada sobre el puente de IA. **Implementación de despliegue preparada; publicación pública y aceptación final pendientes de cuentas/configuración.**
+Inicio: 22 de octubre de 2026. Cierre: **24 de octubre de 2026**. Responsable único: Juulren. Implementación inicial en `codex/modulo-9-despliegue`, ajustes finales en `codex/gemini-gratuito`.
+
+**Módulo concluido por aceptación del responsable**, quien indicó que ya realizó sus pruebas y solicitó dar el proyecto por terminado. Sitio: https://rcc-7gqa.onrender.com. Esta aceptación no se presenta como revisión humana independiente ni como ejecución documentada de cada escenario de la lista inicial. La integración de los PR es una operación separada.
+
 
 ## Entregas implementadas
 
@@ -20,31 +23,32 @@ Se aprobaron **148 pruebas .NET/PostgreSQL**, incluidas seis comprobaciones de p
 
 Las comprobaciones automatizadas no acreditan creación de cuentas, conexión real Neon, TLS público, correo recibido, pago/webhook remoto ni IA cruzando el túnel. El usuario aún no tenía cuentas al iniciar el módulo.
 
-## Aceptación pública pendiente
+## Aceptación y evidencias públicas
 
-| Comprobación | Estado |
+| Comprobación | Evidencia de cierre |
 |---|---|
-| Cuenta Render Free, proyecto Neon Free y configuración privada | Pendiente del responsable |
-| Servicio HTTPS público y migración Neon | Pendiente |
-| Registro/login/logout y autorización cliente/admin en HTTPS | Pendiente |
-| Reserva multi-habitación, precio, concurrencia y cancelación publicada | Pendiente |
-| Stripe sandbox con webhook propio del dominio y seguimiento de reembolso | Pendiente |
-| Correo recibido por destinatario permitido, clima y Maps restringido | Pendiente |
-| Ollama en PC mediante puente autenticado; fallback al apagarlo | Pendiente |
-| Persistencia tras reinicio, respaldo/recuperación y rollback revisados | Pendiente |
-| Revisión 360/768/1440, ES/EN, teclado y movimiento reducido en URL pública | Pendiente |
-| Enlace/commit desplegado, evidencia saneada y demo de diez minutos | Pendiente |
+| Render y Neon | Cuentas/configuración realizadas por el responsable; sitio HTTPS operativo. |
+| API y base de datos | Live y ready respondieron Healthy; rutas SPA y módulo 9 comprobados desde la URL pública. |
+| Registro e inicio de sesión | Confirmados manualmente por el responsable en Render. |
+| Pago Stripe sandbox | El responsable confirmó el pago reflejado tras configurar el webhook del dominio. |
+| Correo Resend | El responsable confirmó recepción tras activar el servicio publicado. |
+| Google Maps | El responsable confirmó carga del mapa en Render. |
+| Gemini | El responsable confirmó funcionamiento tras cambiar a gemini-3.5-flash-lite. No requiere PC/túnel. |
+| Pruebas manuales adicionales y aceptación | El responsable declaró haber probado el proyecto y solicitó su cierre el 24 de octubre de 2026. No aportó un desglose por escenario. |
+| CI y secretos | La CI completa y Secret scanning del commit funcional `5d3994c` terminaron correctamente. |
 
-No se marca el módulo completo hasta cubrir estas comprobaciones o registrar con el docente las limitaciones aceptadas. No se mezclan simulaciones con validación externa real.
+La aceptación general no se convierte en evidencia individual inventada de reembolsos, concurrencia, roles, recuperación de respaldos o ejecución de la demostración. Se conserva el guion y la documentación de entrega como artefactos. Las pruebas automatizadas de PostgreSQL, permisos, pagos, inventario y producción conservan su alcance propio.
 
 ## Límites y riesgos materiales
 
-Free puede dormir/suspender servicios y retrasar workers; no es disponibilidad comercial. La PC y el túnel deben estar activos para IA. Sin ellos se conserva el cálculo determinista. El certificado/contraseña de claves de sesión debe conservarse y renovarse con un plan compatible, no regenerarse por deploy. El rol migrador/runtime compartido simplifica el laboratorio; una operación permanente requiere separación de permisos y revisión adicional. El ingreso Render es el límite de confianza del modo proxy, no una configuración para puertos públicos directos.
+Free puede dormir/suspender servicios y retrasar workers; no es disponibilidad comercial. La IA publicada utiliza Gemini Free; no requiere la PC ni el túnel. Depende de la disponibilidad/cuota del proyecto Google. Ante fallos se conserva el cálculo determinista. No se debe activar Billing para mantener la modalidad gratuita. El certificado/contraseña de claves de sesión debe conservarse y renovarse con un plan compatible, no regenerarse por deploy. El rol migrador/runtime compartido simplifica el laboratorio; una operación permanente requiere separación de permisos y revisión adicional. El ingreso Render es el límite de confianza del modo proxy, no una configuración para puertos públicos directos.
 
 El historial de PR de módulos previos sigue pendiente de integración/revisión. La publicación del README en main no integra automáticamente el código. No se contratan recursos de pago ni se crean aprobaciones humanas ficticias.
 
-## Actualización del 24 de octubre de 2026
+## Cambios finales del despliegue
 
-URL publicada: https://rcc-7gqa.onrender.com. La API respondió Healthy en live/ready, módulo 9 y rutas SPA; el responsable confirmó registro/login, pago de prueba reflejado, correo recibido y Maps en Render. Esto no acredita todavía todas las comprobaciones pendientes de la tabla (roles, reembolsos, concurrencia, accesibilidad, recuperación y demostración).
+El proveedor final es Gemini Free, modelo `gemini-3.5-flash-lite`. Se corrigió el 404 de los modelos 2.5 restringidos para proyectos nuevos. El responsable confirmó la IA funcionando. Ollama/puente queda como alternativa local documentada.
 
-El responsable sustituyó Ollama/túnel por Gemini Free para el despliegue. Véase GEMINI.md: integración preparada y prueba real pendiente de clave/configuración. El requisito de PC/túnel de la sección original corresponde a la alternativa Ollama, no a Gemini. No se declara terminado el módulo.
+El aviso de biblioteca GSSAPI de Npgsql se resolvió configurando `GSS Encryption Mode=Disable` en la conexión privada de Render, conservando `SSL Mode=VerifyFull`. No se publicaron cadenas ni credenciales.
+
+El panel explica el presupuesto total CNY, promedio por habitación/noche y preferencias; los fallos de IA muestran códigos/mensajes seguros. Validación local de esos ajustes: 19 pruebas frontend, seis escenarios responsivos ES/EN y 53 pruebas aisladas de conectores/puente. La CI de la versión funcional también completó la matriz con PostgreSQL y contenedor.

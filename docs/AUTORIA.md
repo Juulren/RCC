@@ -22,7 +22,8 @@ Esta proporción cuenta **commits**, no líneas de código, horas, esfuerzo, pro
 - Elección de hotel, estilo, idioma, módulos y navegación.
 - Configuración local de Docker, Maps, Resend y Stripe sandbox.
 - Confirmación de pago de prueba, correo recibido, cancelación, mapa e IA local funcionando.
-- Preferencia por mantener Ollama y el túnel, descartando Gemini para el despliegue.
+- Decisión inicial de Ollama/túnel y posterior cambio autorizado a Gemini Free para no depender de la PC.
+- Configuración del despliegue en Render/Neon y de los proveedores; confirmación del funcionamiento publicado y aceptación final el 24 de octubre de 2026.
 - Solicitud de README público en main y de documentación reproducible.
 
 Las pruebas automatizadas y revisiones técnicas de Codex no se presentan como revisión humana independiente. La modalidad individual difiere de la consigna de cuatro integrantes; no se simulan personas ni aprobaciones. Ver TRABAJO-INDIVIDUAL.md.
