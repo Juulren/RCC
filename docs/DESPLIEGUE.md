@@ -97,7 +97,7 @@ Inicializa un administrador explícitamente contra la base Neon siguiendo MODULO
 - **Resend:** activa `Resend__Enabled=true` y configura ApiKey/From privados. El remitente de prueba conserva las restricciones de destinatario de tu cuenta. Comprueba recepción; aceptación HTTP no equivale a llegada a bandeja.
 - **Maps:** configura `GoogleMaps__EmbedKey`; agrega el referente HTTPS publicado y restringe la API a Maps Embed. Es una clave pública en el iframe, no un secreto de backend.
 - **Clima:** no requiere una clave para esta integración; comprueba fuente/hora y alternativa ante fallo.
-- **IA:** por decisión del responsable se mantiene **Ollama con puente**, no Gemini. Sigue PUENTE-IA.md. Mantén la PC, Ollama, puente y túnel abiertos; configura Provider=OllamaRelay, URL y token solo en Render. Repite la configuración al cambiar credencial/hostname y apaga la conexión al terminar. La API jamás cambia automáticamente a OpenAI de pago.
+- **IA:** la decisión actual es **Gemini en un proyecto Free**, según [GEMINI.md](GEMINI.md). Configura sus variables privadas y despliega la rama del ajuste; no necesita PC ni túnel. La inferencia real queda pendiente hasta comprobar `AI_RANKED`. Ollama/puente queda como alternativa documentada para desarrollo, sin fallback automático.
 
 ## 8. Límites, operación y reversión
 

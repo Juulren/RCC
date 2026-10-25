@@ -8,7 +8,7 @@ Repositorio oficial: [Juulren/RCC](https://github.com/Juulren/RCC). Responsable 
 
 Los módulos **0–8 están implementados**. El responsable confirmó en desarrollo local pago Stripe sandbox, recepción de correo Resend, cancelación, Maps y recomendaciones con Ollama. También se implementó y probó localmente un puente autenticado para conectar un backend remoto con la IA de la PC.
 
-**Módulo 9 en preparación:** imagen Docker de producción y Blueprint Render Free implementados, con migraciones controladas, claves de sesión cifradas/persistentes en PostgreSQL y prueba del contenedor aprobada. **Falta el despliegue público:** crear/configurar cuentas Render y Neon y comprobar HTTPS, integraciones e IA remota. No se han fusionado los PR automáticamente.
+**Módulo 9 publicado y en validación:** [RCC en Render](https://rcc-7gqa.onrender.com). La API respondió Healthy y el responsable confirmó registro/login, pago sandbox, correo y Maps. Docker de producción, claves de sesión cifradas/persistentes y prueba del contenedor están implementados. La transición a Gemini está preparada, pendiente de clave y prueba real. Quedan comprobaciones de aceptación y demostración; no se han fusionado los PR automáticamente.
 
 - [Desplegar paso a paso en Render y Neon](docs/DESPLIEGUE.md).
 - [Alcance y aceptación del módulo 9](docs/MODULO-9.md).
@@ -48,7 +48,7 @@ Los módulos **0–8 están implementados**. El responsable confirmó en desarro
 | Identidad | ASP.NET Core Identity, roles, cookies de sesión y protección CSRF. |
 | Frontend | **React 19**, JavaScript, HTML y CSS, con **Vite 8**. |
 | Navegación y animación | React Router 7, Motion y animaciones CSS; patrones visuales inspirados/adaptados de React Bits y Reacticx según las atribuciones del proyecto. |
-| IA local | **Ollama + Qwen 2.5 1.5B**, con salida estructurada y validación C#. |
+| IA | **Gemini API Free** para Render; **Ollama + Qwen 2.5 1.5B** como alternativa local, con salida estructurada y validación C#. |
 | Puente de IA | Proceso ASP.NET separado, autenticación por credencial aleatoria y transporte HTTPS mediante túnel temporal. |
 | Pruebas | xUnit, ASP.NET TestHost/WebApplicationFactory, PostgreSQL real, Vitest, Testing Library y Playwright. |
 | Herramientas | Git, GitHub Actions, Docker Compose para PostgreSQL y Gitleaks para detección de secretos. |
@@ -64,6 +64,7 @@ Las versiones exactas de dependencias están en los archivos `.csproj`, `fronten
 | **Resend** | Correos transaccionales mediante cola SQL. Recepción comprobada por el responsable; las restricciones del remitente de prueba dependen de la cuenta configurada. |
 | **Open-Meteo** | Clima actual de Chongqing, con caché y alternativa ante fallos. No es un pronóstico para las fechas de la reserva. |
 | **Google Maps Embed** | Mapa automático en Destino y enlace alternativo. La clave de Embed es pública en el navegador y necesita restricciones de API y referente. |
+| **Gemini API** | Proveedor elegido para Render, sin depender de la PC. Proyecto Free, cuotas y configuración en [GEMINI.md](docs/GEMINI.md); inferencia real pendiente. |
 | **Ollama local** | IA sin cargos por consulta, ejecutada en la PC. C# redacta las explicaciones con cifras verificadas para evitar detalles inventados por el modelo pequeño. |
 | **Cloudflare Quick Tunnel** | Conexión temporal prevista entre el backend y el puente local. Cloudflared instalado; falta configurar y comprobar el acceso desde el despliegue. |
 | **OpenAI, opcional** | Proveedor alternativo de pago mediante Responses API; no se necesita para usar Ollama. No se ha acreditado una inferencia real con este proveedor. |
@@ -190,6 +191,14 @@ Registra un cliente desde `/cuenta`. No hay credenciales fijas de administrador.
 
 Páginas principales: `/`, `/habitaciones`, `/experiencias`, `/destino`, `/cuenta`, `/reservar` y `/mis-reservas`. El administrador accede al panel desde su cuenta.
 
+## IA del despliegue: Gemini gratuito
+
+El proveedor elegido para Render es **Gemini API**, modelo `gemini-2.5-flash-lite`, en un proyecto Google **Free sin facturación**. No necesita PC encendida ni túnel. La integración está preparada; la inferencia real queda pendiente de configurar la clave y comprobar `AI_RANKED`.
+
+Configura `Gemini__Enabled=true`, `Gemini__ApiKey` (privada), `Gemini__Model=gemini-2.5-flash-lite`, `Gemini__DailyRequestLimit=20`, `Gemini__MaxOutputTokens=1024` y `OpenAI__Enabled=false` en Render. Mientras el PR no esté integrado, selecciona la rama `codex/gemini-gratuito`. Conserva el resto de variables de producción. Pasos y condiciones en [GEMINI.md](docs/GEMINI.md).
+
+La gratuidad depende del proyecto/modelo de Google: el código no detecta Billing. No actives facturación ni reutilices un proyecto de Maps con Billing. El cupo diario reduce uso; no es un presupuesto monetario. Si falla Gemini o se agota la cuota, se muestran opciones calculadas sin IA, sin cambiar a otro proveedor. Solo salen cifras y preferencias controladas; las explicaciones se generan con datos comprobados por C#. El nivel Free de Google puede usar contenido para mejorar sus productos.
+
 ## Cómo habilitar IA local sin pagar una API
 
 Instala y abre [Ollama](https://ollama.com/download/windows). Desde la raíz:
@@ -212,7 +221,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\iniciar-puente-local.ps1
 
 Esto **no abre un túnel público**: genera una credencial de sesión y escucha únicamente en `127.0.0.1:5092`. El túnel, sus variables privadas en el backend y la prueba desde el sitio público se preparan por separado siguiendo [PUENTE-IA.md](docs/PUENTE-IA.md).
 
-No expongas directamente el puerto de Ollama. La conexión es temporal: PC encendida, credencial con vencimiento inferior a ocho horas y nueva configuración al reiniciar el puente/túnel. La validación del despliegue remoto sigue pendiente.
+No expongas directamente el puerto de Ollama. La conexión es temporal: PC encendida, credencial con vencimiento inferior a ocho horas y nueva configuración al reiniciar el puente/túnel. Esta alternativa se conserva para desarrollo; el proveedor elegido actualmente para Render es Gemini.
 
 ## Configurar las demás integraciones
 

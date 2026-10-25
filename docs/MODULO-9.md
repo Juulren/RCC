@@ -42,3 +42,9 @@ No se marca el módulo completo hasta cubrir estas comprobaciones o registrar co
 Free puede dormir/suspender servicios y retrasar workers; no es disponibilidad comercial. La PC y el túnel deben estar activos para IA. Sin ellos se conserva el cálculo determinista. El certificado/contraseña de claves de sesión debe conservarse y renovarse con un plan compatible, no regenerarse por deploy. El rol migrador/runtime compartido simplifica el laboratorio; una operación permanente requiere separación de permisos y revisión adicional. El ingreso Render es el límite de confianza del modo proxy, no una configuración para puertos públicos directos.
 
 El historial de PR de módulos previos sigue pendiente de integración/revisión. La publicación del README en main no integra automáticamente el código. No se contratan recursos de pago ni se crean aprobaciones humanas ficticias.
+
+## Actualización del 24 de octubre de 2026
+
+URL publicada: https://rcc-7gqa.onrender.com. La API respondió Healthy en live/ready, módulo 9 y rutas SPA; el responsable confirmó registro/login, pago de prueba reflejado, correo recibido y Maps en Render. Esto no acredita todavía todas las comprobaciones pendientes de la tabla (roles, reembolsos, concurrencia, accesibilidad, recuperación y demostración).
+
+El responsable sustituyó Ollama/túnel por Gemini Free para el despliegue. Véase GEMINI.md: integración preparada y prueba real pendiente de clave/configuración. El requisito de PC/túnel de la sección original corresponde a la alternativa Ollama, no a Gemini. No se declara terminado el módulo.
